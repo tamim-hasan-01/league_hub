@@ -7,7 +7,7 @@ $isCompleted = $match->status === 'completed';
 $userBookmarked = auth()->check() && auth()->user()->bookmarks()->where('game_match_id', $match->id)->exists();
 @endphp
 
-<div {{ $attributes->merge(['class' => 'bg-gray-800/90 hover:bg-gray-800 border border-gray-700/80 hover:border-cyan-500/50 rounded-xl p-4 transition-all duration-200 shadow-lg relative group overflow-hidden']) }}>
+<div {{ $attributes->merge(['class' => 'rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_24px_rgba(15,23,42,0.05)] transition hover:-translate-y-0.5 hover:border-indigo-200']) }}>
     <!-- Top Meta Line -->
     <div class="flex items-center justify-between gap-2 mb-3 pb-2.5 border-b border-gray-700/60 text-xs">
         <div class="flex items-center gap-2">
