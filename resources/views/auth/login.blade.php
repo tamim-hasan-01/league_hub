@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="max-w-md mx-auto my-8">
-        <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_16px_40px_rgba(15,23,42,0.08)] sm:p-8 relative overflow-hidden">
             <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 to-sky-400"></div>
 
             <div class="text-center mb-6">
