@@ -1,24 +1,46 @@
 <x-app-layout>
     <div class="space-y-8" x-data="adminDashboard()">
-        <!-- Header -->
-        <div class="relative overflow-hidden rounded-3xl bg-gray-800 border border-cyan-500/30 p-6 sm:p-8 shadow-2xl">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                    <div class="flex items-center gap-2 mb-1">
-                        <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
-                        <span class="text-xs font-bold uppercase tracking-wider text-cyan-400">Restricted Operations Console</span>
+        <!-- Brand Hero Header -->
+        <section class="relative overflow-hidden rounded-[28px] border border-slate-200 bg-slate-950 text-white shadow-[0_24px_60px_rgba(15,23,42,0.12)]">
+            <div class="absolute right-0 top-0 h-full w-2/5 bg-[radial-gradient(circle_at_center,rgba(129,140,248,0.24),transparent_65%)]"></div>
+            <div class="relative grid gap-8 px-6 py-8 sm:px-8 lg:grid-cols-[1.45fr_0.55fr] lg:px-10 lg:py-10">
+                <div class="min-w-0">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <p class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-indigo-200">
+                            <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            Authority console
+                        </p>
+                        <span class="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-mono font-bold text-slate-300">
+                            Broadcasting: Reverb / Log
+                        </span>
                     </div>
-                    <h1 class="text-2xl sm:text-3xl font-black text-white">League Authority Dashboard</h1>
-                    <p class="text-xs sm:text-sm text-gray-400 mt-1">Real-time match scoring, tournament entry vetting, and medical clearance inspector</p>
+                    <h1 class="mt-4 text-3xl font-black leading-tight tracking-tight text-white sm:text-4xl lg:text-5xl">
+                        League Authority <span class="text-indigo-300">Dashboard</span>
+                    </h1>
+                    <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-300">
+                        Real-time match scoring, tournament entry vetting, and medical clearance inspector from one central command desk.
+                    </p>
                 </div>
-
-                <div class="flex items-center gap-2">
-                    <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-gray-900 text-cyan-400 border border-gray-700">
-                        Broadcasting: Reverb / Log
-                    </span>
+                <div class="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 lg:self-center">
+                    <div class="bg-slate-950/75 p-4">
+                        <p class="text-3xl font-black tracking-tight text-white">{{ $activeMatches->count() }}</p>
+                        <p class="mt-1 text-[11px] font-bold uppercase tracking-wider text-slate-300">Active matches</p>
+                    </div>
+                    <div class="bg-slate-950/75 p-4">
+                        <p class="text-3xl font-black tracking-tight text-white">{{ $pendingApplications->count() }}</p>
+                        <p class="mt-1 text-[11px] font-bold uppercase tracking-wider text-slate-300">Pending entries</p>
+                    </div>
+                    <div class="bg-slate-950/75 p-4">
+                        <p class="text-3xl font-black tracking-tight text-white">{{ $injuredPlayers->count() }}</p>
+                        <p class="mt-1 text-[11px] font-bold uppercase tracking-wider text-slate-300">Medical holds</p>
+                    </div>
+                    <div class="bg-slate-950/75 p-4">
+                        <p class="text-3xl font-black tracking-tight text-white">{{ $tournaments->count() }}</p>
+                        <p class="mt-1 text-[11px] font-bold uppercase tracking-wider text-slate-300">Competitions</p>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- 3 Primary Console Columns/Sections -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
