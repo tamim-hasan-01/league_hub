@@ -43,12 +43,12 @@
         </section>
 
         <!-- 3 Primary Console Columns/Sections -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
             <!-- Col 1: LIVE MATCH CONSOLE (Spans 2 cols) -->
-            <div class="lg:col-span-2 space-y-6">
+            <div class="lg:col-span-2 space-y-8">
                 <!-- Live Console Card -->
-                <div class="bg-gray-800 border border-gray-700 rounded-3xl p-6 shadow-xl space-y-5">
+                <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)] space-y-6">
                     <div class="flex items-center justify-between pb-4 border-b border-gray-700">
                         <div>
                             <h2 class="text-lg font-bold text-white flex items-center gap-2">
@@ -163,13 +163,13 @@
                 </div>
 
                 <!-- Application Review Console -->
-                <div class="bg-gray-800 border border-gray-700 rounded-3xl p-6 shadow-xl space-y-4">
-                    <div class="flex items-center justify-between pb-3 border-b border-gray-700">
+                <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)] space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                         <div>
-                            <h2 class="text-lg font-bold text-white">Tournament Applications Review</h2>
-                            <p class="text-xs text-gray-400">Vet team registrations before seeding brackets</p>
+                            <h2 class="text-lg font-bold text-slate-950">Tournament Applications Review</h2>
+                            <p class="text-xs text-slate-500">Vet team registrations before seeding brackets</p>
                         </div>
-                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
                             {{ $pendingApplications->count() }} Pending
                         </span>
                     </div>
@@ -216,19 +216,19 @@
             </div>
 
             <!-- Col 2: PLAYER HEALTH INSPECTOR & TOURNAMENTS (1 Col) -->
-            <div class="space-y-6">
+            <div class="space-y-8">
 
                 <!-- Player Health Inspector Card -->
-                <div class="bg-gray-800 border border-gray-700 rounded-3xl p-6 shadow-xl space-y-4">
-                    <div class="flex items-center justify-between pb-3 border-b border-gray-700">
+                <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)] space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                         <div>
-                            <h2 class="text-base font-bold text-white flex items-center gap-1.5">
-                                <span class="text-red-400">🏥</span>
+                            <h2 class="text-base font-bold text-slate-950 flex items-center gap-1.5">
+                                <span class="text-rose-500">🏥</span>
                                 Player Health Inspector
                             </h2>
-                            <p class="text-[11px] text-gray-400">Athletes flagged with medical holds</p>
+                            <p class="text-[11px] text-slate-500">Athletes flagged with medical holds</p>
                         </div>
-                        <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-red-500/20 text-red-400 border border-red-500/30">
+                        <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
                             {{ $injuredPlayers->count() }} Injured
                         </span>
                     </div>
@@ -268,10 +268,10 @@
                 </div>
 
                 <!-- Tournaments Quick Overview & Bracket Seed -->
-                <div class="bg-gray-800 border border-gray-700 rounded-3xl p-6 shadow-xl space-y-4">
-                    <div class="flex items-center justify-between pb-3 border-b border-gray-700">
-                        <h2 class="text-base font-bold text-white">Tournaments Overview</h2>
-                        <a href="{{ route('tournaments.index') }}" class="text-xs text-cyan-400 hover:underline">View All</a>
+                <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)] space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <h2 class="text-base font-bold text-slate-950">Tournaments Overview</h2>
+                        <a href="{{ route('tournaments.index') }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-800">View All</a>
                     </div>
 
                     <div class="space-y-3 text-xs">
