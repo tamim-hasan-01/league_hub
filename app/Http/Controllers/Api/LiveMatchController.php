@@ -6,10 +6,25 @@ use App\Http\Controllers\Controller;
 use App\Models\GameMatch;
 use Illuminate\Http\JsonResponse;
 
+/**
+ * LiveMatchController
+ *
+ * RESTful API endpoints powering real-time match tickers, polling widgets,
+ * and live fixture details for mobile clients and frontend dashboards.
+ */
 class LiveMatchController extends Controller
 {
+    /**
+     * Retrieve serialized live and upcoming matches for the ticker banner.
+     *
+     * Prioritizes live matches, followed by upcoming fixtures and recent results.
+     */
     public function ticker(): JsonResponse
     {
+        // ==========================================
+        // 1. Query Top Fixtures for Ticker Display
+        // Order by live status first, then upcoming, then scheduled time
+        // ==========================================
         $matches = GameMatch::with(['homeTeam', 'awayTeam', 'tournament'])
             ->orderByRaw("CASE WHEN status = 'live' THEN 1 WHEN status = 'upcoming' THEN 2 ELSE 3 END")
             ->orderBy('scheduled_at')
@@ -30,12 +45,20 @@ class LiveMatchController extends Controller
                 ];
             });
 
+        // ==========================================
+        // 2. Return JSON Response With Current Timestamp
+        // ==========================================
         return response()->json([
             'updated_at' => now()->toIso8601String(),
             'matches' => $matches,
         ]);
     }
 
+    /**
+     * Return detailed data payload for a specific match fixture.
+     *
+     * Includes teams, current scoreline, timeline incidents, and venue metadata.
+     */
     public function show(GameMatch $match): JsonResponse
     {
         return response()->json([
@@ -51,4 +74,3 @@ class LiveMatchController extends Controller
         ]);
     }
 }
-
