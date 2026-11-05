@@ -49,16 +49,17 @@
             <div class="lg:col-span-2 space-y-8">
                 <!-- Live Console Card -->
                 <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)] space-y-6">
-                    <div class="flex items-center justify-between pb-4 border-b border-gray-700">
+                    <div class="flex items-center justify-between pb-4 border-b border-slate-100">
                         <div>
-                            <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                                <span class="relative flex h-3 w-3">
-                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
+                            <div class="flex items-center gap-2">
+                                <span class="relative flex h-2.5 w-2.5">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500"></span>
                                 </span>
-                                Official Live Match Console
-                            </h2>
-                            <p class="text-xs text-gray-400">Adjust scores, log key occurrences, and emit real-time WebSocket score broadcasts</p>
+                                <p class="text-xs font-bold uppercase tracking-[0.16em] text-indigo-600">Live control desk</p>
+                            </div>
+                            <h2 class="mt-1 text-xl font-black tracking-tight text-slate-950">Official Live Match Console</h2>
+                            <p class="mt-1 text-xs text-slate-500">Adjust scores, log key occurrences, and emit real-time WebSocket score broadcasts</p>
                         </div>
                     </div>
 
