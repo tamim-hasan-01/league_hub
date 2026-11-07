@@ -66,20 +66,23 @@
                     <!-- Match Selector for scoring -->
                     @if($activeMatches->isNotEmpty())
                         <div class="space-y-4">
-                            <label class="block text-xs font-semibold text-gray-300 uppercase">Select Match To Control</label>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <div class="flex items-center justify-between">
+                                <label class="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Select Match to Control</label>
+                                <span class="text-xs font-semibold text-slate-400">{{ $activeMatches->count() }} available</span>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                                 @foreach($activeMatches as $m)
                                     <button type="button" @click="selectMatch({{ $m->id }}, '{{ addslashes($m->homeTeam->name) }}', '{{ addslashes($m->awayTeam->name) }}', {{ $m->home_score }}, {{ $m->away_score }}, '{{ $m->status }}')"
-                                        class="p-3 rounded-xl border text-left transition flex flex-col justify-between"
-                                        :class="currentMatchId === {{ $m->id }} ? 'bg-cyan-500/15 border-cyan-500 ring-1 ring-cyan-500 text-white' : 'bg-gray-900/60 border-gray-700 hover:border-gray-600 text-gray-300'">
-                                        <div class="flex items-center justify-between text-xs mb-1">
-                                            <span class="font-bold truncate max-w-[140px]">{{ $m->tournament->title ?? 'Exhibition' }}</span>
-                                            <span class="px-1.5 py-0.5 rounded text-[10px] uppercase font-bold {{ $m->status === 'live' ? 'bg-rose-500/20 text-rose-400' : 'bg-gray-800 text-gray-400' }}">
+                                        class="flex flex-col justify-between rounded-xl border p-3.5 text-left transition"
+                                        :class="currentMatchId === {{ $m->id }} ? 'border-indigo-600 bg-indigo-50/70 shadow-sm ring-1 ring-indigo-500 text-slate-950' : 'border-slate-200 bg-slate-50/70 hover:border-slate-300 hover:bg-white text-slate-700'">
+                                        <div class="flex items-center justify-between text-xs mb-2">
+                                            <span class="font-bold truncate max-w-[140px] text-slate-900">{{ $m->tournament->title ?? 'Exhibition' }}</span>
+                                            <span class="px-2 py-0.5 rounded-full text-[10px] uppercase font-bold {{ $m->status === 'live' ? 'border border-rose-200 bg-rose-50 text-rose-700' : 'border border-slate-200 bg-slate-100 text-slate-600' }}">
                                                 {{ $m->status }}
                                             </span>
                                         </div>
-                                        <div class="font-bold text-xs">
-                                            {{ $m->homeTeam->name }} <span class="text-cyan-400">({{ $m->home_score }})</span> vs {{ $m->awayTeam->name }} <span class="text-cyan-400">({{ $m->away_score }})</span>
+                                        <div class="font-bold text-xs text-slate-950">
+                                            {{ $m->homeTeam->name }} <span class="font-extrabold text-indigo-600 tabular-nums">({{ $m->home_score }})</span> <span class="mx-1 text-slate-400 font-medium">vs</span> {{ $m->awayTeam->name }} <span class="font-extrabold text-indigo-600 tabular-nums">({{ $m->away_score }})</span>
                                         </div>
                                     </button>
                                 @endforeach
@@ -157,7 +160,7 @@
                             </form>
                         </div>
                     @else
-                        <div class="p-8 text-center text-xs text-gray-400 bg-gray-900/40 rounded-2xl border border-gray-700">
+                        <div class="p-8 text-center text-xs font-medium text-slate-500 bg-slate-50/70 rounded-2xl border border-dashed border-slate-300">
                             No active or upcoming matches available. Schedule new friendlies or launch a tournament bracket.
                         </div>
                     @endif
