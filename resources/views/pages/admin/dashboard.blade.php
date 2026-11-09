@@ -89,38 +89,38 @@
                             </div>
 
                             <!-- Live Scoring Control Box -->
-                            <form :action="'/admin/matches/' + currentMatchId + '/score'" method="POST" class="p-5 rounded-2xl bg-gray-900/90 border border-cyan-500/30 space-y-5">
+                            <form :action="'/admin/matches/' + currentMatchId + '/score'" method="POST" class="space-y-5 rounded-2xl border border-slate-200 bg-slate-50/70 p-5 sm:p-6">
                                 @csrf
-                                <div class="text-center pb-2 border-b border-gray-800">
-                                    <div class="text-xs text-gray-400 uppercase font-semibold">Active Match Controller</div>
-                                    <div class="text-lg font-black text-white mt-0.5">
-                                        <span x-text="homeTeam"></span> <span class="text-cyan-400 font-bold">vs</span> <span x-text="awayTeam"></span>
+                                <div class="border-b border-slate-200 pb-3 text-center">
+                                    <div class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">Active Match Controller</div>
+                                    <div class="mt-1 text-lg font-black text-slate-950">
+                                        <span x-text="homeTeam"></span> <span class="mx-1 text-sm font-bold text-indigo-600">vs</span> <span x-text="awayTeam"></span>
                                     </div>
                                 </div>
 
                                 <!-- Interactive Score Steppers -->
-                                <div class="grid grid-cols-2 gap-6 items-center">
+                                <div class="grid grid-cols-2 gap-4 items-center">
                                     <!-- Home Stepper -->
-                                    <div class="bg-gray-800/80 p-4 rounded-xl border border-gray-700 text-center space-y-2">
-                                        <div class="text-xs font-bold text-gray-300 truncate" x-text="homeTeam"></div>
-                                        <div class="text-4xl font-black text-cyan-400 font-mono" x-text="homeScore"></div>
+                                    <div class="space-y-2 rounded-xl border border-slate-200 bg-white p-4 text-center shadow-sm">
+                                        <div class="truncate text-xs font-bold uppercase tracking-wider text-slate-600" x-text="homeTeam"></div>
+                                        <div class="font-mono text-4xl font-black tabular-nums text-slate-950" x-text="homeScore"></div>
                                         <input type="hidden" name="home_score" :value="homeScore">
                                         <div class="flex items-center justify-center gap-2 pt-1">
-                                            <button type="button" @click="homeScore = Math.max(0, homeScore - 1)" class="w-8 h-8 rounded-lg bg-gray-700 hover:bg-gray-600 font-bold text-sm text-white">-1</button>
-                                            <button type="button" @click="homeScore = homeScore + 1" class="w-8 h-8 rounded-lg bg-cyan-600 hover:bg-cyan-500 font-bold text-sm text-white">+1</button>
-                                            <button type="button" @click="homeScore = homeScore + 3" class="px-2 h-8 rounded-lg bg-cyan-900 hover:bg-cyan-800 font-bold text-xs text-cyan-300">+3</button>
+                                            <button type="button" @click="homeScore = Math.max(0, homeScore - 1)" class="h-8 w-8 rounded-lg border border-slate-200 bg-white text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-100 hover:text-slate-950">-1</button>
+                                            <button type="button" @click="homeScore = homeScore + 1" class="h-8 w-8 rounded-lg bg-indigo-600 text-sm font-bold text-white shadow-sm transition hover:bg-indigo-700">+1</button>
+                                            <button type="button" @click="homeScore = homeScore + 3" class="h-8 rounded-lg border border-indigo-200 bg-indigo-50 px-2.5 text-xs font-bold text-indigo-700 shadow-sm transition hover:bg-indigo-100">+3</button>
                                         </div>
                                     </div>
 
                                     <!-- Away Stepper -->
-                                    <div class="bg-gray-800/80 p-4 rounded-xl border border-gray-700 text-center space-y-2">
-                                        <div class="text-xs font-bold text-gray-300 truncate" x-text="awayTeam"></div>
-                                        <div class="text-4xl font-black text-sky-400 font-mono" x-text="awayScore"></div>
+                                    <div class="space-y-2 rounded-xl border border-slate-200 bg-white p-4 text-center shadow-sm">
+                                        <div class="truncate text-xs font-bold uppercase tracking-wider text-slate-600" x-text="awayTeam"></div>
+                                        <div class="font-mono text-4xl font-black tabular-nums text-slate-950" x-text="awayScore"></div>
                                         <input type="hidden" name="away_score" :value="awayScore">
                                         <div class="flex items-center justify-center gap-2 pt-1">
-                                            <button type="button" @click="awayScore = Math.max(0, awayScore - 1)" class="w-8 h-8 rounded-lg bg-gray-700 hover:bg-gray-600 font-bold text-sm text-white">-1</button>
-                                            <button type="button" @click="awayScore = awayScore + 1" class="w-8 h-8 rounded-lg bg-sky-600 hover:bg-sky-500 font-bold text-sm text-white">+1</button>
-                                            <button type="button" @click="awayScore = awayScore + 3" class="px-2 h-8 rounded-lg bg-sky-900 hover:bg-sky-800 font-bold text-xs text-sky-300">+3</button>
+                                            <button type="button" @click="awayScore = Math.max(0, awayScore - 1)" class="h-8 w-8 rounded-lg border border-slate-200 bg-white text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-100 hover:text-slate-950">-1</button>
+                                            <button type="button" @click="awayScore = awayScore + 1" class="h-8 w-8 rounded-lg bg-indigo-600 text-sm font-bold text-white shadow-sm transition hover:bg-indigo-700">+1</button>
+                                            <button type="button" @click="awayScore = awayScore + 3" class="h-8 rounded-lg border border-indigo-200 bg-indigo-50 px-2.5 text-xs font-bold text-indigo-700 shadow-sm transition hover:bg-indigo-100">+3</button>
                                         </div>
                                     </div>
                                 </div>
