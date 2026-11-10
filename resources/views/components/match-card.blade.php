@@ -8,35 +8,34 @@ $userBookmarked = auth()->check() && auth()->user()->bookmarks()->where('game_ma
 @endphp
 
 <div {{ $attributes->merge(['class' => 'rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_10px_28px_rgba(15,23,42,0.07)] transition hover:-translate-y-0.5 hover:border-indigo-200']) }}>
-    <!-- Top Meta Line -->
-    <div class="flex min-h-12 items-start justify-between gap-3 border-b border-slate-100 pb-3">
-        <div class="flex items-center gap-2">
+    <!-- Competition and status -->
+    <div class="border-b border-slate-100 pb-4">
+        <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
+                <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">
+                    {{ $match->tournament->title ?? 'Exhibition Match' }}
+                </p>
+                <span class="mt-1 block text-sm font-semibold capitalize text-slate-600">
+                    {{ str_replace('_', ' ', $match->stage) }} stage
+                </span>
+            </div>
+
             @if($isLive)
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-rose-500/20 text-rose-400 border border-rose-500/30 animate-pulse">
-                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1.5 animate-ping"></span>
-                    LIVE NOW
+                <span class="inline-flex shrink-0 items-center rounded-full border border-rose-200 bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-700">
+                    <span class="mr-1.5 h-1.5 w-1.5 rounded-full bg-rose-500"></span>
+                    Live
                 </span>
             @elseif($isUpcoming)
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-sky-500/10 text-sky-400 border border-sky-500/30">
-                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span class="inline-flex shrink-0 items-center rounded-full border border-indigo-100 bg-indigo-50 px-2.5 py-1 text-xs font-bold text-indigo-700">
                     Upcoming
                 </span>
             @else
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-700/70 text-gray-300 border border-gray-600/50">
-                    Final Result
+                <span class="inline-flex shrink-0 items-center rounded-full border border-slate-200 bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-700">
+                    Final
                 </span>
             @endif
-
-            <span class="line-clamp-2 max-w-[180px] text-sm font-semibold leading-5 text-slate-600" title="{{ $match->tournament->title ?? 'Exhibition Friendly' }}">
-                {{ $match->tournament->title ?? 'Exhibition Match' }}
-            </span>
         </div>
-
-        <div class="flex items-center gap-1.5 text-gray-400">
-            <span class="shrink-0 rounded-md border border-slate-200 bg-slate-100 px-2 py-1 text-xs font-semibold capitalize text-slate-600">
-                {{ str_replace('_', ' ', $match->stage) }}
-            </span>
-
+        <div class="mt-3 flex items-center justify-end">
             @auth
             <form action="{{ route('bookmarks.toggle') }}" method="POST" class="inline">
                 @csrf
