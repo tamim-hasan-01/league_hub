@@ -32,11 +32,23 @@
                             <a href="{{ route('tournaments.show', $tournament->slug) }}" class="hover:text-indigo-600">{{ $tournament->title }}</a>
                         </h2>
                         <p class="mt-2 line-clamp-3 text-sm leading-6 text-slate-500">{{ $tournament->description }}</p>
-                        <div class="mt-5 grid grid-cols-2 gap-3 rounded-xl bg-slate-50 p-3 text-xs">
-                            <div><span class="block text-slate-400">Teams</span><strong class="mt-1 block text-slate-900">{{ $tournament->teams_count }} / {{ $tournament->max_teams }}</strong></div>
-                            <div><span class="block text-slate-400">Prize pool</span><strong class="mt-1 block text-slate-900">{{ $tournament->prize_pool ?? 'Trophy' }}</strong></div>
-                            <div><span class="block text-slate-400">Starts</span><strong class="mt-1 block text-slate-900">{{ $tournament->start_date ? $tournament->start_date->format('M d, Y') : 'TBA' }}</strong></div>
-                            <div><span class="block text-slate-400">Phase</span><strong class="mt-1 block text-slate-900">{{ str_replace('_', ' ', $tournament->current_stage) }}</strong></div>
+                        <div class="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-slate-200 bg-slate-200">
+                            <div class="min-h-20 bg-slate-50 px-3 py-3">
+                                <span class="block text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">Teams</span>
+                                <strong class="mt-2 block text-base font-extrabold tabular-nums text-slate-950">{{ $tournament->teams_count }} / {{ $tournament->max_teams }}</strong>
+                            </div>
+                            <div class="min-h-20 bg-slate-50 px-3 py-3">
+                                <span class="block text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">Prize pool</span>
+                                <strong class="mt-2 block text-sm font-extrabold leading-5 text-slate-950">{{ $tournament->prize_pool ?? 'Trophy' }}</strong>
+                            </div>
+                            <div class="min-h-20 bg-slate-50 px-3 py-3">
+                                <span class="block text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">Starts</span>
+                                <strong class="mt-2 block text-sm font-extrabold leading-5 text-slate-950">{{ $tournament->start_date ? $tournament->start_date->format('M d, Y') : 'TBA' }}</strong>
+                            </div>
+                            <div class="min-h-20 bg-slate-50 px-3 py-3">
+                                <span class="block text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">Phase</span>
+                                <strong class="mt-2 block text-sm font-extrabold leading-5 capitalize text-slate-950">{{ str_replace('_', ' ', $tournament->current_stage) }}</strong>
+                            </div>
                         </div>
                     </div>
                     <a href="{{ route('tournaments.show', $tournament->slug) }}" class="mt-5 flex items-center justify-between border-t border-slate-100 pt-4 text-sm font-bold text-indigo-600">
