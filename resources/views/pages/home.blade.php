@@ -85,8 +85,8 @@
         <section class="space-y-4">
             <div class="flex items-end justify-between gap-4">
                 <div>
-                    <p class="text-sm font-semibold text-indigo-600">Coming up</p>
-                    <h2 class="mt-1 text-2xl font-semibold tracking-tight text-slate-950">Upcoming fixtures</h2>
+                    <p class="text-sm font-medium text-slate-500">Coming up</p>
+                    <h2 class="mt-0.5 text-xl font-semibold tracking-normal text-slate-950">Upcoming fixtures</h2>
                 </div>
                 <a href="{{ route('tournaments.index') }}" class="text-sm font-bold text-indigo-600 hover:text-indigo-800">View tournaments &rarr;</a>
             </div>
