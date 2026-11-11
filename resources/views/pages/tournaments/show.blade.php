@@ -85,7 +85,7 @@
         </section>
 
         <nav class="overflow-x-auto border-b border-slate-200" aria-label="Tournament sections">
-            <div class="flex min-w-max gap-2">
+            <div class="flex min-w-max gap-1 sm:gap-2">
                 <button type="button" @click="activeTab = 'bracket'"
                         :class="activeTab === 'bracket' ? 'border-slate-950 text-slate-950' : 'border-transparent text-slate-500 hover:text-slate-900'"
                         class="border-b-2 px-4 py-3 text-sm font-bold transition">
