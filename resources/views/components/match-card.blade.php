@@ -20,39 +20,41 @@ $userBookmarked = auth()->check() && auth()->user()->bookmarks()->where('game_ma
                 </span>
             </div>
 
-            @if($isLive)
-                <span class="inline-flex shrink-0 items-center rounded-full border border-rose-200 bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-700">
-                    <span class="mr-1.5 h-1.5 w-1.5 rounded-full bg-rose-500"></span>
-                    Live
-                </span>
-            @elseif($isUpcoming)
-                <span class="inline-flex shrink-0 items-center rounded-full border border-indigo-100 bg-indigo-50 px-2.5 py-1 text-xs font-bold text-indigo-700">
-                    Upcoming
-                </span>
-            @else
-                <span class="inline-flex shrink-0 items-center rounded-full border border-slate-200 bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-700">
-                    Final
-                </span>
-            @endif
-        </div>
-        <div class="mt-3 flex items-center justify-end">
+            <div class="flex shrink-0 items-center gap-1.5">
+                @if($isLive)
+                    <span class="inline-flex items-center rounded-full border border-rose-200 bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-700">
+                        <span class="mr-1.5 h-1.5 w-1.5 rounded-full bg-rose-500"></span>
+                        Live
+                    </span>
+                @elseif($isUpcoming)
+                    <span class="inline-flex items-center rounded-full border border-indigo-100 bg-indigo-50 px-2.5 py-1 text-xs font-bold text-indigo-700">
+                        Upcoming
+                    </span>
+                @else
+                    <span class="inline-flex items-center rounded-full border border-slate-200 bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-700">
+                        Final
+                    </span>
+                @endif
             @auth
-            <form action="{{ route('bookmarks.toggle') }}" method="POST" class="inline">
-                @csrf
-                <input type="hidden" name="type" value="match">
-                <input type="hidden" name="id" value="{{ $match->id }}">
-                <button type="submit" class="rounded-lg p-1.5 text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 transition" title="{{ $userBookmarked ? 'Remove Bookmark' : 'Bookmark Match' }}">
-                    <svg class="w-4 h-4 {{ $userBookmarked ? 'text-indigo-600 fill-indigo-600' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
-                    </svg>
-                </button>
-            </form>
+                <form action="{{ route('bookmarks.toggle') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="type" value="match">
+                    <input type="hidden" name="id" value="{{ $match->id }}">
+                    <button type="submit"
+                            class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-400 shadow-sm transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-600"
+                            title="{{ $userBookmarked ? 'Remove Bookmark' : 'Bookmark Match' }}">
+                        <svg class="h-4 w-4 {{ $userBookmarked ? 'fill-indigo-600 text-indigo-600' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+                        </svg>
+                    </button>
+                </form>
             @endauth
+            </div>
         </div>
     </div>
 
     <!-- Match Teams and Scores -->
-    <div class="grid grid-cols-[1fr_74px_1fr] items-center gap-3 py-6">
+    <div class="grid grid-cols-[minmax(0,1fr)_80px_minmax(0,1fr)] items-center gap-3 py-6">
         <!-- Home Team -->
         <div class="flex min-w-0 flex-col">
             <a href="{{ route('teams.show', $match->homeTeam->slug) }}" class="text-base font-bold leading-6 text-slate-950 transition hover:text-indigo-600">
@@ -64,16 +66,16 @@ $userBookmarked = auth()->check() && auth()->user()->bookmarks()->where('game_ma
         <!-- Score or VS -->
         <div class="flex items-center justify-center">
             @if($isUpcoming)
-                <div class="flex h-12 w-[74px] items-center justify-center rounded-xl border border-slate-200 bg-slate-100 text-sm font-bold tracking-[0.12em] text-slate-700">
-                    VS
+                <div class="flex h-12 w-20 items-center justify-center rounded-xl border border-slate-200 bg-slate-100">
+                    <span class="text-[13px] font-black uppercase tracking-[0.18em] text-slate-700">VS</span>
                 </div>
             @else
-                <div class="flex h-12 w-[74px] items-center justify-center rounded-xl border border-slate-200 bg-slate-950 px-2 tabular-nums text-white">
-                    <span class="text-lg font-bold {{ $match->home_score > $match->away_score ? 'text-indigo-300' : '' }}">
+                <div class="flex h-12 w-20 items-center justify-center rounded-xl border border-slate-800 bg-slate-950 px-2 tabular-nums text-white">
+                    <span class="text-xl font-black {{ $match->home_score > $match->away_score ? 'text-indigo-300' : '' }}">
                         {{ $match->home_score }}
                     </span>
-                    <span class="mx-1 text-slate-400">:</span>
-                    <span class="text-lg font-bold {{ $match->away_score > $match->home_score ? 'text-indigo-300' : '' }}">
+                    <span class="mx-1.5 text-sm font-bold text-slate-400">:</span>
+                    <span class="text-xl font-black {{ $match->away_score > $match->home_score ? 'text-indigo-300' : '' }}">
                         {{ $match->away_score }}
                     </span>
                 </div>
