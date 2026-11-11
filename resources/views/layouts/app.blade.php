@@ -12,15 +12,7 @@
         <nav class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" aria-label="Primary navigation">
             <div class="flex h-18 items-center justify-between gap-4">
                 <a href="{{ route('home') }}" class="flex shrink-0 items-center gap-3">
-                    <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-950 text-white shadow-sm">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                        </svg>
-                    </span>
-                    <span>
-                        <span class="block text-[15px] font-black tracking-[0.16em] text-slate-950">LEAGUE<span class="text-indigo-600">HUB</span></span>
-                        <span class="block text-[9px] font-bold uppercase tracking-[0.24em] text-slate-400">Competition platform</span>
-                    </span>
+                    <img src="{{ asset('logo.png') }}" alt="LeagueHub" class="h-10 w-auto max-w-40">
                 </a>
 
                 <div class="hidden items-center gap-1 lg:flex">
