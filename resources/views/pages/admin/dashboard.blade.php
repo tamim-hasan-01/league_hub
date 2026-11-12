@@ -127,19 +127,19 @@
 
                                 <!-- Match Status Selector -->
                                 <div>
-                                    <label class="block mb-1.5 text-xs font-medium text-gray-300">Fixture Status State</label>
-                                    <select name="status" x-model="status" class="bg-gray-800 border border-gray-700 text-white text-xs rounded-lg block w-full p-2.5">
+                                    <label class="block mb-1.5 text-xs font-bold uppercase tracking-[0.12em] text-slate-600">Fixture Status State</label>
+                                    <select name="status" x-model="status" class="block w-full rounded-xl border border-slate-200 bg-white p-2.5 text-xs font-semibold text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
                                         <option value="upcoming">Upcoming (Pre-match)</option>
                                         <option value="live">Live (Broadcasting actively)</option>
-                                        <option value="completed">Completed (Final Score Sealed & Stats Processed)</option>
+                                        <option value="completed">Completed (Final Score Sealed &amp; Stats Processed)</option>
                                     </select>
                                 </div>
 
                                 <!-- Incident / Event Logger -->
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <div>
-                                        <label class="block mb-1 text-xs text-gray-400">Match Event Type</label>
-                                        <select name="event_type" class="bg-gray-800 border border-gray-700 text-white text-xs rounded-lg block w-full p-2">
+                                        <label class="block mb-1 text-xs font-bold text-slate-600">Match Event Type</label>
+                                        <select name="event_type" class="block w-full rounded-xl border border-slate-200 bg-white p-2.5 text-xs font-medium text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
                                             <option value="score">Goal / Points Scored</option>
                                             <option value="yellow_card">Yellow Warning Card</option>
                                             <option value="red_card">Red Card Disqualification</option>
@@ -148,13 +148,13 @@
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="block mb-1 text-xs text-gray-400">Event Description</label>
-                                        <input type="text" name="event_description" placeholder="e.g. 68' Brilliant curved shot into top corner" class="bg-gray-800 border border-gray-700 text-white text-xs rounded-lg block w-full p-2">
+                                        <label class="block mb-1 text-xs font-bold text-slate-600">Event Description</label>
+                                        <input type="text" name="event_description" placeholder="e.g. 68' Brilliant curved shot into top corner" class="block w-full rounded-xl border border-slate-200 bg-white p-2.5 text-xs text-slate-900 placeholder:text-slate-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
                                     </div>
                                 </div>
 
-                                <button type="submit" class="w-full text-gray-950 bg-gradient-to-r from-cyan-500 to-sky-400 hover:from-cyan-400 font-bold rounded-xl text-sm px-5 py-3 text-center shadow-lg shadow-cyan-500/20 transition flex items-center justify-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-indigo-600">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                                     <span>Emit Official Live Score Update</span>
                                 </button>
                             </form>
