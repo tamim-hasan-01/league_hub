@@ -110,7 +110,7 @@
                 <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Stage progression</h2>
             </div>
 
-            <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-6">
+            <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-6" aria-label="Tournament knockout bracket">
                 <div class="grid min-w-[820px] grid-cols-3 items-center gap-6">
                     @foreach([
                         'quarter_final' => ['Quarterfinal', 'Quarterfinal fixtures'],
