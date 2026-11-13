@@ -25,4 +25,6 @@ test('the about page presents the project and development team', function () {
     $response->assertSee('dev/sami.png');
     $response->assertSee('dev/mobahir.jpg');
     $response->assertSee('Search Facebook');
+    $response->assertSee('Everything needed to run a competition');
+    $response->assertSee('Built by BAUST CSE students');
 });

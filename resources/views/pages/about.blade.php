@@ -65,9 +65,11 @@
         </section>
 
         <section class="space-y-6">
-            <div class="max-w-2xl">
+            <div class="max-w-none">
                 <p class="text-sm font-semibold text-indigo-600">Platform capabilities</p>
-                <h2 class="mt-2 text-3xl font-bold tracking-tight text-slate-950">Everything needed to run a competition</h2>
+                <h2 class="mt-2 max-w-none text-balance text-3xl font-bold leading-tight tracking-tight text-slate-950 sm:text-4xl lg:text-[36px]">
+                    Everything needed to run a competition
+                </h2>
             </div>
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach([
@@ -115,10 +117,12 @@
         </section>
 
         <section class="space-y-6">
-            <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                <div class="max-w-2xl">
+            <div class="grid gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+                <div class="max-w-none">
                     <p class="text-sm font-semibold text-indigo-600">Development team</p>
-                    <h2 class="mt-2 text-3xl font-bold tracking-tight text-slate-950">Built by BAUST CSE students</h2>
+                    <h2 class="mt-2 max-w-none text-balance text-3xl font-bold leading-tight tracking-tight text-slate-950 sm:text-4xl lg:text-[36px]">
+                        Built by BAUST CSE students
+                    </h2>
                 </div>
                 <a href="https://github.com/tamim-hasan-01/league_hub" target="_blank" rel="noopener"
                    class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 shadow-sm hover:border-indigo-200 hover:text-indigo-600">
