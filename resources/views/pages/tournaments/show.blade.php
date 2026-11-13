@@ -174,7 +174,7 @@
                         </a>
                     </article>
                 @empty
-                    <div class="col-span-full rounded-2xl border border-dashed border-slate-300 bg-white py-12 text-center">
+                    <div class="col-span-full rounded-2xl border border-dashed border-slate-300 bg-slate-50 py-12 text-center">
                         <p class="text-base font-bold text-slate-700">No teams confirmed yet</p>
                         <p class="mt-1 text-sm text-slate-500">Approved registrations will appear here.</p>
                     </div>
