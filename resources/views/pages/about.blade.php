@@ -1,27 +1,36 @@
 <x-app-layout>
     <div class="space-y-12">
-        <section class="relative overflow-hidden rounded-[28px] border border-slate-200 bg-slate-950 px-6 py-10 text-white sm:px-10 lg:px-12 lg:py-14">
-            <div class="absolute right-0 top-0 h-full w-1/2 bg-[radial-gradient(circle_at_center,rgba(129,140,248,0.28),transparent_68%)]"></div>
-            <div class="relative max-w-3xl">
-                <p class="inline-flex rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-indigo-200">
-                    About LeagueHub
-                </p>
-                <h1 class="mt-5 text-4xl font-black leading-[1.08] tracking-tight sm:text-5xl">
-                    One platform for every <span class="text-indigo-300">competition.</span>
-                </h1>
-                <p class="mt-6 max-w-2xl text-base leading-7 text-slate-300">
-                    LeagueHub is a sports and tournament management platform designed to make registration, team operations, match scheduling, live scoring, rankings, and league communication clear and accessible.
-                </p>
-                <div class="mt-8 grid max-w-2xl grid-cols-2 gap-3 sm:grid-cols-4">
+        <section class="overflow-hidden rounded-[28px] border border-slate-800 bg-slate-950 text-white">
+            <div class="grid lg:grid-cols-[1.35fr_0.65fr]">
+                <div class="px-6 py-10 sm:px-10 lg:px-12 lg:py-14">
+                    <p class="text-xs font-bold uppercase tracking-[0.18em] text-indigo-300">LeagueHub / About</p>
+                    <h1 class="mt-5 max-w-3xl text-4xl font-black leading-[1.06] tracking-tight sm:text-5xl lg:text-6xl">
+                        League operations,<br>
+                        <span class="text-indigo-300">made clear.</span>
+                    </h1>
+                    <p class="mt-6 max-w-2xl text-base leading-8 text-slate-300">
+                        One organized workspace for registration, team rosters, match scheduling, live results, brackets, rankings, and league communication.
+                    </p>
+                    <div class="mt-8 flex flex-wrap gap-3">
+                        <a href="{{ route('tournaments.index') }}" class="inline-flex items-center rounded-xl bg-white px-5 py-3 text-sm font-bold text-slate-950 shadow-sm hover:bg-indigo-100">
+                            Explore competitions
+                        </a>
+                        <a href="https://github.com/tamim-hasan-01/league_hub" target="_blank" rel="noopener"
+                           class="inline-flex items-center rounded-xl border border-white/15 px-5 py-3 text-sm font-bold text-white hover:border-white/30 hover:bg-white/5">
+                            Project on GitHub
+                        </a>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-px border-t border-slate-800 bg-slate-800 lg:border-l lg:border-t-0">
                     @foreach([
-                        ['Multi-sport', 'One workspace'],
-                        ['Live matches', 'Instant updates'],
-                        ['Role-based', 'Secure access'],
-                        ['Responsive', 'Every screen'],
-                    ] as [$title, $detail])
-                        <div class="rounded-xl border border-white/10 bg-white/5 p-4">
-                            <p class="font-bold text-white">{{ $title }}</p>
-                            <p class="mt-1 text-xs text-slate-400">{{ $detail }}</p>
+                        ['4', 'User roles'],
+                        ['Live', 'Match updates'],
+                        ['One', 'Team workspace'],
+                        ['24/7', 'League access'],
+                    ] as [$value, $label])
+                        <div class="flex min-h-36 flex-col justify-end bg-slate-950 p-6">
+                            <p class="text-3xl font-black tracking-tight text-white">{{ $value }}</p>
+                            <p class="mt-2 text-xs font-bold uppercase tracking-[0.12em] text-slate-400">{{ $label }}</p>
                         </div>
                     @endforeach
                 </div>
@@ -120,9 +129,9 @@
             <div class="grid gap-5 lg:grid-cols-3">
                 @foreach($developers as $developer)
                     <article class="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_10px_28px_rgba(15,23,42,0.05)]">
-                        <div class="relative h-64 overflow-hidden bg-slate-100">
+                        <div class="relative aspect-[4/5] w-full overflow-hidden bg-slate-100">
                             <img src="{{ asset($developer['image']) }}" alt="{{ $developer['name'] }}"
-                                 class="h-full w-full object-cover object-top transition duration-500 group-hover:scale-[1.02]">
+                                 class="h-full w-full object-cover object-[center_18%] transition duration-500 group-hover:scale-[1.02]">
                             <div class="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-slate-950/40 to-transparent"></div>
                         </div>
                         <div class="p-6">
@@ -141,12 +150,21 @@
                             </div>
                             <div class="mt-6 flex items-center gap-3 border-t border-slate-100 pt-5">
                                 <a href="{{ $developer['github'] }}" target="_blank" rel="noopener"
-                                   class="inline-flex items-center gap-2 rounded-lg bg-slate-950 px-3.5 py-2.5 text-sm font-bold text-white hover:bg-indigo-600">
+                                   class="inline-flex h-10 items-center gap-2 rounded-lg bg-slate-950 px-3.5 text-sm font-bold text-white hover:bg-indigo-600">
                                     GitHub
                                 </a>
+                                <a href="{{ $developer['facebook'] }}" target="_blank" rel="noopener"
+                                   class="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-xs font-black text-slate-600 hover:border-indigo-200 hover:text-indigo-600"
+                                   title="Search Facebook">F</a>
+                                <a href="{{ $developer['linkedin'] }}" target="_blank" rel="noopener"
+                                   class="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-xs font-black text-slate-600 hover:border-indigo-200 hover:text-indigo-600"
+                                   title="Search LinkedIn">in</a>
+                                <a href="{{ $developer['x'] }}" target="_blank" rel="noopener"
+                                   class="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-xs font-black text-slate-600 hover:border-indigo-200 hover:text-indigo-600"
+                                   title="Search X">X</a>
                                 @if($developer['email'])
                                     <a href="mailto:{{ $developer['email'] }}"
-                                       class="inline-flex items-center rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm font-bold text-slate-700 hover:border-indigo-200 hover:text-indigo-600">
+                                       class="inline-flex h-10 items-center rounded-lg border border-slate-200 px-3 text-sm font-bold text-slate-700 hover:border-indigo-200 hover:text-indigo-600">
                                         Email
                                     </a>
                                 @endif

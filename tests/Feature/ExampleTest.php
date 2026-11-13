@@ -22,4 +22,7 @@ test('the about page presents the project and development team', function () {
     $response->assertSee('Muhammad Mobasher Ahmmed Milon');
     $response->assertSee('Waliur Rafiq Sami');
     $response->assertSee('0802410205101088');
+    $response->assertSee('dev/sami.png');
+    $response->assertSee('dev/mobahir.jpg');
+    $response->assertSee('Search Facebook');
 });
