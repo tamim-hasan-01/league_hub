@@ -116,14 +116,54 @@
         {{ $slot }}
     </main>
 
-    <footer class="border-t border-slate-200 bg-white">
-        <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 py-8 text-xs text-slate-500 sm:px-6 md:flex-row lg:px-8">
-            <p><span class="font-black tracking-widest text-slate-900">LEAGUEHUB</span> &copy; {{ date('Y') }}</p>
-            <div class="flex flex-wrap justify-center gap-5">
-                <a href="{{ route('tournaments.index') }}" class="hover:text-indigo-600">Tournaments</a>
-                <a href="{{ route('teams.index') }}" class="hover:text-indigo-600">Teams</a>
-                <a href="{{ route('news.index') }}" class="hover:text-indigo-600">News</a>
-                <a href="{{ route('about') }}" class="hover:text-indigo-600">About</a>
+    <footer class="mt-8 border-t border-slate-800 bg-slate-950 text-slate-300">
+        <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+            <div class="grid gap-10 md:grid-cols-[1.5fr_0.75fr_0.75fr] lg:gap-16">
+                <div class="max-w-md">
+                    <a href="{{ route('home') }}" class="inline-flex rounded-lg bg-white px-3 py-2">
+                        <img src="{{ asset('logo.png') }}" alt="LeagueHub" class="h-10 w-auto">
+                    </a>
+                    <p class="mt-5 text-sm leading-7 text-slate-300">
+                        A modern competition platform for tournaments, team rosters, live matches, rankings, and league updates.
+                    </p>
+                    <div class="mt-5 inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1.5 text-xs font-bold text-emerald-300">
+                        <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+                        Competition services active
+                    </div>
+                </div>
+
+                <div>
+                    <h2 class="text-xs font-bold uppercase tracking-[0.18em] text-white">Explore</h2>
+                    <nav class="mt-4 grid gap-3 text-sm" aria-label="Footer explore">
+                        <a href="{{ route('tournaments.index') }}" class="hover:text-indigo-300">Tournaments</a>
+                        <a href="{{ route('teams.index') }}" class="hover:text-indigo-300">Teams</a>
+                        <a href="{{ route('news.index') }}" class="hover:text-indigo-300">News & updates</a>
+                    </nav>
+                </div>
+
+                <div>
+                    <h2 class="text-xs font-bold uppercase tracking-[0.18em] text-white">LeagueHub</h2>
+                    <nav class="mt-4 grid gap-3 text-sm" aria-label="Footer information">
+                        <a href="{{ route('about') }}" class="hover:text-indigo-300">About</a>
+                        @auth
+                            <a href="{{ route('mytournaments') }}" class="hover:text-indigo-300">Personal hub</a>
+                            @if(auth()->user()->isAdmin())
+                                <a href="{{ route('admin.dashboard') }}" class="hover:text-indigo-300">Authority console</a>
+                            @endif
+                        @else
+                            <a href="{{ route('login') }}" class="hover:text-indigo-300">Sign in</a>
+                            <a href="{{ route('register') }}" class="hover:text-indigo-300">Create account</a>
+                        @endauth
+                    </nav>
+                </div>
+            </div>
+
+            <div class="mt-10 flex flex-col gap-3 border-t border-slate-800 pt-6 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between">
+                <p>&copy; {{ date('Y') }} LeagueHub. All rights reserved.</p>
+                <p class="flex items-center gap-2">
+                    <span class="h-1.5 w-1.5 rounded-full bg-indigo-400"></span>
+                    Built for every competition
+                </p>
             </div>
         </div>
     </footer>
