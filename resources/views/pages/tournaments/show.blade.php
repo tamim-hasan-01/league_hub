@@ -158,7 +158,7 @@
             </div>
             <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 @forelse($tournament->teams as $team)
-                    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_24px_rgba(15,23,42,0.05)]">
+                    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_24px_rgba(15,23,42,0.05)] transition hover:-translate-y-0.5 hover:border-indigo-200">
                         <div class="flex items-start justify-between gap-3">
                             <div class="min-w-0">
                                 <p class="text-xs font-bold uppercase tracking-[0.12em] text-slate-400">{{ $team->sport_type }}</p>
