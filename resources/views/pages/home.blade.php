@@ -34,7 +34,7 @@
                     ] as [$label, $value])
                         <div class="bg-slate-950/70 p-5">
                             <p class="text-3xl font-black tracking-tight">{{ $value }}</p>
-                            <p class="mt-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ $label }}</p>
+                            <p class="mt-1 text-[11px] font-bold uppercase tracking-wider text-slate-200">{{ $label }}</p>
                         </div>
                     @endforeach
                 </div>

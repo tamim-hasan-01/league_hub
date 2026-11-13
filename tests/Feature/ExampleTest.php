@@ -11,4 +11,5 @@ test('the application returns a successful response', function () {
     $response->assertStatus(200);
     $response->assertSee('Competition workspace');
     $response->assertDontSee('Toggle Theme');
+    $response->assertSee('logo.png');
 });
