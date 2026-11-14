@@ -170,25 +170,26 @@
                 <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)] space-y-4">
                     <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                         <div>
-                            <h2 class="text-lg font-bold text-slate-950">Tournament Applications Review</h2>
+                            <p class="text-xs font-bold uppercase tracking-[0.16em] text-indigo-600">Registrations</p>
+                            <h2 class="mt-1 text-lg font-bold text-slate-950">Tournament Applications Review</h2>
                             <p class="text-xs text-slate-500">Vet team registrations before seeding brackets</p>
                         </div>
-                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
                             {{ $pendingApplications->count() }} Pending
                         </span>
                     </div>
 
-                    <div class="divide-y divide-gray-700">
+                    <div class="divide-y divide-slate-100">
                         @forelse($pendingApplications as $app)
-                            <div class="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                            <div class="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
                                 <div>
-                                    <div class="font-bold text-white text-sm">{{ $app->team->name }}</div>
-                                    <div class="text-gray-400">
-                                        Tournament: <span class="text-cyan-400 font-semibold">{{ $app->tournament->title }}</span>
-                                        &bull; Manager: {{ $app->team->manager->name ?? 'Staff' }}
+                                    <div class="font-bold text-slate-950 text-sm">{{ $app->team->name }}</div>
+                                    <div class="mt-0.5 text-slate-500">
+                                        Tournament: <span class="text-indigo-600 font-semibold">{{ $app->tournament->title }}</span>
+                                        &bull; Manager: <span class="text-slate-700">{{ $app->team->manager->name ?? 'Staff' }}</span>
                                     </div>
                                     @if($app->notes)
-                                        <p class="text-[11px] text-gray-300 italic mt-0.5">"{{ $app->notes }}"</p>
+                                        <p class="text-[11px] text-slate-600 italic mt-1 rounded-lg bg-slate-50 border border-slate-100 px-2.5 py-1.5">"{{ $app->notes }}"</p>
                                     @endif
                                 </div>
 
@@ -196,7 +197,7 @@
                                     <form action="{{ route('admin.applications.review', $app->id) }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="status" value="approved">
-                                        <button type="submit" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition">
+                                        <button type="submit" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition">
                                             ✓ Approve
                                         </button>
                                     </form>
@@ -204,14 +205,14 @@
                                     <form action="{{ route('admin.applications.review', $app->id) }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="status" value="rejected">
-                                        <button type="submit" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-rose-600/80 hover:bg-rose-600 text-white transition">
+                                        <button type="submit" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 shadow-sm transition">
                                             ✕ Decline
                                         </button>
                                     </form>
                                 </div>
                             </div>
                         @empty
-                            <div class="py-6 text-center text-xs text-gray-400">
+                            <div class="py-8 text-center text-xs font-medium text-slate-500 bg-slate-50/70 rounded-xl border border-dashed border-slate-300">
                                 No pending team applications awaiting review.
                             </div>
                         @endforelse
