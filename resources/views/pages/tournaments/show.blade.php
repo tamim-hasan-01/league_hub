@@ -111,13 +111,13 @@
             </div>
 
             <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-6" aria-label="Tournament knockout bracket">
-                <div class="grid min-w-[820px] grid-cols-3 items-center gap-6">
+                <div class="grid min-w-[820px] grid-cols-3 items-start gap-6">
                     @foreach([
                         'quarter_final' => ['Quarterfinal', 'Quarterfinal fixtures'],
                         'semi_final' => ['Semifinal', 'Semifinal fixtures'],
                         'final' => ['Grand final', 'Championship match'],
                     ] as $stage => [$stageLabel, $emptyLabel])
-                        <section class="space-y-4">
+                        <section class="flex h-full flex-col space-y-4">
                             <div class="rounded-xl border {{ $stage === 'final' ? 'border-amber-200 bg-amber-50' : 'border-slate-200 bg-white' }} px-4 py-3 text-center">
                                 <p class="text-xs font-black uppercase tracking-[0.14em] {{ $stage === 'final' ? 'text-amber-700' : 'text-slate-600' }}">{{ $stageLabel }}</p>
                             </div>
@@ -140,9 +140,14 @@
                                     </div>
                                 </article>
                             @empty
-                                <div class="rounded-2xl border border-dashed border-slate-300 bg-white px-5 py-10 text-center">
-                                    <p class="text-sm font-semibold text-slate-500">{{ $emptyLabel }}</p>
-                                    <p class="mt-1 text-xs text-slate-400">Available after bracket progression.</p>
+                                <div class="flex min-h-44 flex-1 flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white px-5 py-8 text-center">
+                                    <span class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-slate-400">
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </span>
+                                    <p class="mt-3 text-sm font-bold text-slate-600">{{ $emptyLabel }}</p>
+                                    <p class="mt-1 max-w-48 text-xs leading-5 text-slate-400">Waiting for the previous round to finish.</p>
                                 </div>
                             @endforelse
                         </section>
