@@ -210,7 +210,7 @@
                             <p class="text-xs font-bold uppercase tracking-[0.12em] text-indigo-600">Team application</p>
                             <h3 class="mt-1 text-lg font-black text-slate-950">{{ $tournament->title }}</h3>
                         </div>
-                        <button type="button" data-modal-hide="apply-team-modal" class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50">
+                        <button type="button" data-modal-hide="apply-team-modal" aria-label="Close team application" class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50">
                             <span class="text-lg">&times;</span>
                         </button>
                     </div>
