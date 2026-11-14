@@ -28,3 +28,14 @@ test('the about page presents the project and development team', function () {
     $response->assertSee('Everything needed to run a competition');
     $response->assertSee('Built by BAUST CSE students');
 });
+
+test('the tournament detail page presents competition sections', function () {
+    $this->seed();
+    $response = $this->get('/tournaments/apex-continental-championship-2026');
+
+    $response->assertOk();
+    $response->assertSee('Apex Continental Championship 2026');
+    $response->assertSee('Tournament overview');
+    $response->assertSee('Stage progression');
+    $response->assertSee('Approved team rosters');
+});
