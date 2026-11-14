@@ -1,82 +1,89 @@
 <x-app-layout>
-    <div class="max-w-4xl mx-auto space-y-8">
-        <div class="bg-gray-800 border {{ $article->match_incident_flag ? 'border-amber-500/40' : 'border-gray-700' }} rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden">
-            @if($article->match_incident_flag)
-                <div class="absolute top-0 left-0 right-0 h-1 bg-amber-500"></div>
-            @else
-                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 to-sky-400"></div>
-            @endif
-
-            <div class="mb-6">
-                <a href="{{ route('news.index') }}" class="text-xs text-gray-400 hover:text-cyan-400 flex items-center gap-1 mb-4">
-                    &larr; Back to News Dispatches
+    <div class="mx-auto max-w-5xl space-y-8">
+        <article class="overflow-hidden rounded-[28px] border {{ $article->match_incident_flag ? 'border-rose-200' : 'border-slate-200' }} bg-white shadow-[0_16px_40px_rgba(15,23,42,0.07)]">
+            <header class="border-b border-slate-100 px-6 py-7 sm:px-10 sm:py-9">
+                <a href="{{ route('news.index') }}" class="inline-flex items-center gap-2 text-sm font-bold text-indigo-600 hover:text-indigo-800">
+                    <span aria-hidden="true">&larr;</span> All reports
                 </a>
 
-                <div class="flex flex-wrap items-center gap-2 mb-3">
+                <div class="mt-6 flex flex-wrap items-center gap-2">
                     @if($article->match_incident_flag)
-                        <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30 flex items-center gap-1">
-                            ⚠️ OFFICIAL DISCIPLINARY INCIDENT LOG
+                        <span class="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-700">
+                            <span class="h-1.5 w-1.5 rounded-full bg-rose-500"></span>
+                            Official disciplinary incident
                         </span>
                     @else
-                        <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
-                            LEAGUE EXECUTIVE ANNOUNCEMENT
+                        <span class="inline-flex items-center rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1.5 text-xs font-bold text-indigo-700">
+                            League announcement
                         </span>
                     @endif
-
-                    <span class="text-xs text-gray-400">
-                        Published {{ $article->published_at ? $article->published_at->format('M d, Y - H:i') : 'Recent' }}
-                    </span>
-                    <span class="text-xs text-gray-500">&bull; Authored by {{ $article->author->name ?? 'League Authority' }}</span>
                 </div>
 
-                <h1 class="text-2xl sm:text-4xl font-black text-white tracking-tight leading-tight mb-4">
+                <h1 class="mt-5 max-w-4xl text-3xl font-black leading-[1.12] tracking-tight text-slate-950 sm:text-4xl lg:text-5xl">
                     {{ $article->title }}
                 </h1>
 
                 @if($article->excerpt)
-                    <p class="text-base sm:text-lg text-gray-300 font-medium pb-4 border-b border-gray-700/80">
+                    <p class="mt-5 max-w-3xl text-lg leading-8 text-slate-600">
                         {{ $article->excerpt }}
                     </p>
                 @endif
-            </div>
+
+                <div class="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-slate-100 pt-5 text-sm text-slate-500">
+                    <span><strong class="text-slate-800">Published</strong> {{ $article->published_at ? $article->published_at->format('M d, Y · H:i') : 'Recently' }}</span>
+                    <span><strong class="text-slate-800">Author</strong> {{ $article->author->name ?? 'League authority' }}</span>
+                </div>
+            </header>
 
             @if($article->match)
-                <!-- Associated Match Widget -->
-                <div class="my-6 p-4 rounded-2xl bg-gray-900/80 border border-gray-700/80">
-                    <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Subject Match Fixture</div>
-                    <div class="flex items-center justify-between text-sm">
-                        <div class="font-bold text-white">
-                            {{ $article->match->homeTeam->name }} <span class="text-cyan-400">{{ $article->match->home_score }} : {{ $article->match->away_score }}</span> {{ $article->match->awayTeam->name }}
+                <aside class="mx-6 mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:mx-10">
+                    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <p class="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-400">Related fixture</p>
+                            <p class="mt-2 text-lg font-black text-slate-950">
+                                {{ $article->match->homeTeam->name }} <span class="mx-2 text-slate-400">vs</span> {{ $article->match->awayTeam->name }}
+                            </p>
                         </div>
-                        <div class="text-xs text-gray-400">
-                            Stage: {{ ucfirst(str_replace('_', ' ', $article->match->stage)) }} &bull; {{ $article->match->venue }}
+                        <div class="flex items-center gap-3">
+                            @if($article->match->status !== 'upcoming')
+                                <span class="flex h-12 min-w-20 items-center justify-center rounded-xl bg-slate-950 px-3 text-lg font-black tabular-nums text-white">
+                                    {{ $article->match->home_score }} : {{ $article->match->away_score }}
+                                </span>
+                            @endif
+                            <span class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold capitalize text-slate-600">
+                                {{ str_replace('_', ' ', $article->match->stage) }}
+                            </span>
                         </div>
                     </div>
-                </div>
+                </aside>
             @endif
 
-            <!-- Body Content -->
-            <div class="text-sm sm:text-base text-gray-200 leading-relaxed space-y-4 whitespace-pre-line">
-                {{ $article->body }}
-            </div>
-        </div>
-
-        <!-- Related Dispatches -->
-        @if($relatedArticles->isNotEmpty())
-            <div class="space-y-4">
-                <h2 class="text-lg font-bold text-white">Related Dispatches</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    @foreach($relatedArticles as $rel)
-                        <div class="bg-gray-800 border border-gray-700 rounded-xl p-4">
-                            <span class="text-[10px] text-gray-400 block mb-1">{{ $rel->published_at ? $rel->published_at->format('M d') : 'Recent' }}</span>
-                            <a href="{{ route('news.show', $rel->slug) }}" class="text-xs font-bold text-white hover:text-cyan-400 line-clamp-2">
-                                {{ $rel->title }}
-                            </a>
-                        </div>
-                    @endforeach
+            <div class="px-6 py-8 sm:px-10 sm:py-10">
+                <div class="max-w-3xl whitespace-pre-line text-base leading-8 text-slate-700">
+                    {{ $article->body }}
                 </div>
             </div>
+        </article>
+
+        @if($relatedArticles->isNotEmpty())
+            <section class="space-y-4">
+                <div>
+                    <p class="text-sm font-semibold text-indigo-600">Continue reading</p>
+                    <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-950">Related reports</h2>
+                </div>
+                <div class="grid gap-4 md:grid-cols-3">
+                    @foreach($relatedArticles as $related)
+                        <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_24px_rgba(15,23,42,0.05)]">
+                            <time class="text-xs font-bold text-slate-400">
+                                {{ $related->published_at ? $related->published_at->format('M d, Y') : 'Recent' }}
+                            </time>
+                            <h3 class="mt-3 line-clamp-3 text-base font-black leading-6 text-slate-950">
+                                <a href="{{ route('news.show', $related->slug) }}" class="hover:text-indigo-600">{{ $related->title }}</a>
+                            </h3>
+                        </article>
+                    @endforeach
+                </div>
+            </section>
         @endif
     </div>
 </x-app-layout>
-

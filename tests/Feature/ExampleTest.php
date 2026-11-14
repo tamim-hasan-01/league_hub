@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\NewsArticle;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -46,6 +47,21 @@ test('the team detail page presents roster and match sections', function () {
     $response->assertSee('CyberPulse Esports');
     $response->assertSee('Roster and player status');
     $response->assertSee('Matches and results');
+});
+
+test('the news directory and article detail pages render', function () {
+    $this->seed();
+
+    $directory = $this->get('/news');
+    $directory->assertOk();
+    $directory->assertSee('League newsroom');
+
+    $article = NewsArticle::query()->first();
+    $this->assertNotNull($article);
+
+    $detail = $this->get('/news/'.$article->slug);
+    $detail->assertOk();
+    $detail->assertSee($article->title);
 });
 
 test('the tournament detail page presents competition sections', function () {
