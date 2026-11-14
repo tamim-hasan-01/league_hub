@@ -1,146 +1,145 @@
 <x-app-layout>
     <div class="space-y-8">
-        <!-- Header & Filter -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-gray-800">
+        <section class="flex flex-col gap-5 border-b border-slate-200 pb-7 md:flex-row md:items-end md:justify-between">
             <div>
-                <h1 class="text-2xl sm:text-3xl font-black text-white">News & Match Incidents</h1>
-                <p class="text-xs sm:text-sm text-gray-400 mt-1">Official league press dispatches, executive statements, and disciplinary referee incident reviews</p>
+                <p class="text-sm font-semibold text-indigo-600">League newsroom</p>
+                <h1 class="mt-1 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">News and incidents</h1>
+                <p class="mt-2 max-w-2xl text-base leading-7 text-slate-500">
+                    Official announcements, match reports, disciplinary updates, and league statements.
+                </p>
             </div>
-
             @can('create-tournament')
-                <button data-modal-target="publish-article-modal" data-modal-toggle="publish-article-modal" class="px-4 py-2.5 rounded-xl font-bold text-xs bg-cyan-500 hover:bg-cyan-400 text-gray-950 shadow-md shadow-cyan-500/20 transition flex items-center gap-1.5 self-start md:self-auto">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                    <span>Publish Announcement / Incident</span>
+                <button type="button" data-modal-target="publish-article-modal" data-modal-toggle="publish-article-modal"
+                        class="inline-flex h-12 items-center justify-center rounded-xl bg-slate-950 px-5 text-sm font-bold text-white shadow-sm hover:bg-indigo-600">
+                    Publish report
                 </button>
             @endcan
-        </div>
+        </section>
 
-        <!-- Filter Buttons -->
-        <div class="flex flex-wrap items-center gap-2">
-            <a href="{{ route('news.index') }}" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition {{ !request('filter') ? 'bg-cyan-500 text-gray-950 font-bold' : 'bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700' }}">
-                All Dispatches
+        <nav class="flex flex-wrap gap-2" aria-label="News filters">
+            <a href="{{ route('news.index') }}"
+               class="rounded-lg px-4 py-2.5 text-sm font-bold {{ !request('filter') ? 'bg-slate-950 text-white' : 'border border-slate-200 bg-white text-slate-600 hover:border-indigo-200 hover:text-indigo-600' }}">
+                All reports
             </a>
-            <a href="{{ route('news.index', ['filter' => 'incidents']) }}" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition {{ request('filter') === 'incidents' ? 'bg-amber-500 text-gray-950 font-bold' : 'bg-gray-800 text-amber-400 hover:bg-gray-700' }}">
-                ⚠️ Disciplinary Incidents Only
+            <a href="{{ route('news.index', ['filter' => 'incidents']) }}"
+               class="rounded-lg px-4 py-2.5 text-sm font-bold {{ request('filter') === 'incidents' ? 'bg-rose-600 text-white' : 'border border-slate-200 bg-white text-rose-700 hover:border-rose-200' }}">
+                Disciplinary incidents
             </a>
-            <a href="{{ route('news.index', ['filter' => 'announcements']) }}" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition {{ request('filter') === 'announcements' ? 'bg-cyan-500 text-gray-950 font-bold' : 'bg-gray-800 text-cyan-400 hover:bg-gray-700' }}">
-                📢 League Announcements
+            <a href="{{ route('news.index', ['filter' => 'announcements']) }}"
+               class="rounded-lg px-4 py-2.5 text-sm font-bold {{ request('filter') === 'announcements' ? 'bg-indigo-600 text-white' : 'border border-slate-200 bg-white text-indigo-700 hover:border-indigo-200' }}">
+                Announcements
             </a>
-        </div>
+        </nav>
 
-        <!-- News Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid gap-5 lg:grid-cols-2">
             @forelse($articles as $article)
-                <div class="bg-gray-800 border {{ $article->match_incident_flag ? 'border-amber-500/40' : 'border-gray-700' }} hover:border-cyan-500/50 rounded-2xl p-6 shadow-xl transition flex flex-col justify-between group">
+                <article class="group flex min-h-72 flex-col justify-between rounded-2xl border {{ $article->match_incident_flag ? 'border-rose-200' : 'border-slate-200' }} bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)] transition hover:-translate-y-0.5 hover:border-indigo-200">
                     <div>
-                        <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-start justify-between gap-3">
                             @if($article->match_incident_flag)
-                                <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30 flex items-center gap-1">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                                    DISCIPLINARY INCIDENT LOG
+                                <span class="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-xs font-bold text-rose-700">
+                                    <span class="h-1.5 w-1.5 rounded-full bg-rose-500"></span>
+                                    Disciplinary incident
                                 </span>
                             @else
-                                <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
-                                    LEAGUE ANNOUNCEMENT
+                                <span class="inline-flex items-center rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-bold text-indigo-700">
+                                    League announcement
                                 </span>
                             @endif
-
-                            <span class="text-xs text-gray-500">
+                            <time class="shrink-0 text-xs font-semibold text-slate-400">
                                 {{ $article->published_at ? $article->published_at->format('M d, Y') : 'Recent' }}
-                            </span>
+                            </time>
                         </div>
 
-                        <h2 class="text-lg font-bold text-white group-hover:text-cyan-400 transition mb-2">
-                            <a href="{{ route('news.show', $article->slug) }}">
-                                {{ $article->title }}
-                            </a>
+                        <h2 class="mt-5 text-xl font-black leading-7 text-slate-950">
+                            <a href="{{ route('news.show', $article->slug) }}" class="hover:text-indigo-600">{{ $article->title }}</a>
                         </h2>
-
-                        <p class="text-xs sm:text-sm text-gray-300 leading-relaxed mb-4">
-                            {{ $article->excerpt }}
-                        </p>
+                        <p class="mt-3 line-clamp-3 text-sm leading-7 text-slate-500">{{ $article->excerpt }}</p>
 
                         @if($article->match)
-                            <div class="p-2.5 bg-gray-900/60 rounded-xl border border-gray-700/60 text-xs text-gray-400 mb-4 flex items-center justify-between">
-                                <span>Related Fixture:</span>
-                                <span class="text-white font-bold">{{ $article->match->homeTeam->name }} vs {{ $article->match->awayTeam->name }}</span>
+                            <div class="mt-5 flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                                <div class="min-w-0">
+                                    <p class="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400">Related fixture</p>
+                                    <p class="mt-1 truncate text-sm font-bold text-slate-800">
+                                        {{ $article->match->homeTeam->name }} vs {{ $article->match->awayTeam->name }}
+                                    </p>
+                                </div>
+                                @if($article->match->status !== 'upcoming')
+                                    <span class="shrink-0 rounded-lg bg-slate-950 px-2.5 py-1.5 text-xs font-black tabular-nums text-white">
+                                        {{ $article->match->home_score }} : {{ $article->match->away_score }}
+                                    </span>
+                                @endif
                             </div>
                         @endif
                     </div>
 
-                    <div class="pt-3 border-t border-gray-700/60 flex items-center justify-between text-xs text-gray-400">
-                        <span>Reporter: {{ $article->author->name ?? 'League Commissioner' }}</span>
-                        <a href="{{ route('news.show', $article->slug) }}" class="text-cyan-400 font-semibold hover:underline flex items-center gap-1">
-                            <span>Read Full Report</span>
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    <div class="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
+                        <p class="truncate text-xs text-slate-400">By {{ $article->author->name ?? 'League authority' }}</p>
+                        <a href="{{ route('news.show', $article->slug) }}" class="shrink-0 text-sm font-bold text-indigo-600 hover:text-indigo-800">
+                            Read report &rarr;
                         </a>
                     </div>
-                </div>
+                </article>
             @empty
-                <div class="col-span-2 text-center py-16 bg-gray-800/40 rounded-2xl border border-gray-700 text-gray-400 text-sm">
-                    No reports found for this filter.
+                <div class="col-span-full rounded-2xl border border-dashed border-slate-300 bg-slate-50 py-16 text-center">
+                    <p class="text-base font-bold text-slate-700">No reports found</p>
+                    <p class="mt-1 text-sm text-slate-500">Try another newsroom filter.</p>
                 </div>
             @endforelse
         </div>
 
-        <div>
-            {{ $articles->links() }}
-        </div>
+        <div>{{ $articles->links() }}</div>
     </div>
 
-    <!-- Admin Publish Article / Incident Modal -->
     @can('create-tournament')
-    <div id="publish-article-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-        <div class="relative p-4 w-full max-w-lg max-h-full">
-            <div class="relative bg-gray-800 border border-gray-700 rounded-2xl shadow-2xl p-6">
-                <div class="flex items-center justify-between pb-3 mb-4 border-b border-gray-700">
-                    <h3 class="text-base font-bold text-white">Publish League Report / Incident</h3>
-                    <button type="button" class="text-gray-400 hover:text-white rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center" data-modal-hide="publish-article-modal">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 14 14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
-                    </button>
-                </div>
-
-                <form action="{{ route('news.store') }}" method="POST" class="space-y-4">
-                    @csrf
-                    <div>
-                        <label for="title" class="block mb-1 text-xs font-medium text-gray-300">Article Title / Headline</label>
-                        <input type="text" name="title" id="title" required class="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg block w-full p-2.5" placeholder="Disciplinary Hearing: Match #4 Conduct Review">
+        <div id="publish-article-modal" tabindex="-1" aria-hidden="true"
+             class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-y-auto md:inset-0">
+            <div class="relative w-full max-w-xl p-4">
+                <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                        <div>
+                            <p class="text-xs font-bold uppercase tracking-[0.12em] text-indigo-600">Newsroom</p>
+                            <h2 class="mt-1 text-lg font-black text-slate-950">Publish a report</h2>
+                        </div>
+                        <button type="button" data-modal-hide="publish-article-modal" aria-label="Close report publisher"
+                                class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50">&times;</button>
                     </div>
-
-                    <div>
-                        <label class="cursor-pointer flex items-center gap-2 p-2.5 bg-gray-900 rounded-lg border border-gray-700">
-                            <input type="checkbox" name="match_incident_flag" value="1" class="w-4 h-4 text-cyan-500 rounded bg-gray-800 border-gray-600">
-                            <span class="text-xs font-bold text-amber-400">Flag as Disciplinary Match Incident Report</span>
+                    <form action="{{ route('news.store') }}" method="POST" class="mt-5 space-y-4">
+                        @csrf
+                        <div>
+                            <label for="title" class="mb-2 block text-sm font-bold text-slate-700">Headline</label>
+                            <input type="text" name="title" id="title" required
+                                   class="h-12 w-full rounded-xl border border-slate-200 px-3 text-sm text-slate-900"
+                                   placeholder="Disciplinary hearing: match conduct review">
+                        </div>
+                        <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+                            <input type="checkbox" name="match_incident_flag" value="1" class="h-4 w-4 rounded border-slate-300 text-rose-600">
+                            <span class="text-sm font-bold text-rose-700">Flag as a disciplinary incident</span>
                         </label>
-                    </div>
-
-                    <div>
-                        <label for="match_id" class="block mb-1 text-xs font-medium text-gray-300">Related Fixture (Optional)</label>
-                        <select name="match_id" id="match_id" class="bg-gray-900 border border-gray-700 text-white text-xs rounded-lg block w-full p-2.5">
-                            <option value="">None / General Announcement</option>
-                            @foreach($recentMatches as $m)
-                                <option value="{{ $m->id }}">{{ $m->homeTeam->name }} vs {{ $m->awayTeam->name }} ({{ $m->scheduled_at->format('M d') }})</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div>
-                        <label for="excerpt" class="block mb-1 text-xs font-medium text-gray-300">Short Summary Excerpt</label>
-                        <input type="text" name="excerpt" id="excerpt" class="bg-gray-900 border border-gray-700 text-white text-xs rounded-lg block w-full p-2.5" placeholder="Brief summary of disciplinary sanctions or announcement...">
-                    </div>
-
-                    <div>
-                        <label for="body" class="block mb-1 text-xs font-medium text-gray-300">Full Report Body</label>
-                        <textarea name="body" id="body" rows="4" required class="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg block w-full p-2.5" placeholder="Full details, official statements, and referee citations..."></textarea>
-                    </div>
-
-                    <button type="submit" class="w-full text-gray-950 bg-gradient-to-r from-cyan-500 to-sky-400 hover:from-cyan-400 font-bold rounded-lg text-sm px-5 py-2.5 text-center transition">
-                        Broadcast News Dispatch
-                    </button>
-                </form>
+                        <div>
+                            <label for="match_id" class="mb-2 block text-sm font-bold text-slate-700">Related fixture</label>
+                            <select name="match_id" id="match_id" class="h-12 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-900">
+                                <option value="">General announcement</option>
+                                @foreach($recentMatches as $match)
+                                    <option value="{{ $match->id }}">{{ $match->homeTeam->name }} vs {{ $match->awayTeam->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label for="excerpt" class="mb-2 block text-sm font-bold text-slate-700">Summary</label>
+                            <input type="text" name="excerpt" id="excerpt" class="h-12 w-full rounded-xl border border-slate-200 px-3 text-sm text-slate-900"
+                                   placeholder="Short public summary">
+                        </div>
+                        <div>
+                            <label for="body" class="mb-2 block text-sm font-bold text-slate-700">Full report</label>
+                            <textarea name="body" id="body" rows="5" required
+                                      class="w-full rounded-xl border border-slate-200 px-3 py-3 text-sm leading-6 text-slate-900"
+                                      placeholder="Official details and statements"></textarea>
+                        </div>
+                        <button type="submit" class="h-12 w-full rounded-xl bg-slate-950 text-sm font-bold text-white hover:bg-indigo-600">Publish report</button>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
     @endcan
 </x-app-layout>
-
