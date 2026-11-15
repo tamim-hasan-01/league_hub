@@ -7,9 +7,9 @@ $isCompleted = $match->status === 'completed';
 $userBookmarked = auth()->check() && auth()->user()->bookmarks()->where('game_match_id', $match->id)->exists();
 @endphp
 
-<div {{ $attributes->merge(['class' => 'rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_24px_rgba(15,23,42,0.05)] transition hover:-translate-y-0.5 hover:border-indigo-200']) }}>
+<div {{ $attributes->merge(['class' => 'rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_10px_28px_rgba(15,23,42,0.07)] transition hover:-translate-y-0.5 hover:border-indigo-200']) }}>
     <!-- Top Meta Line -->
-    <div class="flex items-center justify-between gap-2 mb-3 pb-2.5 border-b border-gray-700/60 text-xs">
+    <div class="flex min-h-12 items-start justify-between gap-3 border-b border-slate-100 pb-3">
         <div class="flex items-center gap-2">
             @if($isLive)
                 <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-rose-500/20 text-rose-400 border border-rose-500/30 animate-pulse">
@@ -27,13 +27,13 @@ $userBookmarked = auth()->check() && auth()->user()->bookmarks()->where('game_ma
                 </span>
             @endif
 
-            <span class="text-gray-400 truncate max-w-[140px] font-medium" title="{{ $match->tournament->title ?? 'Exhibition Friendly' }}">
+            <span class="line-clamp-2 max-w-[180px] text-sm font-semibold leading-5 text-slate-600" title="{{ $match->tournament->title ?? 'Exhibition Friendly' }}">
                 {{ $match->tournament->title ?? 'Exhibition Match' }}
             </span>
         </div>
 
         <div class="flex items-center gap-1.5 text-gray-400">
-            <span class="px-2 py-0.5 rounded text-[11px] bg-gray-900/60 border border-gray-700 text-cyan-400 uppercase tracking-wider font-semibold">
+            <span class="shrink-0 rounded-md border border-slate-200 bg-slate-100 px-2 py-1 text-xs font-semibold capitalize text-slate-600">
                 {{ str_replace('_', ' ', $match->stage) }}
             </span>
 
@@ -42,8 +42,8 @@ $userBookmarked = auth()->check() && auth()->user()->bookmarks()->where('game_ma
                 @csrf
                 <input type="hidden" name="type" value="match">
                 <input type="hidden" name="id" value="{{ $match->id }}">
-                <button type="submit" class="p-1 rounded hover:bg-gray-700 text-gray-400 hover:text-cyan-400 transition" title="{{ $userBookmarked ? 'Remove Bookmark' : 'Bookmark Match' }}">
-                    <svg class="w-4 h-4 {{ $userBookmarked ? 'text-cyan-400 fill-cyan-400' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button type="submit" class="rounded-lg p-1.5 text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 transition" title="{{ $userBookmarked ? 'Remove Bookmark' : 'Bookmark Match' }}">
+                    <svg class="w-4 h-4 {{ $userBookmarked ? 'text-indigo-600 fill-indigo-600' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
                     </svg>
                 </button>
@@ -53,28 +53,28 @@ $userBookmarked = auth()->check() && auth()->user()->bookmarks()->where('game_ma
     </div>
 
     <!-- Match Teams and Scores -->
-    <div class="grid grid-cols-7 items-center gap-2 py-2">
+    <div class="grid grid-cols-[1fr_74px_1fr] items-center gap-3 py-6">
         <!-- Home Team -->
-        <div class="col-span-3 flex flex-col items-center sm:items-start text-center sm:text-left">
-            <a href="{{ route('teams.show', $match->homeTeam->slug) }}" class="group-hover:text-cyan-400 transition font-bold text-white text-sm sm:text-base truncate w-full">
+        <div class="flex min-w-0 flex-col">
+            <a href="{{ route('teams.show', $match->homeTeam->slug) }}" class="text-base font-bold leading-6 text-slate-950 transition hover:text-indigo-600">
                 {{ $match->homeTeam->name }}
             </a>
-            <span class="text-xs text-gray-400">Home</span>
+            <span class="mt-1 text-xs font-medium text-slate-400">Home</span>
         </div>
 
         <!-- Score or VS -->
-        <div class="col-span-1 flex flex-col items-center justify-center">
+        <div class="flex items-center justify-center">
             @if($isUpcoming)
-                <div class="text-xs font-bold text-cyan-400 bg-gray-900/80 px-2.5 py-1 rounded-md border border-gray-700">
+                <div class="flex h-12 w-[74px] items-center justify-center rounded-xl border border-slate-200 bg-slate-100 text-sm font-bold tracking-[0.12em] text-slate-700">
                     VS
                 </div>
             @else
-                <div class="flex items-center gap-1.5 px-3 py-1 bg-gray-900/90 rounded-lg border border-gray-700">
-                    <span class="text-base sm:text-xl font-black {{ $match->home_score > $match->away_score ? 'text-cyan-400' : 'text-white' }}">
+                <div class="flex h-12 w-[74px] items-center justify-center rounded-xl border border-slate-200 bg-slate-950 px-2 tabular-nums text-white">
+                    <span class="text-lg font-bold {{ $match->home_score > $match->away_score ? 'text-indigo-300' : '' }}">
                         {{ $match->home_score }}
                     </span>
-                    <span class="text-gray-500 font-bold">:</span>
-                    <span class="text-base sm:text-xl font-black {{ $match->away_score > $match->home_score ? 'text-cyan-400' : 'text-white' }}">
+                    <span class="mx-1 text-slate-400">:</span>
+                    <span class="text-lg font-bold {{ $match->away_score > $match->home_score ? 'text-indigo-300' : '' }}">
                         {{ $match->away_score }}
                     </span>
                 </div>
@@ -82,22 +82,22 @@ $userBookmarked = auth()->check() && auth()->user()->bookmarks()->where('game_ma
         </div>
 
         <!-- Away Team -->
-        <div class="col-span-3 flex flex-col items-center sm:items-end text-center sm:text-right">
-            <a href="{{ route('teams.show', $match->awayTeam->slug) }}" class="group-hover:text-cyan-400 transition font-bold text-white text-sm sm:text-base truncate w-full">
+        <div class="flex min-w-0 flex-col items-end text-right">
+            <a href="{{ route('teams.show', $match->awayTeam->slug) }}" class="text-base font-bold leading-6 text-slate-950 transition hover:text-indigo-600">
                 {{ $match->awayTeam->name }}
             </a>
-            <span class="text-xs text-gray-400">Away</span>
+            <span class="mt-1 text-xs font-medium text-slate-400">Away</span>
         </div>
     </div>
 
     <!-- Bottom Meta: Venue & Kickoff -->
-    <div class="mt-3 pt-2.5 border-t border-gray-700/60 flex items-center justify-between text-xs text-gray-400">
+    <div class="mt-1 flex items-center justify-between gap-3 border-t border-slate-100 pt-3 text-sm text-slate-500">
         <div class="flex items-center gap-1.5 truncate">
             <svg class="w-3.5 h-3.5 text-cyan-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
             <span class="truncate">{{ $match->venue }}</span>
         </div>
 
-        <div class="flex items-center gap-1 shrink-0 text-gray-300 font-mono">
+        <div class="flex shrink-0 items-center gap-1.5 font-semibold text-indigo-600">
             <svg class="w-3.5 h-3.5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
             <span>{{ $match->scheduled_at->format('M d, H:i') }}</span>
         </div>
