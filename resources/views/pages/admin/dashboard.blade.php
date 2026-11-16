@@ -227,45 +227,46 @@
                 <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)] space-y-4">
                     <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                         <div>
-                            <h2 class="text-base font-bold text-slate-950 flex items-center gap-1.5">
-                                <span class="text-rose-500">🏥</span>
-                                Player Health Inspector
-                            </h2>
+                            <div class="flex items-center gap-1.5">
+                                <span class="flex h-5 w-5 items-center justify-center rounded-full bg-rose-50 text-xs">🏥</span>
+                                <p class="text-xs font-bold uppercase tracking-[0.16em] text-rose-600">Medical desk</p>
+                            </div>
+                            <h2 class="mt-1 text-base font-bold text-slate-950">Player Health Inspector</h2>
                             <p class="text-[11px] text-slate-500">Athletes flagged with medical holds</p>
                         </div>
-                        <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">
                             {{ $injuredPlayers->count() }} Injured
                         </span>
                     </div>
 
                     <div class="space-y-3">
                         @forelse($injuredPlayers as $prof)
-                            <div class="p-3 bg-gray-900/80 rounded-xl border border-red-900/40 text-xs space-y-2">
+                            <div class="p-3.5 bg-rose-50/40 rounded-xl border border-rose-100 text-xs space-y-2.5">
                                 <div class="flex items-center justify-between">
-                                    <span class="font-bold text-white">{{ $prof->user->name }}</span>
-                                    <span class="text-red-400 text-[10px] font-bold uppercase">Medical Hold</span>
+                                    <span class="font-bold text-slate-950 text-sm">{{ $prof->user->name }}</span>
+                                    <span class="px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 text-[10px] font-bold uppercase tracking-wider">Medical Hold</span>
                                 </div>
 
-                                <div class="text-[11px] text-gray-400">
-                                    Team: {{ $prof->user->teams->pluck('name')->join(', ') ?: 'Free Agent' }}
-                                    &bull; Sport: {{ $prof->primary_sport }}
+                                <div class="text-[11px] text-slate-500">
+                                    Team: <span class="font-medium text-slate-700">{{ $prof->user->teams->pluck('name')->join(', ') ?: 'Free Agent' }}</span>
+                                    &bull; Sport: <span class="font-medium text-slate-700">{{ $prof->primary_sport }}</span>
                                 </div>
 
                                 @if($prof->injury_notes)
-                                    <div class="p-2 bg-red-950/40 rounded border border-red-900/30 text-[11px] text-red-200 italic">
+                                    <div class="p-2 bg-white/80 rounded-lg border border-rose-200/60 text-[11px] text-rose-900 italic">
                                         "{{ $prof->injury_notes }}"
                                     </div>
                                 @endif
 
                                 <form action="{{ route('admin.players.clearInjury', $prof->id) }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="w-full py-1.5 px-2 rounded-lg bg-emerald-600/80 hover:bg-emerald-600 text-white font-semibold text-[11px] transition">
-                                        ✓ Clear Medical Hold (Make Fit)
+                                    <button type="submit" class="w-full inline-flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm transition">
+                                        <span>✓</span> Clear Medical Hold (Make Fit)
                                     </button>
                                 </form>
                             </div>
                         @empty
-                            <div class="py-6 text-center text-xs text-gray-400">
+                            <div class="py-8 text-center text-xs font-medium text-slate-500 bg-slate-50/70 rounded-xl border border-dashed border-slate-300">
                                 All registered players are active and medically fit!
                             </div>
                         @endforelse
