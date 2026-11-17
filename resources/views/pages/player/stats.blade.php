@@ -1,84 +1,88 @@
 <x-app-layout>
     <div class="space-y-8" x-data="playerAnalytics()">
-        <!-- Header Banner with Athlete Profile -->
-        <div class="relative overflow-hidden rounded-3xl bg-gray-800 border border-gray-700 p-6 sm:p-8 shadow-2xl">
-            <div class="absolute -top-16 -right-16 w-64 h-64 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none"></div>
+        <!-- Athlete Profile Hero Banner -->
+        <section class="relative overflow-hidden rounded-[28px] border border-slate-200 bg-slate-950 text-white shadow-[0_24px_60px_rgba(15,23,42,0.12)]">
+            <div class="absolute right-0 top-0 h-full w-2/5 bg-[radial-gradient(circle_at_center,rgba(129,140,248,0.24),transparent_65%)]"></div>
 
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
-                <div class="flex items-start sm:items-center gap-4 sm:gap-6">
-                    <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-cyan-600 to-sky-400 flex items-center justify-center font-black text-white text-2xl sm:text-3xl shadow-xl shrink-0">
-                        #{{ $profile->jersey_number ?? '10' }}
-                    </div>
-
-                    <div class="space-y-1.5">
-                        <div class="flex flex-wrap items-center gap-2">
-                            <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
-                                {{ $profile->primary_sport }}
-                            </span>
-                            <span class="px-2.5 py-0.5 rounded text-xs font-mono font-bold text-sky-400 bg-gray-900 border border-gray-700">
-                                Regional Rank #{{ $profile->areal_ranking }}
-                            </span>
-                            <span class="px-2.5 py-0.5 rounded text-xs font-medium bg-gray-700 text-gray-300">
-                                Zone: {{ auth()->user()->areal_zone ?? 'Metro Central' }}
-                            </span>
+            <div class="relative p-6 sm:p-8 lg:p-10">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                    <div class="flex items-start sm:items-center gap-4 sm:gap-6">
+                        <div class="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-2xl bg-indigo-600 font-black text-white text-2xl sm:text-3xl shadow-lg shrink-0">
+                            #{{ $profile->jersey_number ?? '10' }}
                         </div>
-                        <h1 class="text-2xl sm:text-4xl font-black text-white tracking-tight">{{ auth()->user()->name }}</h1>
-                        <p class="text-xs text-gray-400">
-                            Jersey: <span class="text-gray-200 font-bold">#{{ $profile->jersey_number }}</span>
-                            &bull; Registered Teams: <span class="text-cyan-400 font-semibold">{{ $teams->pluck('name')->join(', ') ?: 'Free Agent' }}</span>
-                        </p>
-                    </div>
-                </div>
 
-                <!-- Health Status Badge & Quick Toggle -->
-                <div class="p-4 rounded-2xl bg-gray-900/80 border border-gray-700/80 sm:max-w-xs w-full">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-semibold text-gray-400 uppercase">Current Health</span>
-                        @if($profile->is_injured)
-                            <span class="px-2 py-0.5 rounded text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/40 animate-pulse">
-                                INJURED (HOLD)
-                            </span>
-                        @else
-                            <span class="px-2 py-0.5 rounded text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
-                                ACTIVE & FIT
-                            </span>
+                        <div class="space-y-2">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="rounded-full border border-indigo-300/20 bg-indigo-300/10 px-3 py-1 text-xs font-bold text-indigo-200">
+                                    {{ $profile->primary_sport }}
+                                </span>
+                                <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-mono font-bold text-slate-200">
+                                    Regional Rank #{{ $profile->areal_ranking }}
+                                </span>
+                                <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-slate-300">
+                                    Zone: {{ auth()->user()->areal_zone ?? 'Metro Central' }}
+                                </span>
+                            </div>
+                            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight">{{ auth()->user()->name }}</h1>
+                            <p class="text-xs text-slate-300">
+                                Jersey: <span class="text-white font-bold">#{{ $profile->jersey_number }}</span>
+                                &bull; Registered Teams: <span class="text-indigo-300 font-semibold">{{ $teams->pluck('name')->join(', ') ?: 'Free Agent' }}</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Health Status Badge & Quick Toggle -->
+                    <div class="p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur sm:max-w-xs w-full lg:self-center">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Current Health</span>
+                            @if($profile->is_injured)
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-400/10 text-rose-300 border border-rose-400/20 animate-pulse">
+                                    <span class="h-1.5 w-1.5 rounded-full bg-rose-400"></span>
+                                    INJURED (HOLD)
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-400/10 text-emerald-300 border border-emerald-400/20">
+                                    <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+                                    ACTIVE &amp; FIT
+                                </span>
+                            @endif
+                        </div>
+
+                        @if($profile->is_injured && $profile->injury_notes)
+                            <p class="text-[11px] text-rose-300 mb-2 italic">"{{ $profile->injury_notes }}"</p>
                         @endif
+
+                        <!-- Health Toggle Button -->
+                        <button data-modal-target="health-toggle-modal" data-modal-toggle="health-toggle-modal"
+                            class="w-full py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 bg-white/10 border border-white/15 text-white hover:bg-white/20">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                            <span>Update Health Status</span>
+                        </button>
                     </div>
+                </div>
 
-                    @if($profile->is_injured && $profile->injury_notes)
-                        <p class="text-[11px] text-red-300 mb-2 italic">"{{ $profile->injury_notes }}"</p>
-                    @endif
-
-                    <!-- Health Toggle Button -->
-                    <button data-modal-target="health-toggle-modal" data-modal-toggle="health-toggle-modal"
-                        class="w-full py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 {{ $profile->is_injured ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-red-600/80 hover:bg-red-600 text-white' }}">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                        <span>Update Health Status</span>
-                    </button>
+                <!-- Career Stat Cards -->
+                @php $stats = $profile->career_stats ?? []; @endphp
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 mt-8">
+                    <div class="bg-slate-950/75 p-4 text-center">
+                        <span class="text-slate-300 text-[11px] block uppercase font-bold tracking-wider">Form Rating</span>
+                        <span class="text-3xl font-black text-indigo-300 mt-1 block tabular-nums">{{ $stats['form_rating'] ?? 8.1 }}</span>
+                    </div>
+                    <div class="bg-slate-950/75 p-4 text-center">
+                        <span class="text-slate-300 text-[11px] block uppercase font-bold tracking-wider">Appearances</span>
+                        <span class="text-3xl font-black text-white mt-1 block tabular-nums">{{ $stats['matches_played'] ?? 14 }}</span>
+                    </div>
+                    <div class="bg-slate-950/75 p-4 text-center">
+                        <span class="text-slate-300 text-[11px] block uppercase font-bold tracking-wider">Contributions</span>
+                        <span class="text-3xl font-black text-white mt-1 block tabular-nums">{{ $stats['goals_or_points'] ?? 11 }}</span>
+                    </div>
+                    <div class="bg-slate-950/75 p-4 text-center">
+                        <span class="text-slate-300 text-[11px] block uppercase font-bold tracking-wider">MVP Awards</span>
+                        <span class="text-3xl font-black text-amber-300 mt-1 block tabular-nums">{{ $stats['mvp_count'] ?? 3 }}</span>
+                    </div>
                 </div>
             </div>
-
-            <!-- Career Stat Cards -->
-            @php $stats = $profile->career_stats ?? []; @endphp
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-gray-700/60">
-                <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-700/60 text-center">
-                    <span class="text-gray-400 text-[11px] block uppercase font-semibold">Form Rating</span>
-                    <span class="text-2xl font-black text-cyan-400">{{ $stats['form_rating'] ?? 8.1 }}</span>
-                </div>
-                <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-700/60 text-center">
-                    <span class="text-gray-400 text-[11px] block uppercase font-semibold">Appearances</span>
-                    <span class="text-2xl font-black text-white">{{ $stats['matches_played'] ?? 14 }}</span>
-                </div>
-                <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-700/60 text-center">
-                    <span class="text-gray-400 text-[11px] block uppercase font-semibold">Score Contributions</span>
-                    <span class="text-2xl font-black text-sky-400">{{ $stats['goals_or_points'] ?? 11 }}</span>
-                </div>
-                <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-700/60 text-center">
-                    <span class="text-gray-400 text-[11px] block uppercase font-semibold">MVP Awards</span>
-                    <span class="text-2xl font-black text-amber-400">{{ $stats['mvp_count'] ?? 3 }}</span>
-                </div>
-            </div>
-        </div>
+        </section>
 
         <!-- Visual Analytics with Chart.js -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
