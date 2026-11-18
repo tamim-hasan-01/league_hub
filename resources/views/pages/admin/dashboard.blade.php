@@ -276,28 +276,37 @@
                 <!-- Tournaments Quick Overview & Bracket Seed -->
                 <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)] space-y-4">
                     <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                        <h2 class="text-base font-bold text-slate-950">Tournaments Overview</h2>
-                        <a href="{{ route('tournaments.index') }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-800">View All</a>
+                        <div>
+                            <p class="text-xs font-bold uppercase tracking-[0.16em] text-indigo-600">Overview</p>
+                            <h2 class="mt-1 text-base font-bold text-slate-950">Tournaments Overview</h2>
+                        </div>
+                        <a href="{{ route('tournaments.index') }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-800">
+                            View All &rarr;
+                        </a>
                     </div>
 
-                    <div class="space-y-3 text-xs">
-                        @foreach($tournaments as $t)
-                            <div class="p-3 bg-gray-900/60 rounded-xl border border-gray-700/60 flex items-center justify-between">
-                                <div>
-                                    <a href="{{ route('tournaments.show', $t->slug) }}" class="font-bold text-white hover:text-cyan-400 transition block">
+                    <div class="space-y-2.5 text-xs">
+                        @forelse($tournaments as $t)
+                            <div class="flex items-center justify-between gap-3 p-3 rounded-xl border border-slate-200 bg-slate-50/70 hover:border-slate-300 hover:bg-white transition">
+                                <div class="min-w-0">
+                                    <a href="{{ route('tournaments.show', $t->slug) }}" class="font-bold text-slate-950 hover:text-indigo-600 transition block truncate">
                                         {{ $t->title }}
                                     </a>
-                                    <span class="text-gray-400">{{ $t->teams_count }} Teams &bull; {{ $t->current_stage }}</span>
+                                    <span class="text-[11px] text-slate-500">{{ $t->teams_count }} Teams &bull; <span class="capitalize">{{ str_replace('_', ' ', $t->current_stage) }}</span></span>
                                 </div>
 
                                 <form action="{{ route('tournaments.generateBracket', $t->id) }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="px-2.5 py-1 rounded bg-sky-900 hover:bg-sky-800 text-sky-200 font-semibold text-[10px] transition" title="Seed and Generate Fixtures">
+                                    <button type="submit" class="shrink-0 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-600 text-slate-700 font-bold text-[11px] shadow-sm transition" title="Seed and Generate Fixtures">
                                         Seed Bracket
                                     </button>
                                 </form>
                             </div>
-                        @endforeach
+                        @empty
+                            <div class="py-8 text-center text-xs font-medium text-slate-500 bg-slate-50/70 rounded-xl border border-dashed border-slate-300">
+                                No tournaments created yet.
+                            </div>
+                        @endforelse
                     </div>
                 </div>
 
