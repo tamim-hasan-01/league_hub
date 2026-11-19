@@ -16,7 +16,6 @@ use App\Notifications\MatchResultNotification;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -29,9 +28,25 @@ class DatabaseSeeder extends Seeder
 
         // 1. Core Users with distinct roles
         $admin = User::create([
-            'name' => 'Commissioner Marcus Vance',
-            'email' => 'admin@leaguehub.com',
-            'password' => $password,
+            'name' => 'Waliur Rafiq Sami',
+            'email' => 'sami@leaguehub.com',
+            'password' => Hash::make('123123123'),
+            'role' => 'admin',
+            'areal_zone' => 'Metro Central',
+        ]);
+
+        User::create([
+            'name' => 'Md. Tamim Hasan Siam',
+            'email' => 'siam@leaguehub.com',
+            'password' => Hash::make('1234512345'),
+            'role' => 'admin',
+            'areal_zone' => 'Metro Central',
+        ]);
+
+        User::create([
+            'name' => 'Muhammad Mobasher Ahmmed Milon',
+            'email' => 'mobahir@leaguehub.com',
+            'password' => Hash::make('123456789'),
             'role' => 'admin',
             'areal_zone' => 'Metro Central',
         ]);
@@ -139,7 +154,7 @@ class DatabaseSeeder extends Seeder
         foreach ($playerNames as $idx => $p) {
             $user = User::create([
                 'name' => $p['name'],
-                'email' => 'athlete' . ($idx + 1) . '@leaguehub.com',
+                'email' => 'athlete'.($idx + 1).'@leaguehub.com',
                 'password' => $password,
                 'role' => 'player',
                 'areal_zone' => ['Metro Central', 'Pacific Coast', 'Eastern Summit', 'North Region'][$idx % 4],
@@ -371,7 +386,7 @@ class DatabaseSeeder extends Seeder
         // 4. Enroll 8 Football Teams in Apex Continental Championship
         $footballTeamSlugs = [
             'apex-sentinels-fc', 'shadow-vipers-united', 'titan-vanguard', 'hyperion-strikers',
-            'ironclad-warriors', 'zephyr-rovers', 'onyx-rangers', 'solar-flare-fc'
+            'ironclad-warriors', 'zephyr-rovers', 'onyx-rangers', 'solar-flare-fc',
         ];
 
         foreach ($footballTeamSlugs as $slug) {
