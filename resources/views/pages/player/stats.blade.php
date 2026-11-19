@@ -85,15 +85,16 @@
         </section>
 
         <!-- Visual Analytics with Chart.js -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <!-- Form Curve Line Chart -->
-            <div class="bg-gray-800 border border-gray-700 rounded-2xl p-5 shadow-xl">
-                <div class="flex items-center justify-between mb-4">
+            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)]">
+                <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
                     <div>
-                        <h2 class="text-lg font-bold text-white">Form Curve & Rating Evolution</h2>
-                        <p class="text-xs text-gray-400">Match-by-match performance index over recent fixtures</p>
+                        <p class="text-xs font-bold uppercase tracking-[0.16em] text-indigo-600">Performance</p>
+                        <h2 class="mt-1 text-lg font-bold text-slate-950">Form Curve &amp; Rating Evolution</h2>
+                        <p class="text-xs text-slate-500">Match-by-match performance index over recent fixtures</p>
                     </div>
-                    <span class="px-2.5 py-1 rounded text-xs font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
+                    <span class="px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
                         Peak: 8.5
                     </span>
                 </div>
@@ -104,13 +105,14 @@
             </div>
 
             <!-- Radar / Skill Distribution Chart -->
-            <div class="bg-gray-800 border border-gray-700 rounded-2xl p-5 shadow-xl">
-                <div class="flex items-center justify-between mb-4">
+            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)]">
+                <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
                     <div>
-                        <h2 class="text-lg font-bold text-white">Athletic & Tactical Attributes</h2>
-                        <p class="text-xs text-gray-400">Regional scouting evaluation benchmark</p>
+                        <p class="text-xs font-bold uppercase tracking-[0.16em] text-indigo-600">Scouting</p>
+                        <h2 class="mt-1 text-lg font-bold text-slate-950">Athletic &amp; Tactical Attributes</h2>
+                        <p class="text-xs text-slate-500">Regional scouting evaluation benchmark</p>
                     </div>
-                    <span class="px-2.5 py-1 rounded text-xs font-mono font-bold bg-sky-500/10 text-sky-400 border border-sky-500/30">
+                    <span class="px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-slate-100 text-slate-700 border border-slate-200">
                         Tier 1 Elite
                     </span>
                 </div>
@@ -241,12 +243,13 @@
                             datasets: [{
                                 label: 'Match Rating (Out of 10)',
                                 data: @json($chartRatings),
-                                borderColor: '#06B6D4',
-                                backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                                borderColor: '#4F46E5',
+                                backgroundColor: 'rgba(79, 70, 229, 0.08)',
                                 tension: 0.35,
                                 fill: true,
-                                pointBackgroundColor: '#38BDF8',
-                                pointBorderColor: '#fff',
+                                pointBackgroundColor: '#4F46E5',
+                                pointBorderColor: '#ffffff',
+                                pointBorderWidth: 2,
                                 pointRadius: 5,
                             }]
                         },
@@ -260,12 +263,12 @@
                                 y: {
                                     min: 5,
                                     max: 10,
-                                    grid: { color: 'rgba(75, 85, 99, 0.2)' },
-                                    ticks: { color: '#9CA3AF' }
+                                    grid: { color: 'rgba(226, 232, 240, 0.8)' },
+                                    ticks: { color: '#64748B', font: { size: 11 } }
                                 },
                                 x: {
-                                    grid: { color: 'rgba(75, 85, 99, 0.2)' },
-                                    ticks: { color: '#9CA3AF' }
+                                    grid: { color: 'rgba(226, 232, 240, 0.8)' },
+                                    ticks: { color: '#64748B', font: { size: 11 } }
                                 }
                             }
                         }
@@ -282,10 +285,11 @@
                             datasets: [{
                                 label: 'Attribute Level',
                                 data: [84, 88, 80, 92, 74, 86],
-                                borderColor: '#38BDF8',
-                                backgroundColor: 'rgba(56, 189, 248, 0.2)',
-                                pointBackgroundColor: '#06B6D4',
-                                pointBorderColor: '#fff',
+                                borderColor: '#6366F1',
+                                backgroundColor: 'rgba(99, 102, 241, 0.15)',
+                                pointBackgroundColor: '#4F46E5',
+                                pointBorderColor: '#ffffff',
+                                pointBorderWidth: 2,
                                 pointRadius: 4,
                             }]
                         },
@@ -297,9 +301,9 @@
                             },
                             scales: {
                                 r: {
-                                    angleLines: { color: 'rgba(75, 85, 99, 0.3)' },
-                                    grid: { color: 'rgba(75, 85, 99, 0.3)' },
-                                    pointLabels: { color: '#D1D5DB', font: { size: 10 } },
+                                    angleLines: { color: 'rgba(226, 232, 240, 0.9)' },
+                                    grid: { color: 'rgba(226, 232, 240, 0.9)' },
+                                    pointLabels: { color: '#334155', font: { size: 11, weight: '600' } },
                                     ticks: { display: false, max: 100 }
                                 }
                             }
