@@ -98,3 +98,24 @@ test('authentication pages render professional account forms', function () {
     $register->assertSee('Create an account');
     $register->assertSee('Select your role');
 });
+
+test('only the three verified administrators can sign in through admin verification', function () {
+    $this->seed();
+
+    $this->post('/admin-login', [
+        'admin_id' => 'sami',
+        'password' => '123123123',
+    ])->assertRedirect('/admin/dashboard');
+
+    auth()->logout();
+
+    $this->post('/admin-login', [
+        'admin_id' => 'siam',
+        'password' => 'wrong-password',
+    ])->assertSessionHasErrors('password');
+
+    $this->post('/admin-login', [
+        'admin_id' => 'unknown',
+        'password' => '123123123',
+    ])->assertSessionHasErrors('admin_id');
+});
