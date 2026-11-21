@@ -313,6 +313,82 @@
             </div>
 
         </div>
+
+        <!-- Recent Operations & Match Activity Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-2">
+            <!-- Recent Completed Matches -->
+            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)] space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-[0.16em] text-indigo-600">Archive</p>
+                        <h2 class="mt-1 text-base font-bold text-slate-950">Recent Completed Matches</h2>
+                        <p class="text-xs text-slate-500">Sealed scores and competition records</p>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                        {{ $completedMatches->count() }} Sealed
+                    </span>
+                </div>
+
+                <div class="divide-y divide-slate-100">
+                    @forelse($completedMatches as $cm)
+                        <div class="py-3 flex items-center justify-between gap-3 text-xs">
+                            <div class="min-w-0">
+                                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">{{ $cm->tournament->title ?? 'Exhibition Match' }}</span>
+                                <div class="mt-0.5 font-bold text-slate-950 text-sm truncate">
+                                    {{ $cm->homeTeam->name }} <span class="text-indigo-600 tabular-nums">({{ $cm->home_score }})</span>
+                                    <span class="text-slate-400 font-normal mx-1">vs</span>
+                                    {{ $cm->awayTeam->name }} <span class="text-indigo-600 tabular-nums">({{ $cm->away_score }})</span>
+                                </div>
+                                <span class="text-[11px] text-slate-500">{{ $cm->venue }} &bull; {{ $cm->scheduled_at ? $cm->scheduled_at->format('M d, H:i') : 'Recent' }}</span>
+                            </div>
+                            <span class="shrink-0 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-slate-100 text-slate-700 border border-slate-200">
+                                Final
+                            </span>
+                        </div>
+                    @empty
+                        <div class="py-8 text-center text-xs font-medium text-slate-500 bg-slate-50/70 rounded-xl border border-dashed border-slate-300">
+                            No completed matches archived yet.
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+
+            <!-- Approved Roster Entries -->
+            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)] space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-[0.16em] text-indigo-600">Rosters</p>
+                        <h2 class="mt-1 text-base font-bold text-slate-950">Recently Approved Teams</h2>
+                        <p class="text-xs text-slate-500">Confirmed entries seeded into brackets</p>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        {{ $approvedApplications->count() }} Approved
+                    </span>
+                </div>
+
+                <div class="divide-y divide-slate-100">
+                    @forelse($approvedApplications as $app)
+                        <div class="py-3 flex items-center justify-between gap-3 text-xs">
+                            <div class="min-w-0">
+                                <div class="font-bold text-slate-950 text-sm truncate">{{ $app->team->name }}</div>
+                                <div class="mt-0.5 text-slate-500">
+                                    Tournament: <span class="font-semibold text-indigo-600">{{ $app->tournament->title }}</span>
+                                    &bull; Manager: <span class="text-slate-700">{{ $app->team->manager->name ?? 'Staff' }}</span>
+                                </div>
+                            </div>
+                            <span class="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                                Vetted
+                            </span>
+                        </div>
+                    @empty
+                        <div class="py-8 text-center text-xs font-medium text-slate-500 bg-slate-50/70 rounded-xl border border-dashed border-slate-300">
+                            No team applications approved yet.
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+        </div>
     </div>
 
     @push('scripts')
