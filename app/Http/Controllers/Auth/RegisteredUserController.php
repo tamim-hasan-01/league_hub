@@ -10,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
@@ -25,26 +26,32 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'string', 'in:manager,player,viewer'],
             'areal_zone' => ['nullable', 'string', 'max:100'],
             'primary_sport' => ['nullable', 'string', 'max:50'],
-            'jersey_number' => ['nullable', 'string', 'max:10'],
+            'jersey_number' => ['nullable', 'integer', 'between:1,99'],
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
-            'areal_zone' => $request->areal_zone ?? 'Metro Central',
+            'name' => Str::squish($request->string('name')->toString()),
+            'email' => Str::lower(trim($request->string('email')->toString())),
+            'password' => Hash::make($request->string('password')->toString()),
+            'role' => $request->string('role')->toString(),
+            'areal_zone' => $request->filled('areal_zone')
+                ? $request->string('areal_zone')->toString()
+                : 'Metro Central',
         ]);
 
         if ($user->role === 'player') {
             PlayerProfile::create([
                 'user_id' => $user->id,
-                'jersey_number' => $request->jersey_number ?? rand(1, 99),
-                'primary_sport' => $request->primary_sport ?? 'Football',
+                'jersey_number' => $request->filled('jersey_number')
+                    ? (string) $request->integer('jersey_number')
+                    : (string) rand(1, 99),
+                'primary_sport' => $request->filled('primary_sport')
+                    ? $request->string('primary_sport')->toString()
+                    : 'Football',
                 'is_injured' => false,
                 'injury_notes' => null,
                 'areal_ranking' => rand(15, 80),
@@ -66,4 +73,3 @@ class RegisteredUserController extends Controller
         return redirect()->route('home')->with('success', 'Registration successful! Welcome to the League Platform.');
     }
 }
-
