@@ -125,53 +125,62 @@
 
         <!-- Match Appearance History & Callups -->
         <div class="space-y-4">
-            <h2 class="text-xl font-bold text-white">Match Appearance Logs & Call-up History</h2>
+            <div class="flex items-end justify-between">
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-[0.16em] text-indigo-600">Call-up history</p>
+                    <h2 class="mt-1 text-2xl font-black tracking-tight text-slate-950">Match Appearance Logs &amp; Call-up History</h2>
+                </div>
+                <span class="text-xs font-semibold text-slate-400">{{ $invitations->count() }} records</span>
+            </div>
 
-            <div class="bg-gray-800 border border-gray-700 rounded-2xl overflow-hidden shadow-xl">
+            <div class="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-[0_8px_24px_rgba(15,23,42,0.05)]">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs">
-                        <thead class="bg-gray-900/80 text-gray-400 uppercase tracking-wider font-semibold border-b border-gray-700">
+                        <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider font-bold text-[11px] border-b border-slate-200">
                             <tr>
-                                <th class="p-3.5">Fixture</th>
-                                <th class="p-3.5">Tournament / Stage</th>
-                                <th class="p-3.5">Venue</th>
-                                <th class="p-3.5">Kickoff</th>
-                                <th class="p-3.5">Call-up Status</th>
-                                <th class="p-3.5">Manager Notes</th>
+                                <th class="p-4">Fixture</th>
+                                <th class="p-4">Tournament / Stage</th>
+                                <th class="p-4">Venue</th>
+                                <th class="p-4">Kickoff</th>
+                                <th class="p-4">Call-up Status</th>
+                                <th class="p-4">Manager Notes</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-700/60 text-gray-300">
+                        <tbody class="divide-y divide-slate-100 text-slate-700">
                             @forelse($invitations as $inv)
-                                <tr class="hover:bg-gray-750 transition">
-                                    <td class="p-3.5 font-bold text-white">
+                                <tr class="hover:bg-slate-50/80 transition">
+                                    <td class="p-4 font-bold text-slate-950">
                                         {{ $inv->match->homeTeam->name ?? 'Home' }} vs {{ $inv->match->awayTeam->name ?? 'Away' }}
                                     </td>
-                                    <td class="p-3.5">
-                                        <span class="text-cyan-400">{{ $inv->match->tournament->title ?? 'Friendly Exhibition' }}</span>
-                                        <span class="text-gray-500 block text-[11px]">({{ str_replace('_', ' ', $inv->match->stage) }})</span>
+                                    <td class="p-4">
+                                        <span class="font-semibold text-indigo-600">{{ $inv->match->tournament->title ?? 'Friendly Exhibition' }}</span>
+                                        <span class="text-slate-400 block text-[11px]">({{ str_replace('_', ' ', $inv->match->stage) }})</span>
                                     </td>
-                                    <td class="p-3.5">{{ $inv->match->venue }}</td>
-                                    <td class="p-3.5 font-mono text-gray-400">{{ $inv->match->scheduled_at->format('M d, H:i') }}</td>
-                                    <td class="p-3.5">
+                                    <td class="p-4 text-slate-600">{{ $inv->match->venue }}</td>
+                                    <td class="p-4 font-mono font-medium text-slate-600">{{ $inv->match->scheduled_at->format('M d, H:i') }}</td>
+                                    <td class="p-4">
                                         @if($inv->status === 'accepted')
-                                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
                                                 Accepted
                                             </span>
                                         @elseif($inv->status === 'declined')
-                                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30">
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                                                <span class="h-1.5 w-1.5 rounded-full bg-rose-500"></span>
                                                 Declined
                                             </span>
                                         @else
-                                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                                                <span class="h-1.5 w-1.5 rounded-full bg-amber-500"></span>
                                                 Pending Response
                                             </span>
                                         @endif
                                     </td>
-                                    <td class="p-3.5 text-gray-400 italic">{{ $inv->manager_notes ?? 'Regular squad callup' }}</td>
+                                    <td class="p-4 text-slate-500 italic">{{ $inv->manager_notes ?? 'Regular squad callup' }}</td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="p-8 text-center text-gray-500">
+                                    <td colspan="6" class="p-10 text-center text-xs font-medium text-slate-500">
                                         No callup invitations found in player history.
                                     </td>
                                 </tr>
@@ -185,12 +194,12 @@
     </div>
 
     <!-- Health Toggle Modal -->
-    <div id="health-toggle-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div id="health-toggle-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full bg-slate-950/60 backdrop-blur-sm">
         <div class="relative p-4 w-full max-w-md max-h-full">
-            <div class="relative bg-gray-800 border border-gray-700 rounded-2xl shadow-2xl p-6">
-                <div class="flex items-center justify-between pb-3 mb-4 border-b border-gray-700">
-                    <h3 class="text-base font-bold text-white">Update Medical & Fitness Status</h3>
-                    <button type="button" class="text-gray-400 hover:text-white rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center" data-modal-hide="health-toggle-modal">
+            <div class="relative bg-white border border-slate-200 rounded-2xl shadow-2xl p-6">
+                <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-100">
+                    <h3 class="text-base font-bold text-slate-950">Update Medical &amp; Fitness Status</h3>
+                    <button type="button" class="text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center" data-modal-hide="health-toggle-modal">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 14 14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
                     </button>
                 </div>
@@ -198,25 +207,31 @@
                 <form action="{{ route('mystats.toggleHealth') }}" method="POST" class="space-y-4">
                     @csrf
                     <div>
-                        <label class="block mb-2 text-xs font-semibold text-gray-300 uppercase">Status</label>
+                        <label class="block mb-2 text-xs font-bold uppercase tracking-[0.12em] text-slate-600">Status</label>
                         <div class="grid grid-cols-2 gap-3">
-                            <label class="cursor-pointer p-3 rounded-xl border border-gray-700 text-center flex items-center justify-center gap-2 has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-500/10 has-[:checked]:text-white">
+                            <label class="cursor-pointer p-3 rounded-xl border border-slate-200 text-center flex items-center justify-center gap-2 transition has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50 has-[:checked]:ring-1 has-[:checked]:ring-indigo-600">
                                 <input type="radio" name="is_injured" value="0" {{ !$profile->is_injured ? 'checked' : '' }} class="sr-only">
-                                <span class="text-emerald-400 font-bold text-xs">Active & Fit</span>
+                                <span class="text-emerald-700 font-bold text-xs flex items-center gap-1.5">
+                                    <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                                    Active &amp; Fit
+                                </span>
                             </label>
-                            <label class="cursor-pointer p-3 rounded-xl border border-gray-700 text-center flex items-center justify-center gap-2 has-[:checked]:border-red-500 has-[:checked]:bg-red-500/10 has-[:checked]:text-white">
+                            <label class="cursor-pointer p-3 rounded-xl border border-slate-200 text-center flex items-center justify-center gap-2 transition has-[:checked]:border-rose-500 has-[:checked]:bg-rose-50 has-[:checked]:ring-1 has-[:checked]:ring-rose-500">
                                 <input type="radio" name="is_injured" value="1" {{ $profile->is_injured ? 'checked' : '' }} class="sr-only">
-                                <span class="text-red-400 font-bold text-xs">Injured (Medical Hold)</span>
+                                <span class="text-rose-700 font-bold text-xs flex items-center gap-1.5">
+                                    <span class="h-2 w-2 rounded-full bg-rose-500"></span>
+                                    Injured (Hold)
+                                </span>
                             </label>
                         </div>
                     </div>
 
                     <div>
-                        <label for="injury_notes" class="block mb-1 text-xs font-medium text-gray-300">Medical Notes / Physio Report</label>
-                        <textarea name="injury_notes" id="injury_notes" rows="3" class="bg-gray-900 border border-gray-700 text-white text-xs rounded-lg block w-full p-2.5" placeholder="Specify injury description (e.g., Hamstring grade 1, recovery ETA 10 days)...">{{ $profile->injury_notes }}</textarea>
+                        <label for="injury_notes" class="block mb-1.5 text-xs font-bold text-slate-600">Medical Notes / Physio Report</label>
+                        <textarea name="injury_notes" id="injury_notes" rows="3" class="block w-full rounded-xl border border-slate-200 bg-white p-3 text-xs text-slate-900 placeholder:text-slate-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" placeholder="Specify injury description (e.g., Hamstring grade 1, recovery ETA 10 days)...">{{ $profile->injury_notes }}</textarea>
                     </div>
 
-                    <button type="submit" class="w-full text-gray-950 bg-gradient-to-r from-cyan-500 to-sky-400 hover:from-cyan-400 font-bold rounded-lg text-sm px-5 py-2.5 text-center transition">
+                    <button type="submit" class="w-full inline-flex items-center justify-center rounded-xl bg-slate-950 px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-indigo-600">
                         Update Health Record
                     </button>
                 </form>
