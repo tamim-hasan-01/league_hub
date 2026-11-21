@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
@@ -23,16 +25,31 @@ class AuthenticatedSessionController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            $request->session()->regenerate();
+        $email = Str::lower(trim($credentials['email']));
+        $user = User::where('email', $email)->first();
 
-            return redirect()->intended(route('home'))
-                ->with('success', 'Logged in successfully as '.Auth::user()->name);
+        if (! $user) {
+            return back()->withErrors([
+                'email' => 'No account was found with this email address.',
+            ])->onlyInput('email');
         }
 
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->onlyInput('email');
+        if (! Hash::check($credentials['password'], $user->password)) {
+            return back()->withErrors([
+                'password' => 'The password you entered is incorrect.',
+            ])->onlyInput('email');
+        }
+
+        Auth::login($user, $request->boolean('remember'));
+        $request->session()->regenerate();
+
+        $roleLabel = ucfirst($user->role);
+        $redirect = $user->isAdmin()
+            ? route('admin.dashboard')
+            : route('mytournaments');
+
+        return redirect()->intended($redirect)
+            ->with('success', "Welcome back, {$user->name}. Signed in as {$roleLabel}.");
     }
 
     public function storeAdmin(Request $request): RedirectResponse
