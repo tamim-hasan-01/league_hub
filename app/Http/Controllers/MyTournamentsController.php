@@ -62,7 +62,7 @@ class MyTournamentsController extends Controller
                 ->orderBy('name')
                 ->get();
         } elseif ($user->isManager()) {
-            $memberDirectory = User::whereIn('role', ['manager', 'player', 'viewer'])
+            $memberDirectory = User::whereIn('role', ['player', 'viewer'])
                 ->orderByRaw("CASE WHEN account_status = 'suspended' THEN 0 ELSE 1 END")
                 ->orderBy('name')
                 ->get();

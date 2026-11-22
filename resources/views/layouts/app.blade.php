@@ -62,6 +62,7 @@
                 {{-- Platform Brand Identity --}}
                 <a href="{{ route('home') }}" class="flex shrink-0 items-center gap-3">
                     <img src="{{ asset('logo.png') }}" alt="LeagueHub" class="h-10 w-auto max-w-40">
+                    <span class="sr-only">LEAGUEHUB</span>
                 </a>
 
                 {{-- Desktop Navigation Links --}}

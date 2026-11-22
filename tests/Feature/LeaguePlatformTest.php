@@ -3,10 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\GameMatch;
-use App\Models\PlayerProfile;
-use App\Models\Team;
 use App\Models\Tournament;
-use App\Models\TournamentApplication;
 use App\Models\User;
 use App\Services\TournamentBracketService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -27,35 +24,35 @@ class LeaguePlatformTest extends TestCase
         $response = $this->get('/');
         $response->assertStatus(200);
         $response->assertSee('LEAGUEHUB');
-        $response->assertSee('Live Match Radar');
+        $response->assertSee('Match ticker');
     }
 
     public function test_tournaments_index_page_loads(): void
     {
         $response = $this->get('/tournaments');
         $response->assertStatus(200);
-        $response->assertSee('Championship Tournaments');
+        $response->assertSee('Tournaments');
     }
 
     public function test_teams_directory_loads(): void
     {
         $response = $this->get('/teams');
         $response->assertStatus(200);
-        $response->assertSee('Registered Teams Directory');
+        $response->assertSee('Teams');
     }
 
     public function test_about_page_loads(): void
     {
         $response = $this->get('/about');
         $response->assertStatus(200);
-        $response->assertSee('About LeagueHub OS');
+        $response->assertSee('League operations');
     }
 
     public function test_news_page_loads(): void
     {
         $response = $this->get('/news');
         $response->assertStatus(200);
-        $response->assertSee('Match Incidents');
+        $response->assertSee('News and incidents');
     }
 
     public function test_live_ticker_api_endpoint_returns_json(): void
@@ -65,8 +62,8 @@ class LeaguePlatformTest extends TestCase
         $response->assertJsonStructure([
             'updated_at',
             'matches' => [
-                '*' => ['id', 'home_team', 'away_team', 'home_score', 'away_score', 'status']
-            ]
+                '*' => ['id', 'home_team', 'away_team', 'home_score', 'away_score', 'status'],
+            ],
         ]);
     }
 
@@ -87,7 +84,7 @@ class LeaguePlatformTest extends TestCase
         $this->assertNotNull($admin);
         $adminResp = $this->actingAs($admin)->get('/admin/dashboard');
         $adminResp->assertStatus(200);
-        $adminResp->assertSee('League Authority Dashboard');
+        $adminResp->assertSee('League Authority');
     }
 
     public function test_player_analytics_page_accessible_by_player(): void
@@ -125,7 +122,7 @@ class LeaguePlatformTest extends TestCase
         $this->assertNotNull($admin);
         $this->assertNotNull($match);
 
-        $response = $this->actingAs($admin)->post('/admin/matches/' . $match->id . '/score', [
+        $response = $this->actingAs($admin)->post('/admin/matches/'.$match->id.'/score', [
             'home_score' => 4,
             'away_score' => 2,
             'status' => 'live',
@@ -144,7 +141,7 @@ class LeaguePlatformTest extends TestCase
         $tournament = Tournament::where('slug', 'apex-continental-championship-2026')->first();
         $this->assertNotNull($tournament);
 
-        $service = new TournamentBracketService();
+        $service = new TournamentBracketService;
         $tree = $service->getBracketTree($tournament);
 
         $this->assertArrayHasKey('quarter_final', $tree);

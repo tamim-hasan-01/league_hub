@@ -60,7 +60,7 @@ Route::get('/news/{slug}', [NewsController::class, 'show'])->name('news.show');
 // 4. Authenticated Member Features
 // Requires active login session for participation and operations
 // ==========================================
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'account.active'])->group(function () {
     // Tournament Management & Entry Applications
     Route::POST('/tournaments', [TournamentController::class, 'store'])->name('tournaments.store');
     Route::POST('/tournaments/{tournament}/apply', [TournamentController::class, 'apply'])->name('tournaments.apply');

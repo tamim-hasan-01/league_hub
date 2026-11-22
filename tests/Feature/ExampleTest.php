@@ -246,6 +246,25 @@ test('registration rejects duplicate normalized email addresses', function () {
     ])->assertSessionHasErrors('email');
 });
 
+test('an already authenticated suspended account is logged out on the next request', function () {
+    $this->seed();
+
+    $user = User::where('email', 'viewer@leaguehub.com')->first();
+    $this->actingAs($user);
+    $this->get('/mytournaments')->assertOk();
+
+    $user->update([
+        'account_status' => 'suspended',
+        'suspension_matches_remaining' => 2,
+        'suspension_reason' => 'Conduct review',
+    ]);
+
+    $this->get('/mytournaments')
+        ->assertRedirect('/login')
+        ->assertSessionHasErrors('password');
+    $this->assertGuest();
+});
+
 test('administrators can suspend and restore member accounts', function () {
     $this->seed();
 
