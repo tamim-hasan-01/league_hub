@@ -119,3 +119,87 @@ test('only the three verified administrators can sign in through admin verificat
         'password' => '123123123',
     ])->assertSessionHasErrors('admin_id');
 });
+
+test('a player can register and persist a player profile', function () {
+    $this->post('/register', [
+        'name' => 'Test Player',
+        'email' => 'test.player@example.com',
+        'password' => 'StrongPass123!',
+        'password_confirmation' => 'StrongPass123!',
+        'role' => 'player',
+        'areal_zone' => 'North Region',
+        'primary_sport' => 'Football',
+        'jersey_number' => 27,
+    ])->assertRedirect('/');
+
+    $this->assertAuthenticated();
+    $this->assertDatabaseHas('users', [
+        'name' => 'Test Player',
+        'email' => 'test.player@example.com',
+        'role' => 'player',
+    ]);
+    $this->assertDatabaseHas('player_profiles', [
+        'jersey_number' => '27',
+        'primary_sport' => 'Football',
+    ]);
+});
+
+test('manager and viewer accounts can register and sign in with the saved password', function () {
+    foreach ([
+        'manager' => 'manager.account@example.com',
+        'viewer' => 'viewer.account@example.com',
+    ] as $role => $email) {
+        auth()->logout();
+        $this->post('/register', [
+            'name' => ucfirst($role).' Account',
+            'email' => $email,
+            'password' => 'StrongPass123!',
+            'password_confirmation' => 'StrongPass123!',
+            'role' => $role,
+            'areal_zone' => 'Metro Central',
+        ])->assertRedirect('/');
+
+        $this->assertAuthenticated();
+        auth()->logout();
+    }
+
+    $response = $this->post('/login', [
+        'email' => 'manager.account@example.com',
+        'password' => 'StrongPass123!',
+    ]);
+    $response->assertRedirect('/mytournaments');
+    $this->assertAuthenticated();
+
+    auth()->logout();
+    $this->post('/login', [
+        'email' => 'viewer.account@example.com',
+        'password' => 'wrong-password',
+    ])->assertSessionHasErrors('password');
+});
+
+test('login rejects unknown accounts and incorrect passwords with specific errors', function () {
+    $this->seed();
+
+    $this->post('/login', [
+        'email' => 'missing.user@example.com',
+        'password' => 'StrongPass123!',
+    ])->assertSessionHasErrors('email');
+
+    $this->post('/login', [
+        'email' => 'player@leaguehub.com',
+        'password' => 'wrong-password',
+    ])->assertSessionHasErrors('password');
+});
+
+test('registration rejects duplicate normalized email addresses', function () {
+    $this->seed();
+
+    $this->post('/register', [
+        'name' => 'Duplicate Viewer',
+        'email' => 'VIEWER@leaguehub.com',
+        'password' => 'StrongPass123!',
+        'password_confirmation' => 'StrongPass123!',
+        'role' => 'viewer',
+        'areal_zone' => 'Metro Central',
+    ])->assertSessionHasErrors('email');
+});
