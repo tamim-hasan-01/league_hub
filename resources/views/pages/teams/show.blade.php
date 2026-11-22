@@ -1,302 +1,262 @@
 <x-app-layout>
-    <div class="space-y-10" x-data="{ tab: 'roster' }">
-        <!-- Team Header Card -->
-        <div class="relative overflow-hidden rounded-3xl bg-gray-800 border border-gray-700 p-6 sm:p-8 shadow-2xl">
-            <div class="absolute -top-16 -right-16 w-64 h-64 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none"></div>
+    <div class="space-y-8" x-data="{ tab: 'roster' }">
+        @php $record = $team->record; @endphp
 
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
-                <div class="flex items-start sm:items-center gap-4 sm:gap-6">
-                    <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-cyan-600 to-sky-400 flex items-center justify-center font-black text-white text-2xl sm:text-3xl shadow-xl shrink-0">
-                        {{ substr($team->name, 0, 2) }}
-                    </div>
-
-                    <div class="space-y-1.5">
-                        <div class="flex flex-wrap items-center gap-2">
-                            <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
-                                {{ $team->sport_type }}
-                            </span>
-                            <span class="px-2.5 py-0.5 rounded text-xs font-mono font-bold text-sky-400 bg-gray-900 border border-gray-700">
-                                Regional Rank #{{ $team->areal_ranking }}
-                            </span>
+        <section class="relative overflow-hidden rounded-[28px] border border-slate-200 bg-slate-950 text-white">
+            <div class="absolute right-0 top-0 h-full w-2/5 bg-[radial-gradient(circle_at_center,rgba(129,140,248,0.24),transparent_68%)]"></div>
+            <div class="relative grid gap-8 px-6 py-8 sm:px-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:px-10 lg:py-10">
+                <div class="min-w-0">
+                    <div class="flex flex-wrap items-center gap-3">
+                        <span class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white text-xl font-black text-slate-950">
+                            {{ strtoupper(substr($team->name, 0, 2)) }}
+                        </span>
+                        <div class="min-w-0">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="rounded-full border border-indigo-300/20 bg-indigo-300/10 px-3 py-1 text-xs font-bold text-indigo-200">{{ $team->sport_type }}</span>
+                                <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-bold text-slate-200">Rank #{{ $team->areal_ranking }}</span>
+                            </div>
+                            <h1 class="mt-2 text-3xl font-black leading-tight tracking-tight sm:text-4xl lg:text-5xl">{{ $team->name }}</h1>
                         </div>
-                        <h1 class="text-2xl sm:text-4xl font-black text-white tracking-tight">{{ $team->name }}</h1>
-                        <p class="text-xs text-gray-400">
-                            Home Venue: <span class="text-gray-200 font-medium">{{ $team->home_venue ?? 'City Arena' }}</span>
-                            &bull; Manager: <span class="text-cyan-400 font-semibold">{{ $team->manager->name ?? 'Staff' }}</span>
-                        </p>
+                    </div>
+                    <div class="mt-6 grid gap-px overflow-hidden rounded-xl border border-white/10 bg-white/10 sm:grid-cols-3">
+                        <div class="bg-slate-950/75 px-4 py-4">
+                            <p class="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-400">Home venue</p>
+                            <p class="mt-2 text-sm font-bold text-white">{{ $team->home_venue ?: 'Venue TBA' }}</p>
+                        </div>
+                        <div class="bg-slate-950/75 px-4 py-4">
+                            <p class="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-400">Manager</p>
+                            <p class="mt-2 text-sm font-bold text-white">{{ $team->manager->name ?? 'League staff' }}</p>
+                        </div>
+                        <div class="bg-slate-950/75 px-4 py-4">
+                            <p class="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-400">Roster size</p>
+                            <p class="mt-2 text-sm font-bold text-white">{{ $team->players->count() }} players</p>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Manager Action Buttons -->
-                @can('manage-team', $team)
-                    <div class="flex flex-wrap items-center gap-2.5">
-                        <button data-modal-target="recruit-player-modal" data-modal-toggle="recruit-player-modal" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-gray-950 shadow-md transition flex items-center gap-1.5">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
-                            <span>Recruit Player</span>
+                <aside class="flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 lg:self-start">
+                    @can('manage-team', $team)
+                        <button type="button" data-modal-target="recruit-player-modal" data-modal-toggle="recruit-player-modal"
+                                class="flex h-12 w-full items-center justify-center rounded-xl bg-white text-sm font-bold text-slate-950 hover:bg-indigo-100">
+                            Recruit player
                         </button>
-
-                        <button data-modal-target="propose-friendly-modal" data-modal-toggle="propose-friendly-modal" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-sky-600 hover:bg-sky-500 text-white shadow-md transition flex items-center gap-1.5">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            <span>Propose Friendly Match</span>
+                        <button type="button" data-modal-target="propose-friendly-modal" data-modal-toggle="propose-friendly-modal"
+                                class="flex h-12 w-full items-center justify-center rounded-xl border border-white/15 bg-white/5 text-sm font-bold text-white hover:bg-white/10">
+                            Propose friendly
                         </button>
-
-                        <a href="{{ route('teams.edit', $team->id) }}" class="p-2 rounded-xl bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white transition" title="Edit Team">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                        <a href="{{ route('teams.edit', $team->id) }}" class="flex h-12 w-full items-center justify-center rounded-xl border border-indigo-300/30 bg-indigo-300/10 text-sm font-bold text-indigo-100 hover:bg-indigo-300/20">
+                            Edit team
                         </a>
-                    </div>
-                @endcan
+                    @endcan
+                </aside>
             </div>
+        </section>
 
-            <!-- Win Loss Stats Pill Grid -->
-            @php $record = $team->record; @endphp
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-gray-700/60">
-                <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-700/60 text-center">
-                    <span class="text-gray-400 text-[11px] block uppercase font-semibold">Total Fixtures</span>
-                    <span class="text-xl font-black text-white">{{ $record['total'] }}</span>
+        <section class="grid grid-cols-2 overflow-hidden rounded-2xl border border-slate-200 bg-slate-200 sm:grid-cols-4">
+            @foreach([
+                ['Fixtures', $record['total'], 'text-slate-950'],
+                ['Wins', $record['wins'], 'text-emerald-700'],
+                ['Losses', $record['losses'], 'text-rose-700'],
+                ['Draws', $record['draws'], 'text-slate-700'],
+            ] as [$label, $value, $valueClass])
+                <div class="bg-white px-5 py-5 text-center">
+                    <p class="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-400">{{ $label }}</p>
+                    <p class="mt-2 text-3xl font-black tabular-nums {{ $valueClass }}">{{ $value }}</p>
                 </div>
-                <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-700/60 text-center">
-                    <span class="text-gray-400 text-[11px] block uppercase font-semibold">Victories</span>
-                    <span class="text-xl font-black text-emerald-400">{{ $record['wins'] }}</span>
-                </div>
-                <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-700/60 text-center">
-                    <span class="text-gray-400 text-[11px] block uppercase font-semibold">Defeats</span>
-                    <span class="text-xl font-black text-rose-400">{{ $record['losses'] }}</span>
-                </div>
-                <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-700/60 text-center">
-                    <span class="text-gray-400 text-[11px] block uppercase font-semibold">Draws</span>
-                    <span class="text-xl font-black text-gray-300">{{ $record['draws'] }}</span>
-                </div>
+            @endforeach
+        </section>
+
+        <nav class="overflow-x-auto border-b border-slate-200" aria-label="Team sections">
+            <div class="flex min-w-max gap-1 sm:gap-2">
+                <button type="button" @click="tab = 'roster'"
+                        :class="tab === 'roster' ? 'border-slate-950 text-slate-950' : 'border-transparent text-slate-500 hover:text-slate-900'"
+                        class="border-b-2 px-4 py-3 text-sm font-bold transition">
+                    Roster <span class="ml-1 text-slate-400">{{ $team->players->count() }}</span>
+                </button>
+                <button type="button" @click="tab = 'matches'"
+                        :class="tab === 'matches' ? 'border-slate-950 text-slate-950' : 'border-transparent text-slate-500 hover:text-slate-900'"
+                        class="border-b-2 px-4 py-3 text-sm font-bold transition">
+                    Matches <span class="ml-1 text-slate-400">{{ $matches->count() }}</span>
+                </button>
+                <button type="button" @click="tab = 'tournaments'"
+                        :class="tab === 'tournaments' ? 'border-slate-950 text-slate-950' : 'border-transparent text-slate-500 hover:text-slate-900'"
+                        class="border-b-2 px-4 py-3 text-sm font-bold transition">
+                    Tournaments <span class="ml-1 text-slate-400">{{ $team->tournaments->count() }}</span>
+                </button>
             </div>
-        </div>
+        </nav>
 
-        <!-- Tabs Navigation -->
-        <div class="flex items-center gap-3 border-b border-gray-800 pb-2">
-            <button @click="tab = 'roster'" :class="tab === 'roster' ? 'text-cyan-400 border-b-2 border-cyan-400 font-bold' : 'text-gray-400 hover:text-white'" class="px-4 py-2 text-sm transition">
-                Roster & Player Health ({{ $team->players->count() }})
-            </button>
-            <button @click="tab = 'matches'" :class="tab === 'matches' ? 'text-cyan-400 border-b-2 border-cyan-400 font-bold' : 'text-gray-400 hover:text-white'" class="px-4 py-2 text-sm transition">
-                Historical Matches & Schedule ({{ $matches->count() }})
-            </button>
-            <button @click="tab = 'tournaments'" :class="tab === 'tournaments' ? 'text-cyan-400 border-b-2 border-cyan-400 font-bold' : 'text-gray-400 hover:text-white'" class="px-4 py-2 text-sm transition">
-                Tournament Affiliations ({{ $team->tournaments->count() }})
-            </button>
-        </div>
-
-        <!-- TAB 1: Active Roster & Injury Badges -->
-        <div x-show="tab === 'roster'" class="space-y-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h2 class="text-xl font-bold text-white">Active Roster & Medical Status</h2>
-                    <p class="text-xs text-gray-400">Players contracted under {{ $team->name }}. Players on medical hold are marked with injury warnings.</p>
-                </div>
+        <div x-show="tab === 'roster'" class="space-y-5">
+            <div>
+                <p class="text-sm font-semibold text-indigo-600">Squad</p>
+                <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Roster and player status</h2>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 @forelse($team->players as $player)
                     @php $profile = $player->playerProfile; @endphp
-                    <div class="bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-lg flex flex-col justify-between relative overflow-hidden">
-                        @if($profile && $profile->is_injured)
-                            <div class="absolute top-0 right-0 left-0 bg-red-600/20 border-b border-red-500/40 text-red-300 text-[10px] font-bold py-0.5 px-3 flex items-center justify-between">
-                                <span class="flex items-center gap-1">
-                                    <svg class="w-3 h-3 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                                    MEDICAL HOLD (INJURED)
+                    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_24px_rgba(15,23,42,0.05)]">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex min-w-0 items-center gap-3">
+                                <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-sm font-black text-slate-700">
+                                    #{{ $profile->jersey_number ?? '-' }}
                                 </span>
-                                <span>No. {{ $profile->jersey_number ?? '10' }}</span>
+                                <div class="min-w-0">
+                                    <h3 class="truncate font-black text-slate-950">{{ $player->name }}</h3>
+                                    <p class="mt-1 truncate text-sm text-slate-500">{{ $player->pivot->position ?: 'Starter' }}</p>
+                                </div>
+                            </div>
+                            @if($profile && $profile->is_injured)
+                                <span class="shrink-0 rounded-full border border-rose-200 bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-700">Injured</span>
+                            @else
+                                <span class="shrink-0 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700">Active</span>
+                            @endif
+                        </div>
+
+                        @if($profile && $profile->is_injured && $profile->injury_notes)
+                            <div class="mt-4 rounded-xl border border-rose-100 bg-rose-50 p-3">
+                                <p class="text-[11px] font-bold uppercase tracking-[0.10em] text-rose-500">Medical notes</p>
+                                <p class="mt-1 text-xs leading-5 text-rose-700">{{ $profile->injury_notes }}</p>
                             </div>
                         @endif
 
-                        <div class="pt-3">
-                            <div class="flex items-start justify-between gap-3 mb-3">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-gray-900 border border-gray-700 flex items-center justify-center font-bold text-cyan-400 text-sm">
-                                        #{{ $profile->jersey_number ?? rand(1, 99) }}
-                                    </div>
-                                    <div>
-                                        <div class="font-bold text-white text-sm">{{ $player->name }}</div>
-                                        <div class="text-xs text-gray-400">{{ $player->pivot->position ?? 'Starter' }}</div>
-                                    </div>
+                        @if($profile && $profile->career_stats)
+                            <div class="mt-4 grid grid-cols-3 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 text-center">
+                                <div class="px-2 py-3">
+                                    <p class="text-[10px] font-bold uppercase text-slate-400">Form</p>
+                                    <p class="mt-1 text-sm font-black text-indigo-700">{{ $profile->career_stats['form_rating'] ?? '-' }}</p>
                                 </div>
-
-                                <div>
-                                    @if($profile && $profile->is_injured)
-                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-500/15 text-red-400 border border-red-500/30">
-                                            Injured
-                                        </span>
-                                    @else
-                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                                            Fit / Active
-                                        </span>
-                                    @endif
+                                <div class="border-x border-slate-200 px-2 py-3">
+                                    <p class="text-[10px] font-bold uppercase text-slate-400">Matches</p>
+                                    <p class="mt-1 text-sm font-black text-slate-900">{{ $profile->career_stats['matches_played'] ?? 0 }}</p>
+                                </div>
+                                <div class="px-2 py-3">
+                                    <p class="text-[10px] font-bold uppercase text-slate-400">Goals</p>
+                                    <p class="mt-1 text-sm font-black text-slate-900">{{ $profile->career_stats['goals_or_points'] ?? 0 }}</p>
                                 </div>
                             </div>
-
-                            @if($profile && $profile->is_injured && $profile->injury_notes)
-                                <div class="mb-3 p-2 bg-red-950/30 rounded-lg border border-red-900/40 text-[11px] text-red-300">
-                                    <span class="font-semibold block text-red-200">Physio Notes:</span>
-                                    {{ $profile->injury_notes }}
-                                </div>
-                            @endif
-
-                            @if($profile && $profile->career_stats)
-                                <div class="grid grid-cols-3 gap-1.5 p-2 bg-gray-900/60 rounded-xl text-center text-xs">
-                                    <div>
-                                        <span class="text-gray-500 block text-[10px]">Form</span>
-                                        <span class="text-cyan-400 font-bold">{{ $profile->career_stats['form_rating'] ?? 7.5 }}</span>
-                                    </div>
-                                    <div>
-                                        <span class="text-gray-500 block text-[10px]">Matches</span>
-                                        <span class="text-white font-bold">{{ $profile->career_stats['matches_played'] ?? 0 }}</span>
-                                    </div>
-                                    <div>
-                                        <span class="text-gray-500 block text-[10px]">Points/Goals</span>
-                                        <span class="text-sky-400 font-bold">{{ $profile->career_stats['goals_or_points'] ?? 0 }}</span>
-                                    </div>
-                                </div>
-                            @endif
-                        </div>
+                        @endif
 
                         @can('manage-team', $team)
-                            <div class="mt-3 pt-2.5 border-t border-gray-700/60 flex items-center justify-end">
-                                <form action="{{ route('teams.removePlayer', [$team->id, $player->id]) }}" method="POST" onsubmit="return confirm('Remove player from roster?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-xs text-red-400 hover:text-red-300 font-medium">Remove from Roster</button>
-                                </form>
-                            </div>
+                            <form action="{{ route('teams.removePlayer', [$team->id, $player->id]) }}" method="POST" class="mt-4 border-t border-slate-100 pt-4" onsubmit="return confirm('Remove player from roster?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-sm font-bold text-rose-600 hover:text-rose-800">Remove from roster</button>
+                            </form>
                         @endcan
-                    </div>
+                    </article>
                 @empty
-                    <div class="col-span-3 text-center py-8 bg-gray-800/40 rounded-xl border border-gray-700 text-gray-400 text-xs">
-                        No players currently enrolled in this roster.
+                    <div class="col-span-full rounded-2xl border border-dashed border-slate-300 bg-slate-50 py-12 text-center">
+                        <p class="text-base font-bold text-slate-700">No players in this roster</p>
                     </div>
                 @endforelse
             </div>
         </div>
 
-        <!-- TAB 2: Historical Match Results -->
-        <div x-show="tab === 'matches'" x-cloak class="space-y-4">
-            <h2 class="text-xl font-bold text-white">Historical Fixtures & Match Logs</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div x-show="tab === 'matches'" x-cloak class="space-y-5">
+            <div>
+                <p class="text-sm font-semibold text-indigo-600">Team fixtures</p>
+                <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Matches and results</h2>
+            </div>
+            <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 @forelse($matches as $match)
                     <x-match-card :match="$match" />
                 @empty
-                    <div class="col-span-3 text-center py-8 bg-gray-800/40 rounded-xl border border-gray-700 text-gray-400 text-xs">
-                        No fixtures recorded for this team yet.
+                    <div class="col-span-full rounded-2xl border border-dashed border-slate-300 bg-slate-50 py-12 text-center">
+                        <p class="text-base font-bold text-slate-700">No fixtures recorded</p>
                     </div>
                 @endforelse
             </div>
         </div>
 
-        <!-- TAB 3: Tournament Affiliations -->
-        <div x-show="tab === 'tournaments'" x-cloak class="space-y-4">
-            <h2 class="text-xl font-bold text-white">Participating Tournaments</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                @forelse($team->tournaments as $t)
-                    <div class="bg-gray-800 border border-gray-700 rounded-xl p-4 flex items-center justify-between">
-                        <div>
-                            <a href="{{ route('tournaments.show', $t->slug) }}" class="font-bold text-white hover:text-cyan-400 transition block">
-                                {{ $t->title }}
-                            </a>
-                            <span class="text-xs text-gray-400">{{ $t->sport_type }} &bull; Phase: {{ $t->current_stage }}</span>
-                        </div>
-                        <a href="{{ route('tournaments.show', $t->slug) }}" class="text-cyan-400 text-xs font-semibold hover:underline">
-                            View &rarr;
+        <div x-show="tab === 'tournaments'" x-cloak class="space-y-5">
+            <div>
+                <p class="text-sm font-semibold text-indigo-600">Competition history</p>
+                <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Tournament affiliations</h2>
+            </div>
+            <div class="grid gap-4 md:grid-cols-2">
+                @forelse($team->tournaments as $tournament)
+                    <article class="rounded-2xl border border-slate-200 bg-white p-5">
+                        <p class="text-xs font-bold uppercase tracking-[0.12em] text-slate-400">{{ $tournament->sport_type }}</p>
+                        <h3 class="mt-2 text-lg font-black text-slate-950">{{ $tournament->title }}</h3>
+                        <p class="mt-1 text-sm capitalize text-slate-500">{{ str_replace('_', ' ', $tournament->current_stage) }} stage</p>
+                        <a href="{{ route('tournaments.show', $tournament->slug) }}" class="mt-5 flex items-center justify-between border-t border-slate-100 pt-4 text-sm font-bold text-indigo-600">
+                            View tournament <span>&rarr;</span>
                         </a>
-                    </div>
+                    </article>
                 @empty
-                    <div class="col-span-2 text-center py-8 bg-gray-800/40 rounded-xl border border-gray-700 text-gray-400 text-xs">
-                        Team has not yet entered any public tournament.
+                    <div class="col-span-full rounded-2xl border border-dashed border-slate-300 bg-slate-50 py-12 text-center">
+                        <p class="text-base font-bold text-slate-700">No tournament affiliations</p>
                     </div>
                 @endforelse
             </div>
         </div>
-
     </div>
 
-    <!-- Recruit Player Modal (For Manager) -->
     @can('manage-team', $team)
-    <div id="recruit-player-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-        <div class="relative p-4 w-full max-w-md max-h-full">
-            <div class="relative bg-gray-800 border border-gray-700 rounded-2xl shadow-2xl p-6">
-                <div class="flex items-center justify-between pb-3 mb-4 border-b border-gray-700">
-                    <h3 class="text-base font-bold text-white">Recruit Athlete to {{ $team->name }}</h3>
-                    <button type="button" class="text-gray-400 hover:text-white rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center" data-modal-hide="recruit-player-modal">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 14 14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
-                    </button>
+        <div id="recruit-player-modal" tabindex="-1" aria-hidden="true" class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-y-auto md:inset-0">
+            <div class="relative w-full max-w-lg p-4">
+                <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                        <div>
+                            <p class="text-xs font-bold uppercase tracking-[0.12em] text-indigo-600">Roster</p>
+                            <h3 class="mt-1 text-lg font-black text-slate-950">Recruit athlete</h3>
+                        </div>
+                        <button type="button" data-modal-hide="recruit-player-modal" aria-label="Close recruitment" class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500">&times;</button>
+                    </div>
+                    <form action="{{ route('teams.addPlayer', $team->id) }}" method="POST" class="mt-5 space-y-4">
+                        @csrf
+                        <div>
+                            <label for="player_id" class="mb-2 block text-sm font-bold text-slate-700">Available player</label>
+                            <select name="player_id" id="player_id" required class="h-12 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-900">
+                                @foreach($availablePlayers as $player)
+                                    <option value="{{ $player->id }}">{{ $player->name }} (Rank #{{ $player->playerProfile->areal_ranking ?? '50' }})</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label for="position" class="mb-2 block text-sm font-bold text-slate-700">Roster position</label>
+                            <input type="text" name="position" id="position" required class="h-12 w-full rounded-xl border border-slate-200 px-3 text-sm text-slate-900" placeholder="Starting forward, defender, goalie...">
+                        </div>
+                        <button type="submit" class="h-12 w-full rounded-xl bg-slate-950 text-sm font-bold text-white hover:bg-indigo-600">Confirm roster contract</button>
+                    </form>
                 </div>
-
-                <form action="{{ route('teams.addPlayer', $team->id) }}" method="POST" class="space-y-4">
-                    @csrf
-                    <div>
-                        <label for="player_id" class="block mb-1 text-xs font-medium text-gray-300">Select Available Player</label>
-                        <select name="player_id" id="player_id" required class="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5">
-                            @foreach($availablePlayers as $avail)
-                                <option value="{{ $avail->id }}">
-                                    {{ $avail->name }} (Rank #{{ $avail->playerProfile->areal_ranking ?? '50' }} &bull; {{ $avail->areal_zone ?? 'Metro' }})
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div>
-                        <label for="position" class="block mb-1 text-xs font-medium text-gray-300">Roster Position</label>
-                        <select name="position" id="position" required class="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5">
-                            <option value="Starting Forward / Striker">Starting Forward / Striker</option>
-                            <option value="Midfield Maestro">Midfield Maestro</option>
-                            <option value="Key Defender">Key Defender</option>
-                            <option value="Goalkeeper / Anchor">Goalkeeper / Anchor</option>
-                            <option value="Entry Fragger / Duelist">Entry Fragger / Duelist</option>
-                            <option value="Tactical In-Game Leader (IGL)">Tactical In-Game Leader (IGL)</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="w-full text-gray-950 bg-gradient-to-r from-cyan-500 to-sky-400 hover:from-cyan-400 font-bold rounded-lg text-sm px-5 py-2.5 text-center transition">
-                        Confirm Roster Contract
-                    </button>
-                </form>
             </div>
         </div>
-    </div>
 
-    <!-- Propose Friendly Match Modal -->
-    <div id="propose-friendly-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-        <div class="relative p-4 w-full max-w-md max-h-full">
-            <div class="relative bg-gray-800 border border-gray-700 rounded-2xl shadow-2xl p-6">
-                <div class="flex items-center justify-between pb-3 mb-4 border-b border-gray-700">
-                    <h3 class="text-base font-bold text-white">Propose Exhibition Friendly Match</h3>
-                    <button type="button" class="text-gray-400 hover:text-white rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center" data-modal-hide="propose-friendly-modal">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 14 14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
-                    </button>
+        <div id="propose-friendly-modal" tabindex="-1" aria-hidden="true" class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-y-auto md:inset-0">
+            <div class="relative w-full max-w-lg p-4">
+                <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                        <div>
+                            <p class="text-xs font-bold uppercase tracking-[0.12em] text-indigo-600">Friendly match</p>
+                            <h3 class="mt-1 text-lg font-black text-slate-950">Propose an exhibition</h3>
+                        </div>
+                        <button type="button" data-modal-hide="propose-friendly-modal" aria-label="Close friendly match" class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500">&times;</button>
+                    </div>
+                    <form action="{{ route('teams.proposeFriendly', $team->id) }}" method="POST" class="mt-5 space-y-4">
+                        @csrf
+                        <div>
+                            <label for="opponent_team_id" class="mb-2 block text-sm font-bold text-slate-700">Opponent team</label>
+                            <select name="opponent_team_id" id="opponent_team_id" required class="h-12 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-900">
+                                @foreach($otherTeams as $opponent)
+                                    <option value="{{ $opponent->id }}">{{ $opponent->name }} (Rank #{{ $opponent->areal_ranking }})</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="grid gap-4 sm:grid-cols-2">
+                            <div>
+                                <label for="scheduled_at" class="mb-2 block text-sm font-bold text-slate-700">Date and time</label>
+                                <input type="datetime-local" name="scheduled_at" id="scheduled_at" required class="h-12 w-full rounded-xl border border-slate-200 px-3 text-sm text-slate-900">
+                            </div>
+                            <div>
+                                <label for="venue" class="mb-2 block text-sm font-bold text-slate-700">Venue</label>
+                                <input type="text" name="venue" id="venue" value="{{ $team->home_venue }}" required class="h-12 w-full rounded-xl border border-slate-200 px-3 text-sm text-slate-900">
+                            </div>
+                        </div>
+                        <button type="submit" class="h-12 w-full rounded-xl bg-slate-950 text-sm font-bold text-white hover:bg-indigo-600">Dispatch callups</button>
+                    </form>
                 </div>
-
-                <form action="{{ route('teams.proposeFriendly', $team->id) }}" method="POST" class="space-y-4">
-                    @csrf
-                    <div>
-                        <label for="opponent_team_id" class="block mb-1 text-xs font-medium text-gray-300">Opponent Team</label>
-                        <select name="opponent_team_id" id="opponent_team_id" required class="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5">
-                            @foreach($otherTeams as $opp)
-                                <option value="{{ $opp->id }}">{{ $opp->name }} (Rank #{{ $opp->areal_ranking }})</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div>
-                        <label for="scheduled_at" class="block mb-1 text-xs font-medium text-gray-300">Date & Kickoff Time</label>
-                        <input type="datetime-local" name="scheduled_at" id="scheduled_at" required class="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg block w-full p-2.5">
-                    </div>
-
-                    <div>
-                        <label for="venue" class="block mb-1 text-xs font-medium text-gray-300">Venue / Location</label>
-                        <input type="text" name="venue" id="venue" value="{{ $team->home_venue ?? 'City Sports Complex' }}" required class="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg block w-full p-2.5">
-                    </div>
-
-                    <button type="submit" class="w-full text-gray-950 bg-gradient-to-r from-cyan-500 to-sky-400 hover:from-cyan-400 font-bold rounded-lg text-sm px-5 py-2.5 text-center transition">
-                        Dispatch Callups & Propose Match
-                    </button>
-                </form>
             </div>
         </div>
-    </div>
     @endcan
 </x-app-layout>
-
