@@ -31,10 +31,6 @@ Route::POST('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
 
-// Demo Account Switcher
-Route::get('/demo-login/{role}', [AuthenticatedSessionController::class, 'switchRole'])
-    ->name('demo.switch');
-
 // Tournaments
 Route::get('/tournaments', [TournamentController::class, 'index'])->name('tournaments.index');
 Route::get('/tournaments/{slug}', [TournamentController::class, 'show'])->name('tournaments.show');

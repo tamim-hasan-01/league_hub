@@ -27,7 +27,7 @@
                 </div>
             </aside>
 
-            <section class="px-5 py-8 sm:px-10 sm:py-10 lg:px-12" x-data="{ adminChooser: false, adminId: '' }">
+            <section class="px-5 py-8 sm:px-10 sm:py-10 lg:px-12" x-data="{ adminChooser: false, adminId: '', selectedRole: '' }">
                 <div class="mb-7">
                     <p class="text-sm font-semibold text-indigo-600">Account access</p>
                     <h2 class="mt-1 text-3xl font-black tracking-tight text-slate-950">Sign in to LeagueHub</h2>
@@ -35,7 +35,7 @@
                 </div>
 
                 <div class="mb-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                    <p class="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">Quick demo access</p>
+                    <p class="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">Choose an account type</p>
                     <div class="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
                         <button type="button" @click="adminChooser = !adminChooser; adminId = ''"
                                 class="flex h-11 items-center justify-center rounded-xl border text-sm font-bold shadow-sm transition"
@@ -47,12 +47,21 @@
                             'player' => 'Player',
                             'viewer' => 'Viewer',
                         ] as $role => $label)
-                            <a href="{{ route('demo.switch', $role) }}"
-                               class="flex h-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-sm font-bold text-slate-700 shadow-sm transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">
+                            <button type="button" @click="selectedRole = '{{ $role }}'; adminChooser = false"
+                                    class="flex h-11 items-center justify-center rounded-xl border text-sm font-bold shadow-sm transition"
+                                    :class="selectedRole === '{{ $role }}' ? 'border-indigo-500 bg-indigo-50 text-indigo-700 ring-1 ring-indigo-500' : 'border-slate-200 bg-white text-slate-700 hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700'">
                                 {{ $label }}
-                            </a>
+                            </button>
                         @endforeach
                     </div>
+                    <p x-show="selectedRole !== ''" x-cloak class="mt-3 text-xs font-bold text-indigo-700">
+                        Selected role:
+                        <span x-text="selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)"></span>.
+                        Enter the registered email and password below.
+                    </p>
+                    @error('role')
+                        <p class="mt-3 text-sm font-medium text-rose-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div x-show="adminChooser" x-cloak
@@ -114,6 +123,7 @@
 
                 <form action="{{ route('login') }}" method="POST" class="space-y-5">
                     @csrf
+                    <input type="hidden" name="role" :value="selectedRole">
                     <div>
                         <label for="email" class="mb-2 block text-sm font-bold text-slate-700">Email address</label>
                         <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus
