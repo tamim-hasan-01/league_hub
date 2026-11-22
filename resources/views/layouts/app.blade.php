@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
+    {{-- ========================================== --}}
+    {{-- Section: Document Metadata & Vite Assets  --}}
+    {{-- ========================================== --}}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -50,13 +53,18 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-slate-50 font-sans text-slate-900 antialiased">
+    {{-- ========================================== --}}
+    {{-- Section: Sticky Header & Primary Navigation --}}
+    {{-- ========================================== --}}
     <header class="sticky top-0 z-40 border-b border-slate-200/90 bg-white/95 backdrop-blur">
         <nav class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" aria-label="Primary navigation">
             <div class="flex h-18 items-center justify-between gap-4">
+                {{-- Platform Brand Identity --}}
                 <a href="{{ route('home') }}" class="flex shrink-0 items-center gap-3">
                     <img src="{{ asset('logo.png') }}" alt="LeagueHub" class="h-10 w-auto max-w-40">
                 </a>
 
+                {{-- Desktop Navigation Links --}}
                 <div class="hidden items-center gap-1 lg:flex">
                     @php
                         $desktopLinks = [
@@ -81,6 +89,7 @@
                     @endauth
                 </div>
 
+                {{-- User Authentication State / Account Controls --}}
                 <div class="flex items-center gap-2">
                     @guest
                         <a href="{{ route('login') }}" class="hidden rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 sm:block">Sign in</a>
@@ -113,11 +122,13 @@
                             </div>
                         </div>
                     @endauth
+                    {{-- Mobile Navigation Trigger Button --}}
                     <button data-collapse-toggle="mobile-menu" type="button" class="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-600 lg:hidden" aria-label="Toggle navigation">
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     </button>
                 </div>
             </div>
+            {{-- Collapsible Mobile Navigation Menu --}}
             <div id="mobile-menu" class="hidden border-t border-slate-100 pb-4 pt-2 lg:hidden">
                 <div class="grid gap-1">
                     <a href="{{ route('home') }}" class="rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-100">Home</a>
@@ -130,6 +141,9 @@
         </nav>
     </header>
 
+    {{-- ========================================== --}}
+    {{-- Section: Session Flash Messages & Alerts  --}}
+    {{-- ========================================== --}}
     @if(session('success') || session('error') || session('info') || $errors->any())
         <div class="mx-auto mt-5 max-w-7xl px-4 sm:px-6 lg:px-8">
             @if(session('success'))
@@ -154,13 +168,20 @@
         </div>
     @endif
 
+    {{-- ========================================== --}}
+    {{-- Section: Main Page Content Slot           --}}
+    {{-- ========================================== --}}
     <main class="mx-auto min-h-[70vh] w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
         {{ $slot }}
     </main>
 
+    {{-- ========================================== --}}
+    {{-- Section: Branded Platform Footer          --}}
+    {{-- ========================================== --}}
     <footer class="mt-8 border-t border-slate-800 bg-slate-950 text-slate-300">
         <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
             <div class="grid gap-10 md:grid-cols-[1.5fr_0.75fr_0.75fr] lg:gap-16">
+                {{-- Platform Bio and System Health Status --}}
                 <div class="max-w-md">
                     <a href="{{ route('home') }}" class="inline-flex rounded-lg bg-white px-3 py-2">
                         <img src="{{ asset('logo.png') }}" alt="LeagueHub" class="h-10 w-auto">
@@ -174,6 +195,7 @@
                     </div>
                 </div>
 
+                {{-- Quick Exploration Navigation Links --}}
                 <div>
                     <h2 class="text-xs font-bold uppercase tracking-[0.18em] text-white">Explore</h2>
                     <nav class="mt-4 grid gap-3 text-sm" aria-label="Footer explore">
@@ -183,6 +205,7 @@
                     </nav>
                 </div>
 
+                {{-- Account & Administrative Links --}}
                 <div>
                     <h2 class="text-xs font-bold uppercase tracking-[0.18em] text-white">LeagueHub</h2>
                     <nav class="mt-4 grid gap-3 text-sm" aria-label="Footer information">
@@ -200,6 +223,7 @@
                 </div>
             </div>
 
+            {{-- Copyright and Attribution Bar --}}
             <div class="mt-10 flex flex-col gap-3 border-t border-slate-800 pt-6 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between">
                 <p>&copy; {{ date('Y') }} LeagueHub. All rights reserved.</p>
                 <p class="flex items-center gap-2">

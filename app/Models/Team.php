@@ -9,10 +9,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
+/**
+ * Team Model
+ *
+ * Represents an athletic club or esports roster, including managers,
+ * active player squads, tournament registrations, home venue, and historical records.
+ */
 class Team extends Model
 {
     use HasFactory;
 
+    // ==========================================
+    // Mass-Assignable Attributes
+    // ==========================================
     protected $fillable = [
         'manager_id',
         'name',
@@ -24,6 +33,9 @@ class Team extends Model
         'home_venue',
     ];
 
+    // ==========================================
+    // Attribute Type Casts
+    // ==========================================
     protected function casts(): array
     {
         return [
@@ -31,6 +43,10 @@ class Team extends Model
         ];
     }
 
+    // ==========================================
+    // Model Lifecycle Events
+    // Generate unique slug for team profile URLs
+    // ==========================================
     protected static function boot()
     {
         parent::boot();
@@ -41,11 +57,21 @@ class Team extends Model
         });
     }
 
+    // ==========================================
+    // Relationships
+    // ==========================================
+
+    /**
+     * The manager user account administering this team.
+     */
     public function manager(): BelongsTo
     {
         return $this->belongsTo(User::class, 'manager_id');
     }
 
+    /**
+     * Active squad players signed to the team roster.
+     */
     public function players(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'team_user')
@@ -53,16 +79,25 @@ class Team extends Model
             ->withTimestamps();
     }
 
+    /**
+     * Matches played where this team was designated as home team.
+     */
     public function homeMatches(): HasMany
     {
         return $this->hasMany(GameMatch::class, 'home_team_id');
     }
 
+    /**
+     * Matches played where this team was designated as away team.
+     */
     public function awayMatches(): HasMany
     {
         return $this->hasMany(GameMatch::class, 'away_team_id');
     }
 
+    /**
+     * Query builder for all matches involving this team (home or away).
+     */
     public function matches()
     {
         return GameMatch::where(function ($query) {
@@ -71,11 +106,17 @@ class Team extends Model
         });
     }
 
+    /**
+     * Applications submitted by this team to join tournaments.
+     */
     public function tournamentApplications(): HasMany
     {
         return $this->hasMany(TournamentApplication::class);
     }
 
+    /**
+     * Tournaments in which this team is registered or participated.
+     */
     public function tournaments(): BelongsToMany
     {
         return $this->belongsToMany(Tournament::class, 'tournament_applications')
@@ -83,7 +124,13 @@ class Team extends Model
             ->withTimestamps();
     }
 
-    // Win/Loss record helper
+    // ==========================================
+    // Calculated Attributes
+    // ==========================================
+
+    /**
+     * Compute cumulative win/loss/draw record from completed fixtures.
+     */
     public function getRecordAttribute(): array
     {
         $matches = GameMatch::where('status', 'completed')
@@ -111,4 +158,3 @@ class Team extends Model
         return ['wins' => $wins, 'losses' => $losses, 'draws' => $draws, 'total' => $matches->count()];
     }
 }
-
