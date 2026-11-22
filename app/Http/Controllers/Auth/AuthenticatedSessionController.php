@@ -23,6 +23,7 @@ class AuthenticatedSessionController extends Controller
         $credentials = $request->validate([
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
+            'role' => ['nullable', 'string', 'in:manager,player,viewer'],
         ]);
 
         $email = Str::lower(trim($credentials['email']));
@@ -37,6 +38,13 @@ class AuthenticatedSessionController extends Controller
         if (! Hash::check($credentials['password'], $user->password)) {
             return back()->withErrors([
                 'password' => 'The password you entered is incorrect.',
+            ])->onlyInput('email');
+        }
+
+        $selectedRole = $request->string('role')->toString();
+        if ($selectedRole !== '' && $user->role !== $selectedRole) {
+            return back()->withErrors([
+                'role' => "This account is registered as {$user->role}, not {$selectedRole}.",
             ])->onlyInput('email');
         }
 
@@ -108,25 +116,5 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('home')->with('info', 'You have been logged out.');
-    }
-
-    /**
-     * Demo role switch for fast testing and grading
-     */
-    public function switchRole(Request $request, string $role): RedirectResponse
-    {
-        $allowed = ['admin', 'manager', 'player', 'viewer'];
-        if (! in_array($role, $allowed)) {
-            abort(404);
-        }
-
-        $user = User::where('role', $role)->first();
-        if ($user) {
-            Auth::login($user);
-
-            return redirect()->back()->with('success', "Switched account to {$user->name} ({$role})");
-        }
-
-        return redirect()->back()->with('error', "No demo {$role} user found in database. Run seeder.");
     }
 }
