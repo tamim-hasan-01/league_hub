@@ -91,12 +91,13 @@ test('authentication pages render professional account forms', function () {
     $login = $this->get('/login');
     $login->assertOk();
     $login->assertSee('Sign in to LeagueHub');
-    $login->assertSee('Quick demo access');
+    $login->assertSee('Choose an account type');
 
     $register = $this->get('/register');
     $register->assertOk();
     $register->assertSee('Create an account');
     $register->assertSee('Select your role');
+    $login->assertDontSee('/demo-login');
 });
 
 test('only the three verified administrators can sign in through admin verification', function () {
@@ -189,6 +190,24 @@ test('login rejects unknown accounts and incorrect passwords with specific error
         'email' => 'player@leaguehub.com',
         'password' => 'wrong-password',
     ])->assertSessionHasErrors('password');
+});
+
+test('selected manager role cannot bypass credentials or match another role', function () {
+    $this->seed();
+
+    $this->get('/demo-login/manager')->assertNotFound();
+
+    $this->post('/login', [
+        'email' => 'viewer@leaguehub.com',
+        'password' => 'wrong-password',
+        'role' => 'viewer',
+    ])->assertSessionHasErrors('password');
+
+    $this->post('/login', [
+        'email' => 'viewer@leaguehub.com',
+        'password' => 'password',
+        'role' => 'manager',
+    ])->assertSessionHasErrors('role');
 });
 
 test('registration rejects duplicate normalized email addresses', function () {
