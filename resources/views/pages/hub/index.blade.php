@@ -1,259 +1,254 @@
 <x-app-layout>
     <div class="space-y-8">
-        <!-- Hub Top Banner -->
-        <div class="relative overflow-hidden rounded-3xl bg-gray-800 border border-gray-700 p-6 sm:p-8 shadow-2xl">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <div class="flex items-center gap-2 mb-1">
-                        <span class="text-xs font-bold uppercase tracking-wider text-cyan-400">Personalized Mission Hub</span>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-gray-700 text-gray-200 border border-gray-600">
-                            Role: {{ $user->role }}
-                        </span>
+        <section class="relative overflow-hidden rounded-[28px] border border-slate-200 bg-slate-950 text-white">
+            <div class="absolute right-0 top-0 h-full w-2/5 bg-[radial-gradient(circle_at_center,rgba(129,140,248,0.24),transparent_68%)]"></div>
+            <div class="relative flex flex-col gap-6 px-6 py-8 sm:px-8 lg:flex-row lg:items-end lg:justify-between lg:px-10 lg:py-10">
+                <div class="max-w-3xl">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="rounded-full border border-indigo-300/20 bg-indigo-300/10 px-3 py-1 text-xs font-bold text-indigo-200">Personal hub</span>
+                        <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-bold capitalize text-slate-200">{{ $user->role }}</span>
                     </div>
-                    <h1 class="text-2xl sm:text-3xl font-black text-white">Welcome, {{ $user->name }}</h1>
-                    <p class="text-xs sm:text-sm text-gray-400 mt-1">
+                    <p class="mt-5 text-sm font-bold uppercase tracking-[0.16em] text-indigo-300">Competition workspace</p>
+                    <h1 class="mt-2 text-3xl font-black leading-tight tracking-tight sm:text-4xl lg:text-5xl">Welcome, {{ $user->name }}</h1>
+                    <p class="mt-4 max-w-2xl text-base leading-7 text-slate-300">
                         @if($user->isManager())
-                            Oversee your team franchises, submit tournament registrations, and manage friendly schedules.
+                            Manage your teams, monitor tournament applications, and coordinate fixtures from one workspace.
                         @elseif($user->isPlayer())
-                            Review match invitations and call-ups, respond with contract acceptance, and check squad status.
+                            Review match call-ups, respond to invitations, and keep track of confirmed games.
                         @elseif($user->isViewer())
-                            Track bookmarked matches, monitor subscribed tournament brackets, and get live scoring alerts.
+                            Follow fixtures and tournaments, review results, and keep your competition list organized.
                         @else
-                            Operations dashboard for multi-sport leagues, live match consoles, and health tracking.
+                            Coordinate league operations, tournament administration, and personalized competition activity.
                         @endif
                     </p>
                 </div>
 
-                <!-- Quick Action Buttons -->
-                <div class="flex flex-wrap items-center gap-2">
+                <div class="flex flex-wrap gap-3 lg:justify-end">
                     @if($user->isManager())
-                        <a href="{{ route('teams.create') }}" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-gray-950 transition flex items-center gap-1.5">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                            <span>Found New Team</span>
-                        </a>
+                        <a href="{{ route('teams.create') }}" class="inline-flex h-12 items-center justify-center rounded-xl bg-white px-5 text-sm font-bold text-slate-950 hover:bg-indigo-100">Create team</a>
                     @elseif($user->isPlayer())
-                        <a href="{{ route('mystats') }}" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-gray-950 transition flex items-center gap-1.5">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                            <span>My Stats & Form</span>
-                        </a>
+                        <a href="{{ route('mystats') }}" class="inline-flex h-12 items-center justify-center rounded-xl bg-white px-5 text-sm font-bold text-slate-950 hover:bg-indigo-100">View player stats</a>
                     @elseif($user->isAdmin())
-                        <a href="{{ route('admin.dashboard') }}" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-gray-950 transition flex items-center gap-1.5">
-                            <span>Open Authority Console</span>
-                        </a>
+                        <a href="{{ route('admin.dashboard') }}" class="inline-flex h-12 items-center justify-center rounded-xl bg-white px-5 text-sm font-bold text-slate-950 hover:bg-indigo-100">Authority console</a>
                     @endif
+                    <a href="{{ route('tournaments.index') }}" class="inline-flex h-12 items-center justify-center rounded-xl border border-white/15 bg-white/5 px-5 text-sm font-bold text-white hover:bg-white/10">Browse tournaments</a>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- 1. MANAGER VIEW -->
         @if($user->isManager() || $user->isAdmin())
-            <div class="space-y-6">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
-                        👔 Managerial Headquarters
-                    </h2>
-                    <span class="text-xs text-gray-400">{{ count($managerData['myTeams'] ?? []) }} Franchises Owned</span>
+            <section class="space-y-5">
+                <div class="flex items-end justify-between gap-4">
+                    <div>
+                        <p class="text-sm font-semibold text-indigo-600">Manager overview</p>
+                        <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Team headquarters</h2>
+                    </div>
+                    <p class="text-sm font-semibold text-slate-400">{{ count($managerData['myTeams'] ?? []) }} teams</p>
                 </div>
 
-                <!-- Managed Teams Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                     @forelse($managerData['myTeams'] ?? [] as $team)
-                        <div class="bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-lg flex flex-col justify-between">
-                            <div>
-                                <div class="flex items-center justify-between mb-2">
-                                    <span class="text-xs font-bold text-cyan-400">{{ $team->sport_type }}</span>
-                                    <span class="text-xs font-mono text-gray-400">Rank #{{ $team->areal_ranking }}</span>
+                        <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_24px_rgba(15,23,42,0.05)]">
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="min-w-0">
+                                    <p class="text-xs font-bold uppercase tracking-[0.12em] text-slate-400">{{ $team->sport_type }}</p>
+                                    <h3 class="mt-2 truncate text-lg font-black text-slate-950">
+                                        <a href="{{ route('teams.show', $team->slug) }}" class="hover:text-indigo-600">{{ $team->name }}</a>
+                                    </h3>
                                 </div>
-                                <h3 class="text-base font-bold text-white mb-1">
-                                    <a href="{{ route('teams.show', $team->slug) }}" class="hover:text-cyan-400 transition">{{ $team->name }}</a>
-                                </h3>
-                                <div class="text-xs text-gray-400 mb-3">{{ $team->players->count() }} Contracted Players</div>
+                                <span class="shrink-0 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-bold text-slate-600">#{{ $team->areal_ranking }}</span>
                             </div>
-                            <div class="flex items-center gap-2 pt-2 border-t border-gray-700/60">
-                                <a href="{{ route('teams.show', $team->slug) }}" class="text-xs text-cyan-400 hover:underline font-semibold flex-1">Manage Roster &rarr;</a>
-                                <a href="{{ route('teams.edit', $team->id) }}" class="text-xs text-gray-400 hover:text-white">Edit</a>
+                            <div class="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-slate-200 bg-slate-200">
+                                <div class="bg-slate-50 px-3 py-3">
+                                    <p class="text-[10px] font-bold uppercase text-slate-400">Players</p>
+                                    <p class="mt-1 text-xl font-black text-slate-950">{{ $team->players->count() }}</p>
+                                </div>
+                                <div class="bg-slate-50 px-3 py-3">
+                                    <p class="text-[10px] font-bold uppercase text-slate-400">Status</p>
+                                    <p class="mt-1 text-sm font-bold text-emerald-700">Active</p>
+                                </div>
                             </div>
-                        </div>
+                            <div class="mt-5 flex items-center justify-between border-t border-slate-100 pt-4 text-sm">
+                                <a href="{{ route('teams.show', $team->slug) }}" class="font-bold text-indigo-600 hover:text-indigo-800">Manage team &rarr;</a>
+                                <a href="{{ route('teams.edit', $team->id) }}" class="font-bold text-slate-500 hover:text-slate-900">Edit</a>
+                            </div>
+                        </article>
                     @empty
-                        <div class="col-span-3 p-6 text-center text-xs text-gray-400 bg-gray-800/40 rounded-2xl border border-gray-700">
-                            You have not founded any teams yet. Create one to start recruiting players!
+                        <div class="col-span-full rounded-2xl border border-dashed border-slate-300 bg-slate-50 py-12 text-center">
+                            <p class="text-base font-bold text-slate-700">No teams founded yet</p>
+                            <p class="mt-1 text-sm text-slate-500">Create a team to start recruiting players.</p>
                         </div>
                     @endforelse
                 </div>
 
-                <!-- Pending Tournament Applications -->
-                <div class="bg-gray-800 border border-gray-700 rounded-2xl p-5 shadow-xl space-y-4">
-                    <h3 class="text-base font-bold text-white">Tournament Applications Status</h3>
-                    <div class="divide-y divide-gray-700">
-                        @forelse($managerData['pendingApplications'] ?? [] as $app)
-                            <div class="py-3 flex items-center justify-between text-xs">
-                                <div>
-                                    <span class="font-bold text-white">{{ $app->team->name }}</span>
-                                    <span class="text-gray-400 mx-1">&rarr;</span>
-                                    <a href="{{ route('tournaments.show', $app->tournament->slug) }}" class="text-cyan-400 hover:underline">{{ $app->tournament->title }}</a>
-                                    @if($app->notes)
-                                        <p class="text-[11px] text-gray-400 italic mt-0.5">Note: {{ $app->notes }}</p>
+                <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+                    <div class="border-b border-slate-100 px-5 py-4">
+                        <p class="text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Tournament registrations</p>
+                        <h3 class="mt-1 text-lg font-black text-slate-950">Application status</h3>
+                    </div>
+                    <div class="divide-y divide-slate-100 px-5">
+                        @forelse($managerData['pendingApplications'] ?? [] as $application)
+                            <div class="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
+                                <div class="min-w-0">
+                                    <p class="font-bold text-slate-950">{{ $application->team->name }}</p>
+                                    <a href="{{ route('tournaments.show', $application->tournament->slug) }}" class="mt-1 block truncate text-sm font-semibold text-indigo-600 hover:text-indigo-800">
+                                        {{ $application->tournament->title }}
+                                    </a>
+                                    @if($application->notes)
+                                        <p class="mt-1 text-xs text-slate-400">{{ $application->notes }}</p>
                                     @endif
                                 </div>
-                                <div>
-                                    @if($app->status === 'approved')
-                                        <span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">APPROVED</span>
-                                    @elseif($app->status === 'rejected')
-                                        <span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">REJECTED</span>
-                                    @else
-                                        <span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">UNDER REVIEW</span>
-                                    @endif
-                                </div>
+                                @if($application->status === 'approved')
+                                    <span class="shrink-0 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">Approved</span>
+                                @elseif($application->status === 'rejected')
+                                    <span class="shrink-0 rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-xs font-bold text-rose-700">Rejected</span>
+                                @else
+                                    <span class="shrink-0 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">Under review</span>
+                                @endif
                             </div>
                         @empty
-                            <div class="py-4 text-center text-xs text-gray-400">
-                                No tournament applications submitted. Explore active tournaments to apply!
-                            </div>
+                            <p class="py-8 text-center text-sm text-slate-500">No tournament applications submitted.</p>
                         @endforelse
                     </div>
                 </div>
-            </div>
+            </section>
         @endif
 
-        <!-- 2. PLAYER VIEW -->
         @if($user->isPlayer() || $user->isAdmin())
-            <div class="space-y-6">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
-                        ⚡ Player Contracts & Match Call-ups
-                    </h2>
-                    <a href="{{ route('mystats') }}" class="text-xs text-cyan-400 hover:underline">View Performance Stats &rarr;</a>
+            <section class="space-y-5">
+                <div class="flex items-end justify-between gap-4">
+                    <div>
+                        <p class="text-sm font-semibold text-indigo-600">Player workspace</p>
+                        <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Match call-ups</h2>
+                    </div>
+                    <a href="{{ route('mystats') }}" class="shrink-0 text-sm font-bold text-indigo-600 hover:text-indigo-800">View stats &rarr;</a>
                 </div>
 
-                <!-- Pending Invitations Actions -->
-                <div class="bg-gray-800 border border-gray-700 rounded-2xl p-5 shadow-xl space-y-4">
-                    <h3 class="text-base font-bold text-white flex items-center gap-2">
-                        <span>Awaiting Response</span>
-                        @if(count($playerData['pendingInvitations'] ?? []) > 0)
-                            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-                        @endif
-                    </h3>
-
-                    <div class="divide-y divide-gray-700">
-                        @forelse($playerData['pendingInvitations'] ?? [] as $inv)
-                            <div class="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
-                                <div class="space-y-1">
-                                    <div class="font-bold text-sm text-white">
-                                        {{ $inv->match->homeTeam->name ?? 'Home' }} vs {{ $inv->match->awayTeam->name ?? 'Away' }}
-                                    </div>
-                                    <div class="text-gray-400">
-                                        Tournament: <span class="text-cyan-400 font-medium">{{ $inv->match->tournament->title ?? 'Exhibition Friendly' }}</span>
-                                        &bull; Venue: <span class="text-gray-300">{{ $inv->match->venue }}</span>
-                                    </div>
-                                    <div class="text-gray-400">
-                                        Kickoff: <span class="text-sky-400 font-mono">{{ $inv->match->scheduled_at->format('M d, Y - H:i') }}</span>
-                                    </div>
-                                    @if($inv->manager_notes)
-                                        <p class="text-[11px] text-gray-300 italic bg-gray-900/60 p-1.5 rounded-lg border border-gray-700/60">
-                                            Manager Note: {{ $inv->manager_notes }}
-                                        </p>
+                <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+                    <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+                        <div>
+                            <p class="text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Awaiting response</p>
+                            <h3 class="mt-1 text-lg font-black text-slate-950">Pending invitations</h3>
+                        </div>
+                        <span class="flex h-8 min-w-8 items-center justify-center rounded-full bg-indigo-50 px-2 text-sm font-black text-indigo-700">
+                            {{ count($playerData['pendingInvitations'] ?? []) }}
+                        </span>
+                    </div>
+                    <div class="divide-y divide-slate-100 px-5">
+                        @forelse($playerData['pendingInvitations'] ?? [] as $invitation)
+                            <div class="flex flex-col gap-4 py-5 lg:flex-row lg:items-center lg:justify-between">
+                                <div class="min-w-0">
+                                    <p class="text-base font-black text-slate-950">
+                                        {{ $invitation->match->homeTeam->name ?? 'Home' }}
+                                        <span class="mx-2 text-slate-400">vs</span>
+                                        {{ $invitation->match->awayTeam->name ?? 'Away' }}
+                                    </p>
+                                    <p class="mt-2 text-sm text-slate-500">
+                                        {{ $invitation->match->tournament->title ?? 'Exhibition friendly' }}
+                                        <span class="mx-1 text-slate-300">&bull;</span>
+                                        {{ $invitation->match->venue }}
+                                    </p>
+                                    <p class="mt-1 text-sm font-bold text-indigo-600">{{ $invitation->match->scheduled_at->format('M d, Y · H:i') }}</p>
+                                    @if($invitation->manager_notes)
+                                        <p class="mt-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-500">{{ $invitation->manager_notes }}</p>
                                     @endif
                                 </div>
-
-                                <!-- Action Buttons: Accept or Decline -->
-                                <div class="flex items-center gap-2">
-                                    <form action="{{ route('invitations.respond', $inv->id) }}" method="POST">
+                                <div class="flex shrink-0 gap-2">
+                                    <form action="{{ route('invitations.respond', $invitation->id) }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="status" value="accepted">
-                                        <button type="submit" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow transition">
-                                            ✓ Accept Contract
-                                        </button>
+                                        <button type="submit" class="h-11 rounded-xl bg-emerald-600 px-4 text-sm font-bold text-white hover:bg-emerald-700">Accept</button>
                                     </form>
-
-                                    <form action="{{ route('invitations.respond', $inv->id) }}" method="POST">
+                                    <form action="{{ route('invitations.respond', $invitation->id) }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="status" value="declined">
-                                        <button type="submit" class="px-4 py-2 rounded-xl text-xs font-bold bg-rose-600/80 hover:bg-rose-600 text-white transition">
-                                            ✕ Decline
-                                        </button>
+                                        <button type="submit" class="h-11 rounded-xl border border-rose-200 bg-rose-50 px-4 text-sm font-bold text-rose-700 hover:bg-rose-100">Decline</button>
                                     </form>
                                 </div>
                             </div>
                         @empty
-                            <div class="py-4 text-center text-xs text-gray-400">
-                                No pending match call-ups requiring response.
-                            </div>
+                            <p class="py-10 text-center text-sm text-slate-500">No pending match call-ups.</p>
                         @endforelse
                     </div>
                 </div>
 
-                <!-- Accepted Match Call-ups -->
-                <div class="space-y-3">
-                    <h3 class="text-base font-bold text-white">Confirmed Upcoming Games ({{ count($playerData['acceptedMatches'] ?? []) }})</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        @forelse($playerData['acceptedMatches'] ?? [] as $inv)
-                            <x-match-card :match="$inv->match" />
+                <div class="space-y-4">
+                    <div class="flex items-end justify-between">
+                        <div>
+                            <p class="text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Confirmed schedule</p>
+                            <h3 class="mt-1 text-lg font-black text-slate-950">Upcoming games</h3>
+                        </div>
+                        <span class="text-sm font-bold text-slate-400">{{ count($playerData['acceptedMatches'] ?? []) }}</span>
+                    </div>
+                    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                        @forelse($playerData['acceptedMatches'] ?? [] as $invitation)
+                            <x-match-card :match="$invitation->match" />
                         @empty
-                            <div class="col-span-3 p-6 text-center text-xs text-gray-400 bg-gray-800/40 rounded-2xl border border-gray-700">
-                                No upcoming matches confirmed yet.
+                            <div class="col-span-full rounded-2xl border border-dashed border-slate-300 bg-slate-50 py-12 text-center">
+                                <p class="text-sm font-bold text-slate-600">No confirmed games yet</p>
                             </div>
                         @endforelse
                     </div>
                 </div>
-            </div>
+            </section>
         @endif
 
-        <!-- 3. VIEWER VIEW -->
-        <div class="space-y-6">
-            <div class="flex items-center justify-between">
-                <h2 class="text-xl font-bold text-white flex items-center gap-2">
-                    👁️ Viewer Bookmarks & Following
-                </h2>
-                <span class="text-xs text-gray-400">Custom alert & match radar</span>
+        <section class="space-y-5">
+            <div>
+                <p class="text-sm font-semibold text-indigo-600">Saved competition</p>
+                <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Bookmarks and following</h2>
             </div>
 
-            <!-- Bookmarked Matches -->
-            <div class="space-y-3">
-                <h3 class="text-sm font-bold text-gray-300 uppercase tracking-wider">Bookmarked Fixtures ({{ count($viewerData['bookmarkedMatches'] ?? []) }})</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    @forelse($viewerData['bookmarkedMatches'] ?? [] as $bm)
-                        @if($bm->match)
-                            <x-match-card :match="$bm->match" />
+            <div class="space-y-4">
+                <div class="flex items-end justify-between">
+                    <h3 class="text-lg font-black text-slate-950">Bookmarked fixtures</h3>
+                    <span class="text-sm font-bold text-slate-400">{{ count($viewerData['bookmarkedMatches'] ?? []) }}</span>
+                </div>
+                <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    @forelse($viewerData['bookmarkedMatches'] ?? [] as $bookmark)
+                        @if($bookmark->match)
+                            <x-match-card :match="$bookmark->match" />
                         @endif
                     @empty
-                        <div class="col-span-3 p-6 text-center text-xs text-gray-400 bg-gray-800/40 rounded-2xl border border-gray-700">
-                            No matches bookmarked yet. Click the bookmark icon on any match card to track it here!
+                        <div class="col-span-full rounded-2xl border border-dashed border-slate-300 bg-slate-50 py-12 text-center">
+                            <p class="text-sm font-bold text-slate-600">No bookmarked fixtures yet</p>
                         </div>
                     @endforelse
                 </div>
             </div>
 
-            <!-- Followed Tournaments -->
-            <div class="space-y-3">
-                <h3 class="text-sm font-bold text-gray-300 uppercase tracking-wider">Followed Tournaments ({{ count($viewerData['bookmarkedTournaments'] ?? []) }})</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    @forelse($viewerData['bookmarkedTournaments'] ?? [] as $bm)
-                        @if($bm->tournament)
-                            <div class="bg-gray-800 border border-gray-700 rounded-2xl p-4 flex items-center justify-between">
-                                <div>
-                                    <span class="text-xs font-bold text-cyan-400">{{ $bm->tournament->sport_type }}</span>
-                                    <h4 class="text-sm font-bold text-white">
-                                        <a href="{{ route('tournaments.show', $bm->tournament->slug) }}" class="hover:text-cyan-400 transition">{{ $bm->tournament->title }}</a>
-                                    </h4>
-                                    <span class="text-xs text-gray-400">Phase: {{ $bm->tournament->current_stage }}</span>
+            <div class="space-y-4">
+                <div class="flex items-end justify-between">
+                    <h3 class="text-lg font-black text-slate-950">Followed tournaments</h3>
+                    <span class="text-sm font-bold text-slate-400">{{ count($viewerData['bookmarkedTournaments'] ?? []) }}</span>
+                </div>
+                <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    @forelse($viewerData['bookmarkedTournaments'] ?? [] as $bookmark)
+                        @if($bookmark->tournament)
+                            <article class="rounded-2xl border border-slate-200 bg-white p-5">
+                                <p class="text-xs font-bold uppercase tracking-[0.12em] text-slate-400">{{ $bookmark->tournament->sport_type }}</p>
+                                <h4 class="mt-2 text-lg font-black text-slate-950">
+                                    <a href="{{ route('tournaments.show', $bookmark->tournament->slug) }}" class="hover:text-indigo-600">{{ $bookmark->tournament->title }}</a>
+                                </h4>
+                                <p class="mt-1 text-sm capitalize text-slate-500">{{ str_replace('_', ' ', $bookmark->tournament->current_stage) }} stage</p>
+                                <div class="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
+                                    <a href="{{ route('tournaments.show', $bookmark->tournament->slug) }}" class="text-sm font-bold text-indigo-600">View &rarr;</a>
+                                    <form action="{{ route('bookmarks.toggle') }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="type" value="tournament">
+                                        <input type="hidden" name="id" value="{{ $bookmark->tournament->id }}">
+                                        <button type="submit" class="text-sm font-bold text-rose-600 hover:text-rose-800">Unfollow</button>
+                                    </form>
                                 </div>
-                                <form action="{{ route('bookmarks.toggle') }}" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="type" value="tournament">
-                                    <input type="hidden" name="id" value="{{ $bm->tournament->id }}">
-                                    <button type="submit" class="text-xs text-red-400 hover:text-red-300">Unfollow</button>
-                                </form>
-                            </div>
+                            </article>
                         @endif
                     @empty
-                        <div class="col-span-3 p-6 text-center text-xs text-gray-400 bg-gray-800/40 rounded-2xl border border-gray-700">
-                            No tournaments followed yet. Click "Follow Tournament" on any tournament details page.
+                        <div class="col-span-full rounded-2xl border border-dashed border-slate-300 bg-slate-50 py-12 text-center">
+                            <p class="text-sm font-bold text-slate-600">No tournaments followed yet</p>
                         </div>
                     @endforelse
                 </div>
             </div>
-        </div>
-
+        </section>
     </div>
 </x-app-layout>
-

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\NewsArticle;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -62,6 +63,17 @@ test('the news directory and article detail pages render', function () {
     $detail = $this->get('/news/'.$article->slug);
     $detail->assertOk();
     $detail->assertSee($article->title);
+});
+
+test('an authenticated user can open the personal tournament hub', function () {
+    $this->seed();
+    $user = User::where('email', 'viewer@leaguehub.com')->first();
+
+    $response = $this->actingAs($user)->get('/mytournaments');
+
+    $response->assertOk();
+    $response->assertSee('Personal hub');
+    $response->assertSee('Bookmarks and following');
 });
 
 test('the tournament detail page presents competition sections', function () {
