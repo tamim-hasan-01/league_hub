@@ -99,6 +99,31 @@ class DatabaseSeeder extends Seeder
             'areal_zone' => 'Metro Central',
         ]);
 
+        //   Demo Accounts (Passwordless role accounts for academic presentation)
+        $profManager = User::create([
+            'name' => '  Demo (Manager)',
+            'email' => 'prof.manager@leaguehub.com',
+            'password' => $password,
+            'role' => 'manager',
+            'areal_zone' => 'Metro Central',
+        ]);
+
+        $profPlayer = User::create([
+            'name' => '  Demo (Player)',
+            'email' => 'prof.player@leaguehub.com',
+            'password' => $password,
+            'role' => 'player',
+            'areal_zone' => 'Metro Central',
+        ]);
+
+        $profViewer = User::create([
+            'name' => '  Demo (Viewer)',
+            'email' => 'prof.viewer@leaguehub.com',
+            'password' => $password,
+            'role' => 'viewer',
+            'areal_zone' => 'Metro Central',
+        ]);
+
         // Create player profiles for main players
         PlayerProfile::create([
             'user_id' => $player1->id,
@@ -131,6 +156,23 @@ class DatabaseSeeder extends Seeder
                 'mvp_count' => 2,
                 'form_rating' => 7.8,
                 'recent_ratings' => [7.2, 7.5, 8.0, 7.9],
+            ],
+        ]);
+
+        PlayerProfile::create([
+            'user_id' => $profPlayer->id,
+            'jersey_number' => '10',
+            'primary_sport' => 'Football',
+            'is_injured' => false,
+            'injury_notes' => null,
+            'areal_ranking' => 10,
+            'career_stats' => [
+                'matches_played' => 18,
+                'goals_or_points' => 16,
+                'assists' => 10,
+                'mvp_count' => 5,
+                'form_rating' => 8.8,
+                'recent_ratings' => [7.9, 8.2, 8.6, 9.0, 8.5, 8.9, 8.8],
             ],
         ]);
 
@@ -295,6 +337,17 @@ class DatabaseSeeder extends Seeder
                 'home_venue' => 'Downtown Arena',
                 'description' => 'Elite rim protectors and 3-point perimeter specialists.',
             ],
+
+            //   Showcase Team
+            [
+                'manager_id' => $profManager->id,
+                'name' => '  Titans FC',
+                'slug' => ' -titans-fc',
+                'sport_type' => 'Football',
+                'areal_ranking' => 1050,
+                'home_venue' => 'Grand Academic Stadium',
+                'description' => 'Flagship tactical squad managed for academic and strategic demonstration.',
+            ],
         ];
 
         $createdTeams = [];
@@ -303,6 +356,11 @@ class DatabaseSeeder extends Seeder
         }
 
         // Attach Players to Teams
+        //   Showcase Team
+        $createdTeams[' -titans-fc']->players()->attach($profPlayer->id, ['position' => 'Starting Playmaker', 'status' => 'active']);
+        $createdTeams[' -titans-fc']->players()->attach($extraPlayers[7]->id, ['position' => 'Central Midfielder', 'status' => 'active']);
+        $createdTeams[' -titans-fc']->players()->attach($extraPlayers[8]->id, ['position' => 'Key Defender', 'status' => 'active']);
+
         // Kai Sterling in Apex Sentinels FC
         $createdTeams['apex-sentinels-fc']->players()->attach($player1->id, ['position' => 'Starting Forward / Striker', 'status' => 'active']);
         $createdTeams['apex-sentinels-fc']->players()->attach($extraPlayers[0]->id, ['position' => 'Midfield Maestro', 'status' => 'active']);
@@ -397,6 +455,14 @@ class DatabaseSeeder extends Seeder
                 'notes' => 'Roster verified, medical clearance verified by commissioner.',
             ]);
         }
+
+        // Tournament application for   Demo Team
+        TournamentApplication::create([
+            'tournament_id' => $tournaments['apex-world-cup']->id,
+            'team_id' => $createdTeams[' -titans-fc']->id,
+            'status' => 'approved',
+            'notes' => 'Official showcase squad registration approved for tournament demonstration.',
+        ]);
 
         // Pending applications in Esports tournament
         TournamentApplication::create([
@@ -563,6 +629,25 @@ class DatabaseSeeder extends Seeder
         // Dispatch in-app notification to Kai Sterling
         $player1->notify(new MatchInvitationReceived($pendingInvite));
 
+        // Invitations for   Demo (Player)
+        $profPendingInvite = MatchInvitation::create([
+            'match_id' => $qf2->id,
+            'player_id' => $profPlayer->id,
+            'team_id' => $createdTeams[' -titans-fc']->id,
+            'status' => 'pending',
+            'manager_notes' => 'Starting playmaker call-up for upcoming tournament showcase match. Accept to confirm starting XI slot.',
+        ]);
+
+        $profAcceptedInvite = MatchInvitation::create([
+            'match_id' => $liveMatch->id,
+            'player_id' => $profPlayer->id,
+            'team_id' => $createdTeams[' -titans-fc']->id,
+            'status' => 'accepted',
+            'manager_notes' => 'Confirmed start as primary attacking playmaker in Quarterfinal fixture.',
+        ]);
+
+        $profPlayer->notify(new MatchInvitationReceived($profPendingInvite));
+
         // 7. News Articles & Disciplinary Incident Logs
         NewsArticle::create([
             'author_id' => $admin->id,
@@ -617,6 +702,16 @@ class DatabaseSeeder extends Seeder
         ]);
         Bookmark::create([
             'user_id' => $viewer->id,
+            'tournament_id' => $tournaments['apex-world-cup']->id,
+        ]);
+
+        // Bookmarks for   Demo (Viewer)
+        Bookmark::create([
+            'user_id' => $profViewer->id,
+            'game_match_id' => $liveMatch->id,
+        ]);
+        Bookmark::create([
+            'user_id' => $profViewer->id,
             'tournament_id' => $tournaments['apex-world-cup']->id,
         ]);
 

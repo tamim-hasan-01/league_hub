@@ -32,6 +32,7 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::POST('/login', [AuthenticatedSessionController::class, 'store']);
     Route::POST('/admin-login', [AuthenticatedSessionController::class, 'storeAdmin'])->name('login.admin');
+    Route::POST('/quick-login', [AuthenticatedSessionController::class, 'storeDemo'])->name('login.demo');
 });
 
 // User session logout
