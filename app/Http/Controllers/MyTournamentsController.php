@@ -8,6 +8,7 @@ use App\Models\MatchInvitation;
 use App\Models\Team;
 use App\Models\Tournament;
 use App\Models\TournamentApplication;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
