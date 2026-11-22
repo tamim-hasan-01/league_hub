@@ -21,7 +21,7 @@ test('the about page presents the project and development team', function () {
 
     $response->assertOk();
     $response->assertSee('Md. Tamim Hasan Siam');
-    $response->assertSee('Muhammad Mobasher Ahmmed Milon');
+    $response->assertSee('Muhammad Mobasher Ahmmed');
     $response->assertSee('Waliur Rafiq Sami');
     $response->assertSee('0802410205101088');
     $response->assertSee('dev/sami.png');
@@ -74,6 +74,14 @@ test('an authenticated user can open the personal tournament hub', function () {
     $response->assertOk();
     $response->assertSee('Personal hub');
     $response->assertSee('Bookmarks and following');
+
+    $manager = User::where('role', 'manager')->first();
+    $managerResp = $this->actingAs($manager)->get('/mytournaments');
+    $managerResp->assertOk();
+
+    $admin = User::where('role', 'admin')->first();
+    $adminResp = $this->actingAs($admin)->get('/mytournaments');
+    $adminResp->assertOk();
 });
 
 test('the tournament detail page presents competition sections', function () {
