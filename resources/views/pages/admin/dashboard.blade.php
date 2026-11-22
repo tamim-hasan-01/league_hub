@@ -1,119 +1,145 @@
 <x-app-layout>
     <div class="space-y-8" x-data="adminDashboard()">
-        <!-- Header -->
-        <div class="relative overflow-hidden rounded-3xl bg-gray-800 border border-cyan-500/30 p-6 sm:p-8 shadow-2xl">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                    <div class="flex items-center gap-2 mb-1">
-                        <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
-                        <span class="text-xs font-bold uppercase tracking-wider text-cyan-400">Restricted Operations Console</span>
+        <!-- Brand Hero Header -->
+        <section class="relative overflow-hidden rounded-[28px] border border-slate-200 bg-slate-950 text-white shadow-[0_24px_60px_rgba(15,23,42,0.12)]">
+            <div class="absolute right-0 top-0 h-full w-2/5 bg-[radial-gradient(circle_at_center,rgba(129,140,248,0.24),transparent_65%)]"></div>
+            <div class="relative grid gap-8 px-6 py-8 sm:px-8 lg:grid-cols-[1.45fr_0.55fr] lg:px-10 lg:py-10">
+                <div class="min-w-0">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <p class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-indigo-200">
+                            <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            Authority console
+                        </p>
+                        <span class="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-mono font-bold text-slate-300">
+                            Broadcasting: Reverb / Log
+                        </span>
                     </div>
-                    <h1 class="text-2xl sm:text-3xl font-black text-white">League Authority Dashboard</h1>
-                    <p class="text-xs sm:text-sm text-gray-400 mt-1">Real-time match scoring, tournament entry vetting, and medical clearance inspector</p>
+                    <h1 class="mt-4 text-3xl font-black leading-tight tracking-tight text-white sm:text-4xl lg:text-5xl">
+                        League Authority <span class="text-indigo-300">Dashboard</span>
+                    </h1>
+                    <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-300">
+                        Real-time match scoring, tournament entry vetting, and medical clearance inspector from one central command desk.
+                    </p>
                 </div>
-
-                <div class="flex items-center gap-2">
-                    <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-gray-900 text-cyan-400 border border-gray-700">
-                        Broadcasting: Reverb / Log
-                    </span>
+                <div class="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 lg:self-center">
+                    <div class="bg-slate-950/75 p-4">
+                        <p class="text-3xl font-black tracking-tight text-white">{{ $activeMatches->count() }}</p>
+                        <p class="mt-1 text-[11px] font-bold uppercase tracking-wider text-slate-300">Active matches</p>
+                    </div>
+                    <div class="bg-slate-950/75 p-4">
+                        <p class="text-3xl font-black tracking-tight text-white">{{ $pendingApplications->count() }}</p>
+                        <p class="mt-1 text-[11px] font-bold uppercase tracking-wider text-slate-300">Pending entries</p>
+                    </div>
+                    <div class="bg-slate-950/75 p-4">
+                        <p class="text-3xl font-black tracking-tight text-white">{{ $injuredPlayers->count() }}</p>
+                        <p class="mt-1 text-[11px] font-bold uppercase tracking-wider text-slate-300">Medical holds</p>
+                    </div>
+                    <div class="bg-slate-950/75 p-4">
+                        <p class="text-3xl font-black tracking-tight text-white">{{ $tournaments->count() }}</p>
+                        <p class="mt-1 text-[11px] font-bold uppercase tracking-wider text-slate-300">Competitions</p>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- 3 Primary Console Columns/Sections -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
             <!-- Col 1: LIVE MATCH CONSOLE (Spans 2 cols) -->
-            <div class="lg:col-span-2 space-y-6">
+            <div class="lg:col-span-2 space-y-8">
                 <!-- Live Console Card -->
-                <div class="bg-gray-800 border border-gray-700 rounded-3xl p-6 shadow-xl space-y-5">
-                    <div class="flex items-center justify-between pb-4 border-b border-gray-700">
+                <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)] space-y-6">
+                    <div class="flex items-center justify-between pb-4 border-b border-slate-100">
                         <div>
-                            <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                                <span class="relative flex h-3 w-3">
-                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
+                            <div class="flex items-center gap-2">
+                                <span class="relative flex h-2.5 w-2.5">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500"></span>
                                 </span>
-                                Official Live Match Console
-                            </h2>
-                            <p class="text-xs text-gray-400">Adjust scores, log key occurrences, and emit real-time WebSocket score broadcasts</p>
+                                <p class="text-xs font-bold uppercase tracking-[0.16em] text-indigo-600">Live control desk</p>
+                            </div>
+                            <h2 class="mt-1 text-xl font-black tracking-tight text-slate-950">Official Live Match Console</h2>
+                            <p class="mt-1 text-xs text-slate-500">Adjust scores, log key occurrences, and emit real-time WebSocket score broadcasts</p>
                         </div>
                     </div>
 
                     <!-- Match Selector for scoring -->
                     @if($activeMatches->isNotEmpty())
                         <div class="space-y-4">
-                            <label class="block text-xs font-semibold text-gray-300 uppercase">Select Match To Control</label>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <div class="flex items-center justify-between">
+                                <label class="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Select Match to Control</label>
+                                <span class="text-xs font-semibold text-slate-400">{{ $activeMatches->count() }} available</span>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                                 @foreach($activeMatches as $m)
                                     <button type="button" @click="selectMatch({{ $m->id }}, '{{ addslashes($m->homeTeam->name) }}', '{{ addslashes($m->awayTeam->name) }}', {{ $m->home_score }}, {{ $m->away_score }}, '{{ $m->status }}')"
-                                        class="p-3 rounded-xl border text-left transition flex flex-col justify-between"
-                                        :class="currentMatchId === {{ $m->id }} ? 'bg-cyan-500/15 border-cyan-500 ring-1 ring-cyan-500 text-white' : 'bg-gray-900/60 border-gray-700 hover:border-gray-600 text-gray-300'">
-                                        <div class="flex items-center justify-between text-xs mb-1">
-                                            <span class="font-bold truncate max-w-[140px]">{{ $m->tournament->title ?? 'Exhibition' }}</span>
-                                            <span class="px-1.5 py-0.5 rounded text-[10px] uppercase font-bold {{ $m->status === 'live' ? 'bg-rose-500/20 text-rose-400' : 'bg-gray-800 text-gray-400' }}">
+                                        class="flex flex-col justify-between rounded-xl border p-3.5 text-left transition"
+                                        :class="currentMatchId === {{ $m->id }} ? 'border-indigo-600 bg-indigo-50/70 shadow-sm ring-1 ring-indigo-500 text-slate-950' : 'border-slate-200 bg-slate-50/70 hover:border-slate-300 hover:bg-white text-slate-700'">
+                                        <div class="flex items-center justify-between text-xs mb-2">
+                                            <span class="font-bold truncate max-w-[140px] text-slate-900">{{ $m->tournament->title ?? 'Exhibition' }}</span>
+                                            <span class="px-2 py-0.5 rounded-full text-[10px] uppercase font-bold {{ $m->status === 'live' ? 'border border-rose-200 bg-rose-50 text-rose-700' : 'border border-slate-200 bg-slate-100 text-slate-600' }}">
                                                 {{ $m->status }}
                                             </span>
                                         </div>
-                                        <div class="font-bold text-xs">
-                                            {{ $m->homeTeam->name }} <span class="text-cyan-400">({{ $m->home_score }})</span> vs {{ $m->awayTeam->name }} <span class="text-cyan-400">({{ $m->away_score }})</span>
+                                        <div class="font-bold text-xs text-slate-950">
+                                            {{ $m->homeTeam->name }} <span class="font-extrabold text-indigo-600 tabular-nums">({{ $m->home_score }})</span> <span class="mx-1 text-slate-400 font-medium">vs</span> {{ $m->awayTeam->name }} <span class="font-extrabold text-indigo-600 tabular-nums">({{ $m->away_score }})</span>
                                         </div>
                                     </button>
                                 @endforeach
                             </div>
 
                             <!-- Live Scoring Control Box -->
-                            <form :action="'/admin/matches/' + currentMatchId + '/score'" method="POST" class="p-5 rounded-2xl bg-gray-900/90 border border-cyan-500/30 space-y-5">
+                            <form :action="'/admin/matches/' + currentMatchId + '/score'" method="POST" class="space-y-5 rounded-2xl border border-slate-200 bg-slate-50/70 p-5 sm:p-6">
                                 @csrf
-                                <div class="text-center pb-2 border-b border-gray-800">
-                                    <div class="text-xs text-gray-400 uppercase font-semibold">Active Match Controller</div>
-                                    <div class="text-lg font-black text-white mt-0.5">
-                                        <span x-text="homeTeam"></span> <span class="text-cyan-400 font-bold">vs</span> <span x-text="awayTeam"></span>
+                                <div class="border-b border-slate-200 pb-3 text-center">
+                                    <div class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">Active Match Controller</div>
+                                    <div class="mt-1 text-lg font-black text-slate-950">
+                                        <span x-text="homeTeam"></span> <span class="mx-1 text-sm font-bold text-indigo-600">vs</span> <span x-text="awayTeam"></span>
                                     </div>
                                 </div>
 
                                 <!-- Interactive Score Steppers -->
-                                <div class="grid grid-cols-2 gap-6 items-center">
+                                <div class="grid grid-cols-2 gap-4 items-center">
                                     <!-- Home Stepper -->
-                                    <div class="bg-gray-800/80 p-4 rounded-xl border border-gray-700 text-center space-y-2">
-                                        <div class="text-xs font-bold text-gray-300 truncate" x-text="homeTeam"></div>
-                                        <div class="text-4xl font-black text-cyan-400 font-mono" x-text="homeScore"></div>
+                                    <div class="space-y-2 rounded-xl border border-slate-200 bg-white p-4 text-center shadow-sm">
+                                        <div class="truncate text-xs font-bold uppercase tracking-wider text-slate-600" x-text="homeTeam"></div>
+                                        <div class="font-mono text-4xl font-black tabular-nums text-slate-950" x-text="homeScore"></div>
                                         <input type="hidden" name="home_score" :value="homeScore">
                                         <div class="flex items-center justify-center gap-2 pt-1">
-                                            <button type="button" @click="homeScore = Math.max(0, homeScore - 1)" class="w-8 h-8 rounded-lg bg-gray-700 hover:bg-gray-600 font-bold text-sm text-white">-1</button>
-                                            <button type="button" @click="homeScore = homeScore + 1" class="w-8 h-8 rounded-lg bg-cyan-600 hover:bg-cyan-500 font-bold text-sm text-white">+1</button>
-                                            <button type="button" @click="homeScore = homeScore + 3" class="px-2 h-8 rounded-lg bg-cyan-900 hover:bg-cyan-800 font-bold text-xs text-cyan-300">+3</button>
+                                            <button type="button" @click="homeScore = Math.max(0, homeScore - 1)" class="h-8 w-8 rounded-lg border border-slate-200 bg-white text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-100 hover:text-slate-950">-1</button>
+                                            <button type="button" @click="homeScore = homeScore + 1" class="h-8 w-8 rounded-lg bg-indigo-600 text-sm font-bold text-white shadow-sm transition hover:bg-indigo-700">+1</button>
+                                            <button type="button" @click="homeScore = homeScore + 3" class="h-8 rounded-lg border border-indigo-200 bg-indigo-50 px-2.5 text-xs font-bold text-indigo-700 shadow-sm transition hover:bg-indigo-100">+3</button>
                                         </div>
                                     </div>
 
                                     <!-- Away Stepper -->
-                                    <div class="bg-gray-800/80 p-4 rounded-xl border border-gray-700 text-center space-y-2">
-                                        <div class="text-xs font-bold text-gray-300 truncate" x-text="awayTeam"></div>
-                                        <div class="text-4xl font-black text-sky-400 font-mono" x-text="awayScore"></div>
+                                    <div class="space-y-2 rounded-xl border border-slate-200 bg-white p-4 text-center shadow-sm">
+                                        <div class="truncate text-xs font-bold uppercase tracking-wider text-slate-600" x-text="awayTeam"></div>
+                                        <div class="font-mono text-4xl font-black tabular-nums text-slate-950" x-text="awayScore"></div>
                                         <input type="hidden" name="away_score" :value="awayScore">
                                         <div class="flex items-center justify-center gap-2 pt-1">
-                                            <button type="button" @click="awayScore = Math.max(0, awayScore - 1)" class="w-8 h-8 rounded-lg bg-gray-700 hover:bg-gray-600 font-bold text-sm text-white">-1</button>
-                                            <button type="button" @click="awayScore = awayScore + 1" class="w-8 h-8 rounded-lg bg-sky-600 hover:bg-sky-500 font-bold text-sm text-white">+1</button>
-                                            <button type="button" @click="awayScore = awayScore + 3" class="px-2 h-8 rounded-lg bg-sky-900 hover:bg-sky-800 font-bold text-xs text-sky-300">+3</button>
+                                            <button type="button" @click="awayScore = Math.max(0, awayScore - 1)" class="h-8 w-8 rounded-lg border border-slate-200 bg-white text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-100 hover:text-slate-950">-1</button>
+                                            <button type="button" @click="awayScore = awayScore + 1" class="h-8 w-8 rounded-lg bg-indigo-600 text-sm font-bold text-white shadow-sm transition hover:bg-indigo-700">+1</button>
+                                            <button type="button" @click="awayScore = awayScore + 3" class="h-8 rounded-lg border border-indigo-200 bg-indigo-50 px-2.5 text-xs font-bold text-indigo-700 shadow-sm transition hover:bg-indigo-100">+3</button>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Match Status Selector -->
                                 <div>
-                                    <label class="block mb-1.5 text-xs font-medium text-gray-300">Fixture Status State</label>
-                                    <select name="status" x-model="status" class="bg-gray-800 border border-gray-700 text-white text-xs rounded-lg block w-full p-2.5">
+                                    <label class="block mb-1.5 text-xs font-bold uppercase tracking-[0.12em] text-slate-600">Fixture Status State</label>
+                                    <select name="status" x-model="status" class="block w-full rounded-xl border border-slate-200 bg-white p-2.5 text-xs font-semibold text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
                                         <option value="upcoming">Upcoming (Pre-match)</option>
                                         <option value="live">Live (Broadcasting actively)</option>
-                                        <option value="completed">Completed (Final Score Sealed & Stats Processed)</option>
+                                        <option value="completed">Completed (Final Score Sealed &amp; Stats Processed)</option>
                                     </select>
                                 </div>
 
                                 <!-- Incident / Event Logger -->
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <div>
-                                        <label class="block mb-1 text-xs text-gray-400">Match Event Type</label>
-                                        <select name="event_type" class="bg-gray-800 border border-gray-700 text-white text-xs rounded-lg block w-full p-2">
+                                        <label class="block mb-1 text-xs font-bold text-slate-600">Match Event Type</label>
+                                        <select name="event_type" class="block w-full rounded-xl border border-slate-200 bg-white p-2.5 text-xs font-medium text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
                                             <option value="score">Goal / Points Scored</option>
                                             <option value="yellow_card">Yellow Warning Card</option>
                                             <option value="red_card">Red Card Disqualification</option>
@@ -122,47 +148,48 @@
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="block mb-1 text-xs text-gray-400">Event Description</label>
-                                        <input type="text" name="event_description" placeholder="e.g. 68' Brilliant curved shot into top corner" class="bg-gray-800 border border-gray-700 text-white text-xs rounded-lg block w-full p-2">
+                                        <label class="block mb-1 text-xs font-bold text-slate-600">Event Description</label>
+                                        <input type="text" name="event_description" placeholder="e.g. 68' Brilliant curved shot into top corner" class="block w-full rounded-xl border border-slate-200 bg-white p-2.5 text-xs text-slate-900 placeholder:text-slate-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
                                     </div>
                                 </div>
 
-                                <button type="submit" class="w-full text-gray-950 bg-gradient-to-r from-cyan-500 to-sky-400 hover:from-cyan-400 font-bold rounded-xl text-sm px-5 py-3 text-center shadow-lg shadow-cyan-500/20 transition flex items-center justify-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-indigo-600">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                                     <span>Emit Official Live Score Update</span>
                                 </button>
                             </form>
                         </div>
                     @else
-                        <div class="p-8 text-center text-xs text-gray-400 bg-gray-900/40 rounded-2xl border border-gray-700">
+                        <div class="p-8 text-center text-xs font-medium text-slate-500 bg-slate-50/70 rounded-2xl border border-dashed border-slate-300">
                             No active or upcoming matches available. Schedule new friendlies or launch a tournament bracket.
                         </div>
                     @endif
                 </div>
 
                 <!-- Application Review Console -->
-                <div class="bg-gray-800 border border-gray-700 rounded-3xl p-6 shadow-xl space-y-4">
-                    <div class="flex items-center justify-between pb-3 border-b border-gray-700">
+                <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)] space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                         <div>
-                            <h2 class="text-lg font-bold text-white">Tournament Applications Review</h2>
-                            <p class="text-xs text-gray-400">Vet team registrations before seeding brackets</p>
+                            <p class="text-xs font-bold uppercase tracking-[0.16em] text-indigo-600">Registrations</p>
+                            <h2 class="mt-1 text-lg font-bold text-slate-950">Tournament Applications Review</h2>
+                            <p class="text-xs text-slate-500">Vet team registrations before seeding brackets</p>
                         </div>
-                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
                             {{ $pendingApplications->count() }} Pending
                         </span>
                     </div>
 
-                    <div class="divide-y divide-gray-700">
+                    <div class="divide-y divide-slate-100">
                         @forelse($pendingApplications as $app)
-                            <div class="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                            <div class="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
                                 <div>
-                                    <div class="font-bold text-white text-sm">{{ $app->team->name }}</div>
-                                    <div class="text-gray-400">
-                                        Tournament: <span class="text-cyan-400 font-semibold">{{ $app->tournament->title }}</span>
-                                        &bull; Manager: {{ $app->team->manager->name ?? 'Staff' }}
+                                    <div class="font-bold text-slate-950 text-sm">{{ $app->team->name }}</div>
+                                    <div class="mt-0.5 text-slate-500">
+                                        Tournament: <span class="text-indigo-600 font-semibold">{{ $app->tournament->title }}</span>
+                                        &bull; Manager: <span class="text-slate-700">{{ $app->team->manager->name ?? 'Staff' }}</span>
                                     </div>
                                     @if($app->notes)
-                                        <p class="text-[11px] text-gray-300 italic mt-0.5">"{{ $app->notes }}"</p>
+                                        <p class="text-[11px] text-slate-600 italic mt-1 rounded-lg bg-slate-50 border border-slate-100 px-2.5 py-1.5">"{{ $app->notes }}"</p>
                                     @endif
                                 </div>
 
@@ -170,7 +197,7 @@
                                     <form action="{{ route('admin.applications.review', $app->id) }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="status" value="approved">
-                                        <button type="submit" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition">
+                                        <button type="submit" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition">
                                             ✓ Approve
                                         </button>
                                     </form>
@@ -178,14 +205,14 @@
                                     <form action="{{ route('admin.applications.review', $app->id) }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="status" value="rejected">
-                                        <button type="submit" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-rose-600/80 hover:bg-rose-600 text-white transition">
+                                        <button type="submit" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 shadow-sm transition">
                                             ✕ Decline
                                         </button>
                                     </form>
                                 </div>
                             </div>
                         @empty
-                            <div class="py-6 text-center text-xs text-gray-400">
+                            <div class="py-8 text-center text-xs font-medium text-slate-500 bg-slate-50/70 rounded-xl border border-dashed border-slate-300">
                                 No pending team applications awaiting review.
                             </div>
                         @endforelse
@@ -194,51 +221,52 @@
             </div>
 
             <!-- Col 2: PLAYER HEALTH INSPECTOR & TOURNAMENTS (1 Col) -->
-            <div class="space-y-6">
+            <div class="space-y-8">
 
                 <!-- Player Health Inspector Card -->
-                <div class="bg-gray-800 border border-gray-700 rounded-3xl p-6 shadow-xl space-y-4">
-                    <div class="flex items-center justify-between pb-3 border-b border-gray-700">
+                <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)] space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                         <div>
-                            <h2 class="text-base font-bold text-white flex items-center gap-1.5">
-                                <span class="text-red-400">🏥</span>
-                                Player Health Inspector
-                            </h2>
-                            <p class="text-[11px] text-gray-400">Athletes flagged with medical holds</p>
+                            <div class="flex items-center gap-1.5">
+                                <span class="flex h-5 w-5 items-center justify-center rounded-full bg-rose-50 text-xs">🏥</span>
+                                <p class="text-xs font-bold uppercase tracking-[0.16em] text-rose-600">Medical desk</p>
+                            </div>
+                            <h2 class="mt-1 text-base font-bold text-slate-950">Player Health Inspector</h2>
+                            <p class="text-[11px] text-slate-500">Athletes flagged with medical holds</p>
                         </div>
-                        <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-red-500/20 text-red-400 border border-red-500/30">
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">
                             {{ $injuredPlayers->count() }} Injured
                         </span>
                     </div>
 
                     <div class="space-y-3">
                         @forelse($injuredPlayers as $prof)
-                            <div class="p-3 bg-gray-900/80 rounded-xl border border-red-900/40 text-xs space-y-2">
+                            <div class="p-3.5 bg-rose-50/40 rounded-xl border border-rose-100 text-xs space-y-2.5">
                                 <div class="flex items-center justify-between">
-                                    <span class="font-bold text-white">{{ $prof->user->name }}</span>
-                                    <span class="text-red-400 text-[10px] font-bold uppercase">Medical Hold</span>
+                                    <span class="font-bold text-slate-950 text-sm">{{ $prof->user->name }}</span>
+                                    <span class="px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 text-[10px] font-bold uppercase tracking-wider">Medical Hold</span>
                                 </div>
 
-                                <div class="text-[11px] text-gray-400">
-                                    Team: {{ $prof->user->teams->pluck('name')->join(', ') ?: 'Free Agent' }}
-                                    &bull; Sport: {{ $prof->primary_sport }}
+                                <div class="text-[11px] text-slate-500">
+                                    Team: <span class="font-medium text-slate-700">{{ $prof->user->teams->pluck('name')->join(', ') ?: 'Free Agent' }}</span>
+                                    &bull; Sport: <span class="font-medium text-slate-700">{{ $prof->primary_sport }}</span>
                                 </div>
 
                                 @if($prof->injury_notes)
-                                    <div class="p-2 bg-red-950/40 rounded border border-red-900/30 text-[11px] text-red-200 italic">
+                                    <div class="p-2 bg-white/80 rounded-lg border border-rose-200/60 text-[11px] text-rose-900 italic">
                                         "{{ $prof->injury_notes }}"
                                     </div>
                                 @endif
 
                                 <form action="{{ route('admin.players.clearInjury', $prof->id) }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="w-full py-1.5 px-2 rounded-lg bg-emerald-600/80 hover:bg-emerald-600 text-white font-semibold text-[11px] transition">
-                                        ✓ Clear Medical Hold (Make Fit)
+                                    <button type="submit" class="w-full inline-flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm transition">
+                                        <span>✓</span> Clear Medical Hold (Make Fit)
                                     </button>
                                 </form>
                             </div>
                         @empty
-                            <div class="py-6 text-center text-xs text-gray-400">
+                            <div class="py-8 text-center text-xs font-medium text-slate-500 bg-slate-50/70 rounded-xl border border-dashed border-slate-300">
                                 All registered players are active and medically fit!
                             </div>
                         @endforelse
@@ -246,35 +274,120 @@
                 </div>
 
                 <!-- Tournaments Quick Overview & Bracket Seed -->
-                <div class="bg-gray-800 border border-gray-700 rounded-3xl p-6 shadow-xl space-y-4">
-                    <div class="flex items-center justify-between pb-3 border-b border-gray-700">
-                        <h2 class="text-base font-bold text-white">Tournaments Overview</h2>
-                        <a href="{{ route('tournaments.index') }}" class="text-xs text-cyan-400 hover:underline">View All</a>
+                <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)] space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <div>
+                            <p class="text-xs font-bold uppercase tracking-[0.16em] text-indigo-600">Overview</p>
+                            <h2 class="mt-1 text-base font-bold text-slate-950">Tournaments Overview</h2>
+                        </div>
+                        <a href="{{ route('tournaments.index') }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-800">
+                            View All &rarr;
+                        </a>
                     </div>
 
-                    <div class="space-y-3 text-xs">
-                        @foreach($tournaments as $t)
-                            <div class="p-3 bg-gray-900/60 rounded-xl border border-gray-700/60 flex items-center justify-between">
-                                <div>
-                                    <a href="{{ route('tournaments.show', $t->slug) }}" class="font-bold text-white hover:text-cyan-400 transition block">
+                    <div class="space-y-2.5 text-xs">
+                        @forelse($tournaments as $t)
+                            <div class="flex items-center justify-between gap-3 p-3 rounded-xl border border-slate-200 bg-slate-50/70 hover:border-slate-300 hover:bg-white transition">
+                                <div class="min-w-0">
+                                    <a href="{{ route('tournaments.show', $t->slug) }}" class="font-bold text-slate-950 hover:text-indigo-600 transition block truncate">
                                         {{ $t->title }}
                                     </a>
-                                    <span class="text-gray-400">{{ $t->teams_count }} Teams &bull; {{ $t->current_stage }}</span>
+                                    <span class="text-[11px] text-slate-500">{{ $t->teams_count }} Teams &bull; <span class="capitalize">{{ str_replace('_', ' ', $t->current_stage) }}</span></span>
                                 </div>
 
                                 <form action="{{ route('tournaments.generateBracket', $t->id) }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="px-2.5 py-1 rounded bg-sky-900 hover:bg-sky-800 text-sky-200 font-semibold text-[10px] transition" title="Seed and Generate Fixtures">
+                                    <button type="submit" class="shrink-0 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-600 text-slate-700 font-bold text-[11px] shadow-sm transition" title="Seed and Generate Fixtures">
                                         Seed Bracket
                                     </button>
                                 </form>
                             </div>
-                        @endforeach
+                        @empty
+                            <div class="py-8 text-center text-xs font-medium text-slate-500 bg-slate-50/70 rounded-xl border border-dashed border-slate-300">
+                                No tournaments created yet.
+                            </div>
+                        @endforelse
                     </div>
                 </div>
 
             </div>
 
+        </div>
+
+        <!-- Recent Operations & Match Activity Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-2">
+            <!-- Recent Completed Matches -->
+            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)] space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-[0.16em] text-indigo-600">Archive</p>
+                        <h2 class="mt-1 text-base font-bold text-slate-950">Recent Completed Matches</h2>
+                        <p class="text-xs text-slate-500">Sealed scores and competition records</p>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                        {{ $completedMatches->count() }} Sealed
+                    </span>
+                </div>
+
+                <div class="divide-y divide-slate-100">
+                    @forelse($completedMatches as $cm)
+                        <div class="py-3 flex items-center justify-between gap-3 text-xs">
+                            <div class="min-w-0">
+                                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">{{ $cm->tournament->title ?? 'Exhibition Match' }}</span>
+                                <div class="mt-0.5 font-bold text-slate-950 text-sm truncate">
+                                    {{ $cm->homeTeam->name }} <span class="text-indigo-600 tabular-nums">({{ $cm->home_score }})</span>
+                                    <span class="text-slate-400 font-normal mx-1">vs</span>
+                                    {{ $cm->awayTeam->name }} <span class="text-indigo-600 tabular-nums">({{ $cm->away_score }})</span>
+                                </div>
+                                <span class="text-[11px] text-slate-500">{{ $cm->venue }} &bull; {{ $cm->scheduled_at ? $cm->scheduled_at->format('M d, H:i') : 'Recent' }}</span>
+                            </div>
+                            <span class="shrink-0 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-slate-100 text-slate-700 border border-slate-200">
+                                Final
+                            </span>
+                        </div>
+                    @empty
+                        <div class="py-8 text-center text-xs font-medium text-slate-500 bg-slate-50/70 rounded-xl border border-dashed border-slate-300">
+                            No completed matches archived yet.
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+
+            <!-- Approved Roster Entries -->
+            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)] space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-[0.16em] text-indigo-600">Rosters</p>
+                        <h2 class="mt-1 text-base font-bold text-slate-950">Recently Approved Teams</h2>
+                        <p class="text-xs text-slate-500">Confirmed entries seeded into brackets</p>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        {{ $approvedApplications->count() }} Approved
+                    </span>
+                </div>
+
+                <div class="divide-y divide-slate-100">
+                    @forelse($approvedApplications as $app)
+                        <div class="py-3 flex items-center justify-between gap-3 text-xs">
+                            <div class="min-w-0">
+                                <div class="font-bold text-slate-950 text-sm truncate">{{ $app->team->name }}</div>
+                                <div class="mt-0.5 text-slate-500">
+                                    Tournament: <span class="font-semibold text-indigo-600">{{ $app->tournament->title }}</span>
+                                    &bull; Manager: <span class="text-slate-700">{{ $app->team->manager->name ?? 'Staff' }}</span>
+                                </div>
+                            </div>
+                            <span class="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                                Vetted
+                            </span>
+                        </div>
+                    @empty
+                        <div class="py-8 text-center text-xs font-medium text-slate-500 bg-slate-50/70 rounded-xl border border-dashed border-slate-300">
+                            No team applications approved yet.
+                        </div>
+                    @endforelse
+                </div>
+            </div>
         </div>
     </div>
 
