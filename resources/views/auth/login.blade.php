@@ -129,6 +129,9 @@
                         <input type="password" id="password" name="password" required
                                class="h-12 w-full rounded-xl border border-slate-200 px-3.5 text-sm text-slate-900 placeholder:text-slate-400"
                                placeholder="Enter your password">
+                        @error('password')
+                            <p class="mt-2 text-sm font-medium text-rose-600">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <label class="flex items-center gap-2.5">
