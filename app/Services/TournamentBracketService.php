@@ -6,25 +6,45 @@ use App\Models\GameMatch;
 use App\Models\Tournament;
 use Carbon\Carbon;
 
+/**
+ * TournamentBracketService
+ *
+ * Orchestrates single-elimination tournament bracket generation,
+ * dynamic stage progression upon match completion, and tree formatting for visual bracket boards.
+ */
 class TournamentBracketService
 {
     /**
      * Generate initial knockout bracket fixtures for approved teams.
+     *
+     * Validates approved team count, resets unplayed fixtures, determines starting stage
+     * (quarter_final, semi_final, or final), pairs seeded teams, and schedules matches.
      */
     public function generateBracket(Tournament $tournament): array
     {
+        // ==========================================
+        // 1. Team Count & Eligibility Validation
+        // Requires a minimum of 2 approved teams to generate fixtures
+        // ==========================================
         $teams = $tournament->teams()->get();
         if ($teams->count() < 2) {
             return ['success' => false, 'message' => 'At least 2 approved teams are required to generate bracket fixtures.'];
         }
 
+        // ==========================================
+        // 2. Fixture Reset
         // Clear existing non-completed matches if regenerating
+        // ==========================================
         $tournament->matches()->where('status', 'upcoming')->delete();
 
+        // Randomize team seed order for draw allocation
         $shuffled = $teams->shuffle()->values();
         $count = $shuffled->count();
 
-        // Determine starting stage
+        // ==========================================
+        // 3. Stage Determination
+        // Select starting round based on participating team volume
+        // ==========================================
         $stage = 'final';
         if ($count >= 8) {
             $stage = 'quarter_final';
@@ -37,6 +57,7 @@ class TournamentBracketService
             $numMatches = 1;
         }
 
+        // Update competition status to live tournament state
         $tournament->update([
             'status' => 'in_progress',
             'current_stage' => $stage,
@@ -45,6 +66,10 @@ class TournamentBracketService
         $createdMatches = [];
         $baseDate = $tournament->start_date ? Carbon::parse($tournament->start_date) : Carbon::now()->addDays(2);
 
+        // ==========================================
+        // 4. Match Pairings and Schedule Assignment
+        // Create home vs away match fixtures spaced evenly throughout competition days
+        // ==========================================
         for ($i = 0; $i < $numMatches; $i++) {
             $homeIndex = $i * 2;
             $awayIndex = $i * 2 + 1;
@@ -77,16 +102,24 @@ class TournamentBracketService
 
     /**
      * Advance tournament bracket to the next round if current round is completed.
+     *
+     * Inspects active round fixtures, identifies winning teams, and automatically generates
+     * subsequent stage matches or marks the tournament as completed.
      */
     public function advanceBracketIfCompleted(Tournament $tournament): bool
     {
         $currentStage = $tournament->current_stage;
         $matches = $tournament->matches()->where('stage', $currentStage)->get();
 
+        // Ensure all matches in current stage have concluded
         if ($matches->isEmpty() || $matches->contains(fn($m) => $m->status !== 'completed')) {
             return false;
         }
 
+        // ==========================================
+        // 1. Identify Advancing Winners
+        // Pick victorious team based on scoreline
+        // ==========================================
         $winners = [];
         foreach ($matches as $match) {
             if ($match->home_score >= $match->away_score) {
@@ -96,6 +129,9 @@ class TournamentBracketService
             }
         }
 
+        // ==========================================
+        // 2. Quarter-Final -> Semi-Final Progression
+        // ==========================================
         if ($currentStage === 'quarter_final') {
             $nextStage = 'semi_final';
             $tournament->update(['current_stage' => $nextStage]);
@@ -118,6 +154,9 @@ class TournamentBracketService
                 }
             }
             return true;
+        // ==========================================
+        // 3. Semi-Final -> Grand Final Progression
+        // ==========================================
         } elseif ($currentStage === 'semi_final') {
             $nextStage = 'final';
             $tournament->update(['current_stage' => $nextStage]);
@@ -138,6 +177,10 @@ class TournamentBracketService
                 ]);
             }
             return true;
+        // ==========================================
+        // 4. Tournament Completion
+        // Mark competition finished once the grand final concludes
+        // ==========================================
         } elseif ($currentStage === 'final') {
             $tournament->update(['status' => 'completed']);
             return true;
@@ -148,6 +191,9 @@ class TournamentBracketService
 
     /**
      * Get structured bracket structure for visual display.
+     *
+     * Groups fixtures into quarter-finals, semi-finals, and finals stages
+     * with team identities, scores, and winner resolution for front-end bracket UI.
      */
     public function getBracketTree(Tournament $tournament): array
     {
@@ -190,4 +236,3 @@ class TournamentBracketService
         return $tree;
     }
 }
-

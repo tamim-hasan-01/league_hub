@@ -18,22 +18,41 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
+/**
+ * AdminDashboardController
+ *
+ * Provides authority operations for tournament organizers and platform administrators:
+ * live scoring console, tournament bracket progression, application reviews, and medical clearances.
+ */
 class AdminDashboardController extends Controller
 {
     protected TournamentBracketService $bracketService;
     protected RankingService $rankingService;
 
+    /**
+     * Initialize controller with required bracket and ranking domain services.
+     */
     public function __construct(TournamentBracketService $bracketService, RankingService $rankingService)
     {
         $this->bracketService = $bracketService;
         $this->rankingService = $rankingService;
     }
 
+    /**
+     * Display the primary administrative control console.
+     *
+     * Gathers active fixtures, pending tournament registrations,
+     * roster injury reports, and tournament summaries.
+     */
     public function index(): View
     {
+        // Enforce administrative access authorization gate
         Gate::authorize('access-dashboard');
 
-        // Live and upcoming matches for the console
+        // ==========================================
+        // 1. Live and Upcoming Match Console
+        // Fetch matches prioritizing currently live fixtures
+        // ==========================================
         $activeMatches = GameMatch::with(['homeTeam', 'awayTeam', 'tournament'])
             ->whereIn('status', ['live', 'upcoming'])
             ->orderByRaw("CASE WHEN status = 'live' THEN 1 ELSE 2 END")
@@ -46,7 +65,10 @@ class AdminDashboardController extends Controller
             ->take(5)
             ->get();
 
-        // Pending and recent applications
+        // ==========================================
+        // 2. Team Tournament Applications
+        // Segregate pending applications for review from approved entries
+        // ==========================================
         $pendingApplications = TournamentApplication::where('status', 'pending')
             ->with(['tournament', 'team.manager'])
             ->orderBy('created_at', 'desc')
@@ -57,12 +79,18 @@ class AdminDashboardController extends Controller
             ->take(5)
             ->get();
 
-        // Injured players across rosters
+        // ==========================================
+        // 3. Player Medical and Injury Oversight
+        // Query players flagged as injured across all team rosters
+        // ==========================================
         $injuredPlayers = PlayerProfile::where('is_injured', true)
             ->with(['user.teams'])
             ->get();
 
-        // Tournaments overview
+        // ==========================================
+        // 4. Tournament Competitions Overview
+        // Load competitions with associated team and match counts
+        // ==========================================
         $tournaments = Tournament::withCount(['teams', 'matches'])->get();
 
         return view('pages.admin.dashboard', compact(
@@ -75,10 +103,17 @@ class AdminDashboardController extends Controller
         ));
     }
 
+    /**
+     * Update match scoreline, timeline events, and game status.
+     *
+     * Dispatches real-time broadcast events and triggers ranking recalculation
+     * and knockout bracket advancement when a match concludes.
+     */
     public function updateScore(Request $request, GameMatch $match): RedirectResponse|JsonResponse
     {
         Gate::authorize('access-dashboard');
 
+        // Validate incoming scoreline data and status parameters
         $request->validate([
             'home_score' => 'required|integer|min:0',
             'away_score' => 'required|integer|min:0',
@@ -90,7 +125,10 @@ class AdminDashboardController extends Controller
         $prevStatus = $match->status;
         $matchData = $match->match_data ?? ['events' => []];
 
-        // Add timeline event if provided
+        // ==========================================
+        // 1. Timeline Event Appending
+        // Record timestamped key incidents (e.g. goals, fouls, substitutions)
+        // ==========================================
         if ($request->filled('event_description')) {
             $events = $matchData['events'] ?? [];
             $events[] = [
@@ -101,6 +139,9 @@ class AdminDashboardController extends Controller
             $matchData['events'] = $events;
         }
 
+        // ==========================================
+        // 2. Persist Updated Match State
+        // ==========================================
         $match->update([
             'home_score' => $request->home_score,
             'away_score' => $request->away_score,
@@ -108,14 +149,19 @@ class AdminDashboardController extends Controller
             'match_data' => $matchData,
         ]);
 
-        // Broadcast event
+        // ==========================================
+        // 3. Broadcast Real-Time Update Event
+        // ==========================================
         event(new MatchScoreUpdated(
             $match,
             $request->event_type ?? 'score_update',
             $request->event_description ?? "Score updated to {$match->home_score} - {$match->away_score}"
         ));
 
-        // If completed just now, recalculate rankings and advance bracket if tournament match
+        // ==========================================
+        // 4. Completion Lifecycle Hooks
+        // Recalculate team rankings, advance bracket stage, and alert bookmarked users
+        // ==========================================
         if ($match->status === 'completed' && $prevStatus !== 'completed') {
             $this->rankingService->recalculateTeamRankings();
 
@@ -123,7 +169,7 @@ class AdminDashboardController extends Controller
                 $this->bracketService->advanceBracketIfCompleted($match->tournament);
             }
 
-            // Notify followers
+            // Notify followers who bookmarked this match
             foreach ($match->bookmarks as $bookmark) {
                 $bookmark->user->notify(new MatchResultNotification($match));
             }
@@ -140,6 +186,11 @@ class AdminDashboardController extends Controller
         return back()->with('success', "Score updated for {$match->homeTeam->name} vs {$match->awayTeam->name}!");
     }
 
+    /**
+     * Review and decide on a team's tournament entry application.
+     *
+     * Marks status as approved or rejected and sends notification to the team manager.
+     */
     public function reviewApplication(Request $request, TournamentApplication $application): RedirectResponse
     {
         Gate::authorize('access-dashboard');
@@ -152,7 +203,7 @@ class AdminDashboardController extends Controller
             'status' => $request->status,
         ]);
 
-        // Notify team manager
+        // Notify team manager of application decision
         if ($application->team && $application->team->manager) {
             $application->team->manager->notify(new TournamentApplicationStatusChanged($application));
         }
@@ -160,6 +211,11 @@ class AdminDashboardController extends Controller
         return back()->with('success', "Application for team {$application->team->name} was marked as {$request->status}!");
     }
 
+    /**
+     * Medically clear an injured player profile.
+     *
+     * Resets the injury status to active and appends a clearance log entry.
+     */
     public function clearInjury(PlayerProfile $profile): RedirectResponse
     {
         Gate::authorize('access-dashboard');
@@ -172,4 +228,3 @@ class AdminDashboardController extends Controller
         return back()->with('success', "Player {$profile->user->name} has been medically cleared!");
     }
 }
-

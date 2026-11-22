@@ -13,8 +13,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
+/**
+ * MyTournamentsController
+ *
+ * Manages the personalized user hub, tailoring data according to user roles:
+ * - Managers: team rosters, active tournaments, pending applications, friendly matches
+ * - Players: match call-up invitations, active rosters, fixture schedule
+ * - Viewers & Spectators: bookmarked matches and followed tournaments
+ */
 class MyTournamentsController extends Controller
 {
+    /**
+     * Display the personalized hub tailored to the authenticated user's role.
+     */
     public function index(): View
     {
         $user = Auth::user();
@@ -24,6 +35,10 @@ class MyTournamentsController extends Controller
         $playerData = [];
         $viewerData = [];
 
+        // ==========================================
+        // 1. Manager Role Data Assembly
+        // Collect managed teams, active tournament participation, and pending applications
+        // ==========================================
         if ($user->isManager() || $user->isAdmin()) {
             $teams = Team::where('manager_id', $user->id)->pluck('id');
             $managerData = [
@@ -40,6 +55,10 @@ class MyTournamentsController extends Controller
             ];
         }
 
+        // ==========================================
+        // 2. Player Role Data Assembly
+        // Retrieve incoming match call-ups, confirmed fixtures, and current team rosters
+        // ==========================================
         if ($user->isPlayer() || $user->isAdmin()) {
             $playerData = [
                 'pendingInvitations' => MatchInvitation::where('player_id', $user->id)
@@ -58,6 +77,10 @@ class MyTournamentsController extends Controller
             ];
         }
 
+        // ==========================================
+        // 3. Viewer & General Follower Bookmarks
+        // Load followed matches and tracked tournaments
+        // ==========================================
         if ($user->isViewer() || $user->isAdmin() || $user->isManager() || $user->isPlayer()) {
             $viewerData = [
                 'bookmarkedMatches' => Bookmark::where('user_id', $user->id)
@@ -71,9 +94,18 @@ class MyTournamentsController extends Controller
             ];
         }
 
+        // ==========================================
+        // 4. View Rendering
+        // Render unified hub view with populated role-specific collections
+        // ==========================================
         return view('pages.hub.index', compact('user', 'role', 'managerData', 'playerData', 'viewerData'));
     }
 
+    /**
+     * Respond to a match call-up invitation as a player.
+     *
+     * Validates player identity and sets invitation status to accepted or declined.
+     */
     public function respondInvitation(Request $request, MatchInvitation $invitation): RedirectResponse
     {
         $user = Auth::user();
@@ -91,12 +123,18 @@ class MyTournamentsController extends Controller
         return back()->with('success', "Match call-up has been {$statusLabel}.");
     }
 
+    /**
+     * Toggle bookmark state for a match or tournament.
+     *
+     * Creates a new bookmark record or removes an existing one for the user.
+     */
     public function toggleBookmark(Request $request): RedirectResponse
     {
         $user = Auth::user();
         $type = $request->type; // 'match' or 'tournament'
         $id = $request->id;
 
+        // Handle match bookmarking
         if ($type === 'match') {
             $match = GameMatch::findOrFail($id);
             $bookmark = Bookmark::where('user_id', $user->id)->where('game_match_id', $match->id)->first();
@@ -107,6 +145,7 @@ class MyTournamentsController extends Controller
                 Bookmark::create(['user_id' => $user->id, 'game_match_id' => $match->id]);
                 return back()->with('success', 'Match added to your bookmarks!');
             }
+        // Handle tournament bookmarking
         } elseif ($type === 'tournament') {
             $tournament = Tournament::findOrFail($id);
             $bookmark = Bookmark::where('user_id', $user->id)->where('tournament_id', $tournament->id)->first();
@@ -122,4 +161,3 @@ class MyTournamentsController extends Controller
         return back();
     }
 }
-

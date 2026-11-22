@@ -1,5 +1,9 @@
 <x-app-layout>
     <div class="space-y-8" x-data="{ activeTab: 'bracket' }">
+        {{-- ========================================== --}}
+        {{-- Section: Tournament Hero Banner & Metadata --}}
+        {{-- Displays title, sport category, prize pool, team counts, and current stage --}}
+        {{-- ========================================== --}}
         <section class="relative overflow-hidden rounded-[28px] border border-slate-200 bg-slate-950 text-white">
             <div class="absolute right-0 top-0 h-full w-2/5 bg-[radial-gradient(circle_at_center,rgba(129,140,248,0.24),transparent_68%)]"></div>
             <div class="relative grid gap-8 px-6 py-8 sm:px-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:px-10 lg:py-10">
@@ -21,6 +25,7 @@
                         {{ $tournament->description ?: 'A registered multi-stage competition managed through LeagueHub.' }}
                     </p>
 
+                    {{-- Competition Fast-Fact Stats Grid --}}
                     <div class="mt-7 grid gap-px overflow-hidden rounded-xl border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
                         <div class="bg-slate-950/75 px-4 py-4">
                             <p class="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-400">Venue</p>
@@ -41,6 +46,9 @@
                     </div>
                 </div>
 
+                {{-- ========================================== --}}
+                {{-- Section: Action Controls (Follow, Apply, Bracket Generation) --}}
+                {{-- ========================================== --}}
                 <aside class="flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 lg:self-start">
                     @auth
                         <form action="{{ route('bookmarks.toggle') }}" method="POST">
@@ -84,6 +92,9 @@
             </div>
         </section>
 
+        {{-- ========================================== --}}
+        {{-- Section: Navigation Tabs (Bracket, Teams, Fixtures) --}}
+        {{-- ========================================== --}}
         <nav class="overflow-x-auto border-b border-slate-200" aria-label="Tournament sections">
             <div class="flex min-w-max gap-1 sm:gap-2">
                 <button type="button" @click="activeTab = 'bracket'"
@@ -104,6 +115,10 @@
             </div>
         </nav>
 
+        {{-- ========================================== --}}
+        {{-- Section: Knockout Bracket Visual Board     --}}
+        {{-- Shows tree progression through quarter, semi, and grand final rounds --}}
+        {{-- ========================================== --}}
         <div x-show="activeTab === 'bracket'" class="space-y-5">
             <div>
                 <p class="text-sm font-semibold text-indigo-600">Tournament bracket</p>
@@ -156,6 +171,9 @@
             </div>
         </div>
 
+        {{-- ========================================== --}}
+        {{-- Section: Confirmed Participating Teams     --}}
+        {{-- ========================================== --}}
         <div x-show="activeTab === 'teams'" x-cloak class="space-y-5">
             <div>
                 <p class="text-sm font-semibold text-indigo-600">Confirmed participants</p>
@@ -187,6 +205,9 @@
             </div>
         </div>
 
+        {{-- ========================================== --}}
+        {{-- Section: Tournament Fixtures and Schedule  --}}
+        {{-- ========================================== --}}
         <div x-show="activeTab === 'fixtures'" x-cloak class="space-y-5">
             <div>
                 <p class="text-sm font-semibold text-indigo-600">Match schedule</p>
@@ -205,6 +226,9 @@
         </div>
     </div>
 
+    {{-- ========================================== --}}
+    {{-- Section: Manager Team Application Modal    --}}
+    {{-- ========================================== --}}
     @if(auth()->check() && auth()->user()->isManager())
         <div id="apply-team-modal" tabindex="-1" aria-hidden="true"
              class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-x-hidden overflow-y-auto md:inset-0">

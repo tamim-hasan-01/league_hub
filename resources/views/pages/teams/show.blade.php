@@ -2,6 +2,10 @@
     <div class="space-y-8" x-data="{ tab: 'roster' }">
         @php $record = $team->record; @endphp
 
+        {{-- ========================================== --}}
+        {{-- Section: Team Profile Hero & Standing Badge --}}
+        {{-- Displays club identity, ranking tier, manager, and action controls --}}
+        {{-- ========================================== --}}
         <section class="relative overflow-hidden rounded-[28px] border border-slate-200 bg-slate-950 text-white">
             <div class="absolute right-0 top-0 h-full w-2/5 bg-[radial-gradient(circle_at_center,rgba(129,140,248,0.24),transparent_68%)]"></div>
             <div class="relative grid gap-8 px-6 py-8 sm:px-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:px-10 lg:py-10">
@@ -18,6 +22,7 @@
                             <h1 class="mt-2 text-3xl font-black leading-tight tracking-tight sm:text-4xl lg:text-5xl">{{ $team->name }}</h1>
                         </div>
                     </div>
+                    {{-- Team Attributes Overview --}}
                     <div class="mt-6 grid gap-px overflow-hidden rounded-xl border border-white/10 bg-white/10 sm:grid-cols-3">
                         <div class="bg-slate-950/75 px-4 py-4">
                             <p class="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-400">Home venue</p>
@@ -34,6 +39,7 @@
                     </div>
                 </div>
 
+                {{-- Manager Action Toolbar --}}
                 <aside class="flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 lg:self-start">
                     @can('manage-team', $team)
                         <button type="button" data-modal-target="recruit-player-modal" data-modal-toggle="recruit-player-modal"
@@ -52,6 +58,10 @@
             </div>
         </section>
 
+        {{-- ========================================== --}}
+        {{-- Section: Cumulative Record Counter         --}}
+        {{-- Tabulates completed fixtures, total wins, losses, and drawn games --}}
+        {{-- ========================================== --}}
         <section class="grid grid-cols-2 overflow-hidden rounded-2xl border border-slate-200 bg-slate-200 sm:grid-cols-4">
             @foreach([
                 ['Fixtures', $record['total'], 'text-slate-950'],
@@ -66,6 +76,9 @@
             @endforeach
         </section>
 
+        {{-- ========================================== --}}
+        {{-- Section: Team Profile Sub-Navigation Tabs  --}}
+        {{-- ========================================== --}}
         <nav class="overflow-x-auto border-b border-slate-200" aria-label="Team sections">
             <div class="flex min-w-max gap-1 sm:gap-2">
                 <button type="button" @click="tab = 'roster'"
@@ -86,6 +99,10 @@
             </div>
         </nav>
 
+        {{-- ========================================== --}}
+        {{-- Section: Squad Roster Grid & Player Cards  --}}
+        {{-- Shows jersey numbers, playing positions, health statuses, and form stats --}}
+        {{-- ========================================== --}}
         <div x-show="tab === 'roster'" class="space-y-5">
             <div>
                 <p class="text-sm font-semibold text-indigo-600">Squad</p>
@@ -112,6 +129,7 @@
                             @endif
                         </div>
 
+                        {{-- Player Medical Clearance Notes --}}
                         @if($profile && $profile->is_injured && $profile->injury_notes)
                             <div class="mt-4 rounded-xl border border-rose-100 bg-rose-50 p-3">
                                 <p class="text-[11px] font-bold uppercase tracking-[0.10em] text-rose-500">Medical notes</p>
@@ -119,6 +137,7 @@
                             </div>
                         @endif
 
+                        {{-- Rolling Form & Performance Metrics --}}
                         @if($profile && $profile->career_stats)
                             <div class="mt-4 grid grid-cols-3 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 text-center">
                                 <div class="px-2 py-3">
@@ -152,6 +171,9 @@
             </div>
         </div>
 
+        {{-- ========================================== --}}
+        {{-- Section: Team Match Fixtures & History     --}}
+        {{-- ========================================== --}}
         <div x-show="tab === 'matches'" x-cloak class="space-y-5">
             <div>
                 <p class="text-sm font-semibold text-indigo-600">Team fixtures</p>
@@ -168,6 +190,9 @@
             </div>
         </div>
 
+        {{-- ========================================== --}}
+        {{-- Section: Tournament Competition Affiliations --}}
+        {{-- ========================================== --}}
         <div x-show="tab === 'tournaments'" x-cloak class="space-y-5">
             <div>
                 <p class="text-sm font-semibold text-indigo-600">Competition history</p>
@@ -192,6 +217,9 @@
         </div>
     </div>
 
+    {{-- ========================================== --}}
+    {{-- Section: Manager Modals (Recruit Athlete & Propose Friendly) --}}
+    {{-- ========================================== --}}
     @can('manage-team', $team)
         <div id="recruit-player-modal" tabindex="-1" aria-hidden="true" class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-y-auto md:inset-0">
             <div class="relative w-full max-w-lg p-4">
