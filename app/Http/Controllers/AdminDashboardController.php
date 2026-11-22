@@ -5,11 +5,12 @@ namespace App\Http\Controllers;
 use App\Events\MatchScoreUpdated;
 use App\Models\GameMatch;
 use App\Models\PlayerProfile;
+use App\Models\Team;
 use App\Models\Tournament;
 use App\Models\TournamentApplication;
 use App\Models\User;
-use App\Notifications\TournamentApplicationStatusChanged;
 use App\Notifications\MatchResultNotification;
+use App\Notifications\TournamentApplicationStatusChanged;
 use App\Services\RankingService;
 use App\Services\TournamentBracketService;
 use Illuminate\Http\JsonResponse;
@@ -27,6 +28,7 @@ use Illuminate\View\View;
 class AdminDashboardController extends Controller
 {
     protected TournamentBracketService $bracketService;
+
     protected RankingService $rankingService;
 
     /**
@@ -93,13 +95,19 @@ class AdminDashboardController extends Controller
         // ==========================================
         $tournaments = Tournament::withCount(['teams', 'matches'])->get();
 
+        $managedUsers = User::whereIn('role', ['manager', 'player', 'viewer'])
+            ->orderByRaw("CASE WHEN account_status = 'suspended' THEN 0 ELSE 1 END")
+            ->orderBy('name')
+            ->get();
+
         return view('pages.admin.dashboard', compact(
             'activeMatches',
             'completedMatches',
             'pendingApplications',
             'approvedApplications',
             'injuredPlayers',
-            'tournaments'
+            'tournaments',
+            'managedUsers'
         ));
     }
 
@@ -164,6 +172,7 @@ class AdminDashboardController extends Controller
         // ==========================================
         if ($match->status === 'completed' && $prevStatus !== 'completed') {
             $this->rankingService->recalculateTeamRankings();
+            $this->decrementSuspensionsForMatch($match);
 
             if ($match->tournament_id) {
                 $this->bracketService->advanceBracketIfCompleted($match->tournament);
@@ -179,7 +188,7 @@ class AdminDashboardController extends Controller
             return response()->json([
                 'success' => true,
                 'match' => $match->fresh(['homeTeam', 'awayTeam']),
-                'message' => 'Score updated and broadcasted.'
+                'message' => 'Score updated and broadcasted.',
             ]);
         }
 
@@ -222,9 +231,46 @@ class AdminDashboardController extends Controller
 
         $profile->update([
             'is_injured' => false,
-            'injury_notes' => 'Medically cleared by league authority on ' . now()->toFormattedDateString(),
+            'injury_notes' => 'Medically cleared by league authority on '.now()->toFormattedDateString(),
         ]);
 
         return back()->with('success', "Player {$profile->user->name} has been medically cleared!");
+    }
+
+    private function decrementSuspensionsForMatch(GameMatch $match): void
+    {
+        $teamIds = array_filter([
+            $match->home_team_id,
+            $match->away_team_id,
+        ]);
+
+        $userIds = collect($teamIds)
+            ->flatMap(function (int $teamId) {
+                $team = Team::with(['manager', 'players'])->find($teamId);
+
+                if (! $team) {
+                    return [];
+                }
+
+                $ids = $team->players->pluck('id')->all();
+                if ($team->manager_id) {
+                    $ids[] = $team->manager_id;
+                }
+
+                return $ids;
+            })
+            ->unique()
+            ->values();
+
+        foreach (User::whereIn('id', $userIds)->where('account_status', 'suspended')->get() as $user) {
+            $remaining = max(0, (int) $user->suspension_matches_remaining - 1);
+            $user->update([
+                'account_status' => $remaining > 0 ? 'suspended' : 'active',
+                'suspension_matches_remaining' => $remaining,
+                'suspension_reason' => $remaining > 0 ? $user->suspension_reason : null,
+                'suspended_at' => $remaining > 0 ? $user->suspended_at : null,
+                'suspended_by' => $remaining > 0 ? $user->suspended_by : null,
+            ]);
+        }
     }
 }

@@ -12,6 +12,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PlayerStatsController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TournamentController;
+use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
 
 // ==========================================
@@ -82,6 +83,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/mytournaments', [MyTournamentsController::class, 'index'])->name('mytournaments');
     Route::POST('/invitations/{invitation}/respond', [MyTournamentsController::class, 'respondInvitation'])->name('invitations.respond');
     Route::POST('/bookmarks/toggle', [MyTournamentsController::class, 'toggleBookmark'])->name('bookmarks.toggle');
+    Route::POST('/members/{user}/suspend', [UserManagementController::class, 'suspend'])->name('members.suspend');
+    Route::POST('/members/{user}/restore', [UserManagementController::class, 'restore'])->name('members.restore');
 
     // Official News Article Publishing
     Route::POST('/news', [NewsController::class, 'store'])->name('news.store');
@@ -99,6 +102,8 @@ Route::middleware('auth')->group(function () {
         Route::POST('/matches/{match}/score', [AdminDashboardController::class, 'updateScore'])->name('matches.score');
         Route::POST('/applications/{application}/review', [AdminDashboardController::class, 'reviewApplication'])->name('applications.review');
         Route::POST('/players/{profile}/clear-injury', [AdminDashboardController::class, 'clearInjury'])->name('players.clearInjury');
+        Route::POST('/users/{user}/suspend', [UserManagementController::class, 'suspend'])->name('users.suspend');
+        Route::POST('/users/{user}/restore', [UserManagementController::class, 'restore'])->name('users.restore');
     });
 });
 

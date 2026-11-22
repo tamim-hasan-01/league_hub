@@ -41,6 +41,17 @@ class AuthenticatedSessionController extends Controller
             ])->onlyInput('email');
         }
 
+        if ($user->account_status === 'suspended') {
+            $matchesRemaining = (int) $user->suspension_matches_remaining;
+            $reason = $user->suspension_reason
+                ? ' Reason: '.$user->suspension_reason
+                : '';
+
+            return back()->withErrors([
+                'password' => "This account is suspended for {$matchesRemaining} remaining match(es).{$reason}",
+            ])->onlyInput('email');
+        }
+
         $selectedRole = $request->string('role')->toString();
         if ($selectedRole !== '' && $user->role !== $selectedRole) {
             return back()->withErrors([

@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use App\Models\Team;
-use App\Models\Tournament;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\View;
@@ -42,6 +41,18 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::define('apply-tournament', function (User $user, Team $team) {
             return $user->isAdmin() || ($user->isManager() && $team->manager_id === $user->id);
+        });
+
+        Gate::define('manage-user', function (User $actor, User $target) {
+            if ($target->isAdmin()) {
+                return false;
+            }
+
+            if ($actor->isAdmin()) {
+                return true;
+            }
+
+            return $actor->isManager() && in_array($target->role, ['player', 'viewer'], true);
         });
 
         Gate::define('player-only', function (User $user) {

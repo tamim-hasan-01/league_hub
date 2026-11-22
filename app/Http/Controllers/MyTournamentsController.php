@@ -55,6 +55,19 @@ class MyTournamentsController extends Controller
             ];
         }
 
+        $memberDirectory = collect();
+        if ($user->isAdmin()) {
+            $memberDirectory = User::whereIn('role', ['manager', 'player', 'viewer'])
+                ->orderByRaw("CASE WHEN account_status = 'suspended' THEN 0 ELSE 1 END")
+                ->orderBy('name')
+                ->get();
+        } elseif ($user->isManager()) {
+            $memberDirectory = User::whereIn('role', ['manager', 'player', 'viewer'])
+                ->orderByRaw("CASE WHEN account_status = 'suspended' THEN 0 ELSE 1 END")
+                ->orderBy('name')
+                ->get();
+        }
+
         // ==========================================
         // 2. Player Role Data Assembly
         // Retrieve incoming match call-ups, confirmed fixtures, and current team rosters
@@ -98,7 +111,7 @@ class MyTournamentsController extends Controller
         // 4. View Rendering
         // Render unified hub view with populated role-specific collections
         // ==========================================
-        return view('pages.hub.index', compact('user', 'role', 'managerData', 'playerData', 'viewerData'));
+        return view('pages.hub.index', compact('user', 'role', 'managerData', 'playerData', 'viewerData', 'memberDirectory'));
     }
 
     /**
@@ -109,7 +122,7 @@ class MyTournamentsController extends Controller
     public function respondInvitation(Request $request, MatchInvitation $invitation): RedirectResponse
     {
         $user = Auth::user();
-        if ($invitation->player_id !== $user->id && !$user->isAdmin()) {
+        if ($invitation->player_id !== $user->id && ! $user->isAdmin()) {
             abort(403);
         }
 
@@ -120,6 +133,7 @@ class MyTournamentsController extends Controller
         $invitation->update(['status' => $request->status]);
 
         $statusLabel = $request->status === 'accepted' ? 'Accepted' : 'Declined';
+
         return back()->with('success', "Match call-up has been {$statusLabel}.");
     }
 
@@ -140,20 +154,24 @@ class MyTournamentsController extends Controller
             $bookmark = Bookmark::where('user_id', $user->id)->where('game_match_id', $match->id)->first();
             if ($bookmark) {
                 $bookmark->delete();
+
                 return back()->with('info', 'Match removed from bookmarks.');
             } else {
                 Bookmark::create(['user_id' => $user->id, 'game_match_id' => $match->id]);
+
                 return back()->with('success', 'Match added to your bookmarks!');
             }
-        // Handle tournament bookmarking
+            // Handle tournament bookmarking
         } elseif ($type === 'tournament') {
             $tournament = Tournament::findOrFail($id);
             $bookmark = Bookmark::where('user_id', $user->id)->where('tournament_id', $tournament->id)->first();
             if ($bookmark) {
                 $bookmark->delete();
+
                 return back()->with('info', 'Tournament unfollowed.');
             } else {
                 Bookmark::create(['user_id' => $user->id, 'tournament_id' => $tournament->id]);
+
                 return back()->with('success', 'Tournament followed! You will receive updates.');
             }
         }
