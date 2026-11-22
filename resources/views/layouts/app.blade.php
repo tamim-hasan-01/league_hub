@@ -4,7 +4,49 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? config('app.name', 'LeagueHub') }}</title>
+    @php
+        $siteName = 'LeagueHub';
+        $metaTitle = match (true) {
+            request()->routeIs('tournaments.*') => 'Tournaments | ' . $siteName,
+            request()->routeIs('teams.*') => 'Teams | ' . $siteName,
+            request()->routeIs('news.*') => 'News & Incidents | ' . $siteName,
+            request()->routeIs('about') => 'About | ' . $siteName,
+            request()->routeIs('mytournaments') => 'Personal Hub | ' . $siteName,
+            request()->routeIs('mystats') => 'Player Analytics | ' . $siteName,
+            request()->routeIs('admin.*') => 'Authority Console | ' . $siteName,
+            request()->routeIs('login') => 'Sign In | ' . $siteName,
+            request()->routeIs('register') => 'Create Account | ' . $siteName,
+            default => $siteName . ' — Sports & Tournament Management',
+        };
+        $metaDescription = 'LeagueHub brings tournaments, teams, fixtures, live scores, player analytics, league news, and competition management into one professional platform.';
+        $pageTitle = isset($title) && trim((string) $title) !== ''
+            ? (string) $title
+            : $metaTitle;
+    @endphp
+    <title>{{ $pageTitle }}</title>
+    <meta name="description" content="{{ $metaDescription }}">
+    <meta name="keywords" content="LeagueHub, tournaments, sports league, football, esports, team management, live scores, brackets, player analytics">
+    <meta name="author" content="LeagueHub Development Team">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="color-scheme" content="light">
+    <meta name="robots" content="index, follow">
+
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="alternate icon" href="{{ asset('favicon.ico') }}">
+    <link rel="apple-touch-icon" href="{{ asset('logo.png') }}">
+    <link rel="canonical" href="{{ url()->current() }}">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{ $siteName }}">
+    <meta property="og:title" content="{{ $pageTitle }}">
+    <meta property="og:description" content="{{ $metaDescription }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:image" content="{{ asset('logo.png') }}">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $pageTitle }}">
+    <meta name="twitter:description" content="{{ $metaDescription }}">
+    <meta name="twitter:image" content="{{ asset('logo.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-slate-50 font-sans text-slate-900 antialiased">

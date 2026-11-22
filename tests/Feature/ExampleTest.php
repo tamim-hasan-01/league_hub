@@ -92,12 +92,21 @@ test('authentication pages render professional account forms', function () {
     $login->assertOk();
     $login->assertSee('Sign in to LeagueHub');
     $login->assertSee('Choose an account type');
+    $login->assertDontSee('/demo-login');
 
     $register = $this->get('/register');
     $register->assertOk();
     $register->assertSee('Create an account');
     $register->assertSee('Select your role');
-    $login->assertDontSee('/demo-login');
+});
+
+test('the layout exposes LeagueHub metadata and favicon assets', function () {
+    $response = $this->get('/');
+
+    $response->assertOk();
+    $response->assertSee('LeagueHub — Sports & Tournament Management');
+    $response->assertSee('property="og:site_name"', false);
+    $response->assertSee('favicon.svg', false);
 });
 
 test('only the three verified administrators can sign in through admin verification', function () {
