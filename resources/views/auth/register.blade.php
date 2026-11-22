@@ -66,12 +66,18 @@
                             <input type="text" id="name" name="name" value="{{ old('name') }}" required
                                    class="h-12 w-full rounded-xl border border-slate-200 px-3.5 text-sm text-slate-900"
                                    placeholder="Your full name">
+                            @error('name')
+                                <p class="mt-2 text-sm font-medium text-rose-600">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label for="email" class="mb-2 block text-sm font-bold text-slate-700">Email address</label>
                             <input type="email" id="email" name="email" value="{{ old('email') }}" required
                                    class="h-12 w-full rounded-xl border border-slate-200 px-3.5 text-sm text-slate-900"
                                    placeholder="you@example.com">
+                            @error('email')
+                                <p class="mt-2 text-sm font-medium text-rose-600">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 
@@ -81,6 +87,9 @@
                             <input type="password" id="password" name="password" required
                                    class="h-12 w-full rounded-xl border border-slate-200 px-3.5 text-sm text-slate-900"
                                    placeholder="Create a password">
+                            @error('password')
+                                <p class="mt-2 text-sm font-medium text-rose-600">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label for="password_confirmation" class="mb-2 block text-sm font-bold text-slate-700">Confirm password</label>
