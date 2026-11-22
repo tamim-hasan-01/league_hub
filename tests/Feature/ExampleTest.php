@@ -245,3 +245,61 @@ test('registration rejects duplicate normalized email addresses', function () {
         'areal_zone' => 'Metro Central',
     ])->assertSessionHasErrors('email');
 });
+
+test('administrators can suspend and restore member accounts', function () {
+    $this->seed();
+
+    $admin = User::where('email', 'admin@leaguehub.com')->first();
+    $viewer = User::where('email', 'viewer@leaguehub.com')->first();
+
+    if (! $admin) {
+        $admin = User::create([
+            'name' => 'Test Administrator',
+            'email' => 'test.admin@leaguehub.com',
+            'password' => bcrypt('password'),
+            'role' => 'admin',
+        ]);
+    }
+
+    $this->actingAs($admin)->post('/admin/users/'.$viewer->id.'/suspend', [
+        'match_count' => 2,
+        'reason' => 'Match conduct review',
+    ])->assertSessionHas('success');
+
+    $viewer->refresh();
+    $this->assertSame('suspended', $viewer->account_status);
+    $this->assertSame(2, $viewer->suspension_matches_remaining);
+
+    auth()->logout();
+    $this->post('/login', [
+        'email' => 'viewer@leaguehub.com',
+        'password' => 'password',
+    ])->assertSessionHasErrors('password');
+
+    $this->actingAs($admin)->post('/admin/users/'.$viewer->id.'/restore')
+        ->assertSessionHas('success');
+
+    $viewer->refresh();
+    $this->assertSame('active', $viewer->account_status);
+});
+
+test('managers can suspend players but cannot suspend managers', function () {
+    $this->seed();
+
+    $manager = User::where('email', 'manager@leaguehub.com')->first();
+    $player = User::where('email', 'player@leaguehub.com')->first();
+    $otherManager = User::where('email', 'manager2@leaguehub.com')->first();
+
+    $this->actingAs($manager)->post('/members/'.$player->id.'/suspend', [
+        'match_count' => 1,
+        'reason' => 'Repeated unsporting conduct',
+    ])->assertSessionHas('success');
+
+    $player->refresh();
+    $this->assertSame('suspended', $player->account_status);
+
+    $this->actingAs($manager)->post('/members/'.$otherManager->id.'/suspend', [
+        'match_count' => 1,
+        'reason' => 'Unauthorized peer suspension',
+    ])->assertForbidden();
+});

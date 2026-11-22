@@ -111,6 +111,70 @@
                         @endforelse
                     </div>
                 </div>
+
+                <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+                    <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+                        <div>
+                            <p class="text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Member controls</p>
+                            <h3 class="mt-1 text-lg font-black text-slate-950">Player and manager directory</h3>
+                        </div>
+                        <span class="text-sm font-bold text-slate-400">{{ $memberDirectory->count() }} users</span>
+                    </div>
+                    <div class="grid max-h-[620px] gap-3 overflow-y-auto p-5 md:grid-cols-2">
+                        @forelse($memberDirectory as $member)
+                            @php
+                                $canManageMember = $user->isAdmin()
+                                    || ($user->isManager() && in_array($member->role, ['player', 'viewer'], true));
+                            @endphp
+                            <div class="rounded-xl border {{ $member->account_status === 'suspended' ? 'border-rose-200 bg-rose-50/50' : 'border-slate-200 bg-slate-50/60' }} p-4">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="min-w-0">
+                                        <p class="truncate text-sm font-black text-slate-950">{{ $member->name }}</p>
+                                        <p class="mt-1 truncate text-xs text-slate-500">{{ $member->email }}</p>
+                                    </div>
+                                    <span class="shrink-0 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-bold uppercase text-slate-600">
+                                        {{ $member->role }}
+                                    </span>
+                                </div>
+
+                                @if($member->account_status === 'suspended')
+                                    <div class="mt-3 rounded-lg border border-rose-100 bg-white px-3 py-2">
+                                        <p class="text-xs font-bold text-rose-700">{{ $member->suspension_matches_remaining }} match suspension remaining</p>
+                                        <p class="mt-1 text-xs leading-5 text-slate-500">{{ $member->suspension_reason ?: 'No reason provided' }}</p>
+                                    </div>
+                                    @if($canManageMember)
+                                        <form action="{{ route('members.restore', $member->id) }}" method="POST" class="mt-3">
+                                            @csrf
+                                            <button type="submit" class="h-9 w-full rounded-lg border border-emerald-200 bg-white text-xs font-bold text-emerald-700 hover:bg-emerald-50">
+                                                Restore account
+                                            </button>
+                                        </form>
+                                    @endif
+                                @elseif($canManageMember)
+                                    <form action="{{ route('members.suspend', $member->id) }}" method="POST" class="mt-3 space-y-2">
+                                        @csrf
+                                        <div class="grid grid-cols-[1fr_1.5fr] gap-2">
+                                            <select name="match_count" required class="h-9 rounded-lg border border-slate-200 bg-white px-2 text-xs font-bold text-slate-700">
+                                                <option value="1">1 match</option>
+                                                <option value="2">2 matches</option>
+                                                <option value="3">3 matches</option>
+                                            </select>
+                                            <input type="text" name="reason" required maxlength="500" placeholder="Reason"
+                                                   class="h-9 rounded-lg border border-slate-200 bg-white px-2.5 text-xs text-slate-900 placeholder:text-slate-400">
+                                        </div>
+                                        <button type="submit" class="h-9 w-full rounded-lg bg-rose-600 text-xs font-bold text-white hover:bg-rose-700">
+                                            Suspend account
+                                        </button>
+                                    </form>
+                                @else
+                                    <p class="mt-3 text-xs font-bold text-slate-400">Account active</p>
+                                @endif
+                            </div>
+                        @empty
+                            <div class="col-span-full py-10 text-center text-sm text-slate-500">No members found.</div>
+                        @endforelse
+                    </div>
+                </div>
             </section>
         @endif
 
