@@ -86,3 +86,15 @@ test('the tournament detail page presents competition sections', function () {
     $response->assertSee('Stage progression');
     $response->assertSee('Approved team rosters');
 });
+
+test('authentication pages render professional account forms', function () {
+    $login = $this->get('/login');
+    $login->assertOk();
+    $login->assertSee('Sign in to LeagueHub');
+    $login->assertSee('Quick demo access');
+
+    $register = $this->get('/register');
+    $register->assertOk();
+    $register->assertSee('Create an account');
+    $register->assertSee('Select your role');
+});
