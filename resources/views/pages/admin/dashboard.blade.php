@@ -223,6 +223,77 @@
             <!-- Col 2: PLAYER HEALTH INSPECTOR & TOURNAMENTS (1 Col) -->
             <div class="space-y-8">
 
+                <!-- Account Suspension & Member Directory -->
+                <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)] space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <div>
+                            <p class="text-xs font-bold uppercase tracking-[0.16em] text-indigo-600">User controls</p>
+                            <h2 class="mt-1 text-base font-bold text-slate-950">Member account directory</h2>
+                            <p class="text-[11px] text-slate-500">Managers, players, and viewers</p>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                            {{ $managedUsers->count() }} Accounts
+                        </span>
+                    </div>
+
+                    <div class="max-h-[520px] space-y-3 overflow-y-auto pr-1">
+                        @forelse($managedUsers as $member)
+                            <div class="rounded-xl border {{ $member->account_status === 'suspended' ? 'border-rose-200 bg-rose-50/50' : 'border-slate-200 bg-slate-50/60' }} p-3.5">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="min-w-0">
+                                        <p class="truncate text-sm font-bold text-slate-950">{{ $member->name }}</p>
+                                        <p class="mt-0.5 truncate text-xs text-slate-500">{{ $member->email }}</p>
+                                    </div>
+                                    <div class="flex shrink-0 items-center gap-1.5">
+                                        <span class="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-bold uppercase text-slate-600">
+                                            {{ $member->role }}
+                                        </span>
+                                        @if($member->account_status === 'suspended')
+                                            <span class="rounded-full border border-rose-200 bg-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-700">
+                                                {{ $member->suspension_matches_remaining }} match
+                                            </span>
+                                        @else
+                                            <span class="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+                                                Active
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                @if($member->account_status === 'suspended')
+                                    <p class="mt-2 text-xs leading-5 text-rose-700">
+                                        Suspended: {{ $member->suspension_reason ?: 'No reason provided' }}
+                                    </p>
+                                    <form action="{{ route('admin.users.restore', $member->id) }}" method="POST" class="mt-3">
+                                        @csrf
+                                        <button type="submit" class="w-full rounded-lg border border-emerald-200 bg-white px-3 py-2 text-xs font-bold text-emerald-700 hover:bg-emerald-50">
+                                            Restore account
+                                        </button>
+                                    </form>
+                                @else
+                                    <form action="{{ route('admin.users.suspend', $member->id) }}" method="POST" class="mt-3 space-y-2">
+                                        @csrf
+                                        <select name="match_count" required class="h-9 w-full rounded-lg border border-slate-200 bg-white px-2 text-xs font-bold text-slate-700">
+                                            <option value="1">Suspend for 1 match</option>
+                                            <option value="2">Suspend for 2 matches</option>
+                                            <option value="3">Suspend for 3 matches</option>
+                                        </select>
+                                        <input type="text" name="reason" required maxlength="500" placeholder="Reason for suspension"
+                                               class="h-9 w-full rounded-lg border border-slate-200 bg-white px-2.5 text-xs text-slate-900 placeholder:text-slate-400">
+                                        <button type="submit" class="w-full rounded-lg bg-rose-600 px-3 py-2 text-xs font-bold text-white hover:bg-rose-700">
+                                            Suspend account
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+                        @empty
+                            <div class="py-8 text-center text-xs font-medium text-slate-500 bg-slate-50/70 rounded-xl border border-dashed border-slate-300">
+                                No member accounts found.
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+
                 <!-- Player Health Inspector Card -->
                 <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)] space-y-4">
                     <div class="flex items-center justify-between pb-3 border-b border-slate-100">
