@@ -1,71 +1,92 @@
 <x-app-layout>
-    <div class="max-w-md mx-auto my-8">
-        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_16px_40px_rgba(15,23,42,0.08)] sm:p-8 relative overflow-hidden">
-            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 to-sky-400"></div>
-
-            <div class="text-center mb-6">
-                <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 mx-auto flex items-center justify-center mb-3">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+    <div class="mx-auto max-w-5xl">
+        <div class="grid overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_20px_50px_rgba(15,23,42,0.08)] lg:grid-cols-[0.9fr_1.1fr]">
+            <aside class="relative hidden overflow-hidden bg-slate-950 px-10 py-12 text-white lg:block">
+                <div class="absolute right-0 top-0 h-full w-full bg-[radial-gradient(circle_at_80%_20%,rgba(129,140,248,0.24),transparent_55%)]"></div>
+                <div class="relative flex h-full flex-col justify-between">
+                    <div>
+                        <a href="{{ route('home') }}" class="inline-flex rounded-xl bg-white px-3 py-2">
+                            <img src="{{ asset('logo.png') }}" alt="LeagueHub" class="h-9 w-auto">
+                        </a>
+                        <p class="mt-12 text-xs font-bold uppercase tracking-[0.18em] text-indigo-300">Welcome back</p>
+                        <h1 class="mt-3 text-4xl font-black leading-tight tracking-tight">Manage every competition from one account.</h1>
+                        <p class="mt-5 max-w-md text-sm leading-7 text-slate-300">
+                            Follow fixtures, manage team rosters, review tournament brackets, and stay connected to every match update.
+                        </p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10">
+                        <div class="bg-slate-950/80 p-4">
+                            <p class="text-2xl font-black">Live</p>
+                            <p class="mt-1 text-xs font-bold uppercase tracking-wider text-slate-400">Match activity</p>
+                        </div>
+                        <div class="bg-slate-950/80 p-4">
+                            <p class="text-2xl font-black">Secure</p>
+                            <p class="mt-1 text-xs font-bold uppercase tracking-wider text-slate-400">Role access</p>
+                        </div>
+                    </div>
                 </div>
-                <h1 class="text-2xl font-black text-white">Sign In to LeagueHub</h1>
-                <p class="text-xs text-gray-400 mt-1">Access tournaments, schedules, rosters, and live consoles</p>
-            </div>
+            </aside>
 
-            <!-- Demo fast-fill accounts -->
-            <div class="mb-6 p-3 rounded-xl bg-gray-900/60 border border-gray-700/80">
-                <div class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Quick Demo One-Click Sign In:</div>
-                <div class="grid grid-cols-2 gap-2 text-xs">
-                    <a href="{{ route('demo.switch', 'admin') }}" class="p-2 rounded-lg bg-gray-800 hover:bg-cyan-500/20 border border-gray-700 hover:border-cyan-500/50 text-cyan-400 text-center font-medium transition">
-                        🛡️ Admin
-                    </a>
-                    <a href="{{ route('demo.switch', 'manager') }}" class="p-2 rounded-lg bg-gray-800 hover:bg-sky-500/20 border border-gray-700 hover:border-sky-500/50 text-sky-400 text-center font-medium transition">
-                        👔 Manager
-                    </a>
-                    <a href="{{ route('demo.switch', 'player') }}" class="p-2 rounded-lg bg-gray-800 hover:bg-emerald-500/20 border border-gray-700 hover:border-emerald-500/50 text-emerald-400 text-center font-medium transition">
-                        ⚡ Player
-                    </a>
-                    <a href="{{ route('demo.switch', 'viewer') }}" class="p-2 rounded-lg bg-gray-800 hover:bg-purple-500/20 border border-gray-700 hover:border-purple-500/50 text-purple-400 text-center font-medium transition">
-                        👁️ Viewer
-                    </a>
-                </div>
-            </div>
-
-            <form action="{{ route('login') }}" method="POST" class="space-y-4">
-                @csrf
-
-                <div>
-                    <label for="email" class="block mb-1.5 text-xs font-medium text-gray-300">Email Address</label>
-                    <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus
-                        class="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 placeholder-gray-500"
-                        placeholder="you@leagueplatform.com">
+            <section class="px-5 py-8 sm:px-10 sm:py-10 lg:px-12">
+                <div class="mb-7">
+                    <p class="text-sm font-semibold text-indigo-600">Account access</p>
+                    <h2 class="mt-1 text-3xl font-black tracking-tight text-slate-950">Sign in to LeagueHub</h2>
+                    <p class="mt-2 text-sm text-slate-500">Enter your account credentials to continue.</p>
                 </div>
 
-                <div>
-                    <label for="password" class="block mb-1.5 text-xs font-medium text-gray-300">Password</label>
-                    <input type="password" id="password" name="password" required
-                        class="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 placeholder-gray-500"
-                        placeholder="••••••••">
-                </div>
-
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <input id="remember" name="remember" type="checkbox"
-                            class="w-4 h-4 text-cyan-600 bg-gray-900 border-gray-700 rounded focus:ring-cyan-500">
-                        <label for="remember" class="ml-2 text-xs font-medium text-gray-400">Remember me</label>
+                <div class="mb-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <p class="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">Quick demo access</p>
+                    <div class="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                        @foreach([
+                            'admin' => 'Admin',
+                            'manager' => 'Manager',
+                            'player' => 'Player',
+                            'viewer' => 'Viewer',
+                        ] as $role => $label)
+                            <a href="{{ route('demo.switch', $role) }}"
+                               class="flex h-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-sm font-bold text-slate-700 shadow-sm transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">
+                                {{ $label }}
+                            </a>
+                        @endforeach
                     </div>
                 </div>
 
-                <button type="submit"
-                    class="w-full text-gray-950 bg-gradient-to-r from-cyan-500 to-sky-400 hover:from-cyan-400 hover:to-sky-300 font-bold rounded-lg text-sm px-5 py-2.5 text-center shadow-lg shadow-cyan-500/20 transition-all">
-                    Sign In
-                </button>
-            </form>
+                <form action="{{ route('login') }}" method="POST" class="space-y-5">
+                    @csrf
+                    <div>
+                        <label for="email" class="mb-2 block text-sm font-bold text-slate-700">Email address</label>
+                        <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus
+                               class="h-12 w-full rounded-xl border border-slate-200 px-3.5 text-sm text-slate-900 placeholder:text-slate-400"
+                               placeholder="you@leaguehub.com">
+                        @error('email')
+                            <p class="mt-2 text-sm font-medium text-rose-600">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-            <div class="mt-6 text-center text-xs text-gray-400">
-                Don't have an account yet?
-                <a href="{{ route('register') }}" class="text-cyan-400 hover:underline font-semibold ml-1">Register now</a>
-            </div>
+                    <div>
+                        <label for="password" class="mb-2 block text-sm font-bold text-slate-700">Password</label>
+                        <input type="password" id="password" name="password" required
+                               class="h-12 w-full rounded-xl border border-slate-200 px-3.5 text-sm text-slate-900 placeholder:text-slate-400"
+                               placeholder="Enter your password">
+                    </div>
+
+                    <label class="flex items-center gap-2.5">
+                        <input id="remember" name="remember" type="checkbox"
+                               class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                        <span class="text-sm font-medium text-slate-600">Keep me signed in</span>
+                    </label>
+
+                    <button type="submit"
+                            class="h-12 w-full rounded-xl bg-slate-950 text-sm font-bold text-white shadow-sm transition hover:bg-indigo-600">
+                        Sign in
+                    </button>
+                </form>
+
+                <p class="mt-7 text-center text-sm text-slate-500">
+                    New to LeagueHub?
+                    <a href="{{ route('register') }}" class="ml-1 font-bold text-indigo-600 hover:text-indigo-800">Create an account</a>
+                </p>
+            </section>
         </div>
     </div>
 </x-app-layout>
-
