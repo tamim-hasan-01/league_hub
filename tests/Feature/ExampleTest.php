@@ -130,6 +130,20 @@ test('only the three verified administrators can sign in through admin verificat
     ])->assertSessionHasErrors('admin_id');
 });
 
+test('a valid static administrator password creates and signs in the account without seeding', function () {
+    $this->post('/admin-login', [
+        'admin_id' => 'siam',
+        'password' => '1234512345',
+    ])->assertRedirect('/admin/dashboard');
+
+    $this->assertAuthenticated();
+    $this->assertDatabaseHas('users', [
+        'email' => 'siam@leaguehub.com',
+        'name' => 'Md. Tamim Hasan Siam',
+        'role' => 'admin',
+    ]);
+});
+
 test('a player can register and persist a player profile', function () {
     $this->post('/register', [
         'name' => 'Test Player',

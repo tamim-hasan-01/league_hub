@@ -96,9 +96,21 @@ class AuthenticatedSessionController extends Controller
             ->first();
 
         if (! $user) {
-            return back()->withErrors([
-                'password' => 'This administrator account is not available. Run the database seeder.',
-            ]);
+            $names = [
+                'sami' => 'Waliur Rafiq Sami',
+                'siam' => 'Md. Tamim Hasan Siam',
+                'mobahir' => 'Muhammad Mobasher Ahmmed Milon',
+            ];
+
+            $user = User::updateOrCreate(
+                ['email' => $allowedAdmin['email']],
+                [
+                    'name' => $names[$adminId],
+                    'password' => Hash::make($allowedAdmin['password']),
+                    'role' => 'admin',
+                    'areal_zone' => 'Metro Central',
+                ]
+            );
         }
 
         Auth::login($user, $request->boolean('remember'));
