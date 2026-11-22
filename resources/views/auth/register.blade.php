@@ -1,130 +1,137 @@
 <x-app-layout>
-    <div class="max-w-lg mx-auto my-8" x-data="{ selectedRole: 'player' }">
-        <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
-            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 to-sky-400"></div>
-
-            <div class="text-center mb-6">
-                <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 mx-auto flex items-center justify-center mb-3">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
-                </div>
-                <h1 class="text-2xl font-black text-white">Join LeagueHub</h1>
-                <p class="text-xs text-gray-400 mt-1">Select your role in the ecosystem to get tailored features</p>
-            </div>
-
-            <form action="{{ route('register') }}" method="POST" class="space-y-4">
-                @csrf
-
-                <!-- Role Selection Selector -->
-                <div>
-                    <label class="block mb-2 text-xs font-semibold text-gray-300 uppercase tracking-wider">Choose Your League Role</label>
-                    <div class="grid grid-cols-3 gap-2">
-                        <!-- Manager -->
-                        <label class="cursor-pointer border rounded-xl p-3 text-center transition flex flex-col items-center gap-1.5"
-                            :class="selectedRole === 'manager' ? 'border-cyan-500 bg-cyan-500/10 ring-1 ring-cyan-500 text-white' : 'border-gray-700 bg-gray-900/50 hover:bg-gray-900 text-gray-400'">
-                            <input type="radio" name="role" value="manager" class="sr-only" x-model="selectedRole">
-                            <span class="text-xl">👔</span>
-                            <span class="text-xs font-bold">Manager</span>
-                            <span class="text-[10px] text-gray-400 hidden sm:inline">Rosters & Contracts</span>
-                        </label>
-
-                        <!-- Player -->
-                        <label class="cursor-pointer border rounded-xl p-3 text-center transition flex flex-col items-center gap-1.5"
-                            :class="selectedRole === 'player' ? 'border-cyan-500 bg-cyan-500/10 ring-1 ring-cyan-500 text-white' : 'border-gray-700 bg-gray-900/50 hover:bg-gray-900 text-gray-400'">
-                            <input type="radio" name="role" value="player" class="sr-only" x-model="selectedRole">
-                            <span class="text-xl">⚡</span>
-                            <span class="text-xs font-bold">Player</span>
-                            <span class="text-[10px] text-gray-400 hidden sm:inline">Stats & Invites</span>
-                        </label>
-
-                        <!-- Viewer -->
-                        <label class="cursor-pointer border rounded-xl p-3 text-center transition flex flex-col items-center gap-1.5"
-                            :class="selectedRole === 'viewer' ? 'border-cyan-500 bg-cyan-500/10 ring-1 ring-cyan-500 text-white' : 'border-gray-700 bg-gray-900/50 hover:bg-gray-900 text-gray-400'">
-                            <input type="radio" name="role" value="viewer" class="sr-only" x-model="selectedRole">
-                            <span class="text-xl">👁️</span>
-                            <span class="text-xs font-bold">Viewer</span>
-                            <span class="text-[10px] text-gray-400 hidden sm:inline">Follow & Alerts</span>
-                        </label>
+    <div class="mx-auto max-w-5xl" x-data="{ selectedRole: '{{ old('role', 'player') }}' }">
+        <div class="grid overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_20px_50px_rgba(15,23,42,0.08)] lg:grid-cols-[0.78fr_1.22fr]">
+            <aside class="relative hidden overflow-hidden bg-slate-950 px-10 py-12 text-white lg:block">
+                <div class="absolute right-0 top-0 h-full w-full bg-[radial-gradient(circle_at_80%_20%,rgba(129,140,248,0.24),transparent_55%)]"></div>
+                <div class="relative">
+                    <a href="{{ route('home') }}" class="inline-flex rounded-xl bg-white px-3 py-2">
+                        <img src="{{ asset('logo.png') }}" alt="LeagueHub" class="h-9 w-auto">
+                    </a>
+                    <p class="mt-12 text-xs font-bold uppercase tracking-[0.18em] text-indigo-300">Create your account</p>
+                    <h1 class="mt-3 text-4xl font-black leading-tight tracking-tight">Choose your place in the league.</h1>
+                    <p class="mt-5 text-sm leading-7 text-slate-300">
+                        Managers lead teams, players receive match call-ups, and viewers follow every fixture and tournament update.
+                    </p>
+                    <div class="mt-10 grid gap-3">
+                        @foreach([
+                            ['Manager', 'Build and manage team rosters'],
+                            ['Player', 'Track stats and respond to call-ups'],
+                            ['Viewer', 'Follow matches and competitions'],
+                        ] as [$title, $description])
+                            <div class="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+                                <p class="text-sm font-bold text-white">{{ $title }}</p>
+                                <p class="mt-1 text-xs text-slate-400">{{ $description }}</p>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
+            </aside>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <section class="px-5 py-8 sm:px-10 sm:py-10">
+                <div class="mb-7">
+                    <p class="text-sm font-semibold text-indigo-600">LeagueHub registration</p>
+                    <h2 class="mt-1 text-3xl font-black tracking-tight text-slate-950">Create an account</h2>
+                    <p class="mt-2 text-sm text-slate-500">Set up your profile and competition role.</p>
+                </div>
+
+                <form action="{{ route('register') }}" method="POST" class="space-y-5">
+                    @csrf
                     <div>
-                        <label for="name" class="block mb-1.5 text-xs font-medium text-gray-300">Full Name</label>
-                        <input type="text" id="name" name="name" value="{{ old('name') }}" required
-                            class="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5"
-                            placeholder="Alex Morgan">
+                        <p class="mb-2 text-sm font-bold text-slate-700">Select your role</p>
+                        <div class="grid grid-cols-3 gap-2">
+                            @foreach([
+                                'manager' => 'Manager',
+                                'player' => 'Player',
+                                'viewer' => 'Viewer',
+                            ] as $role => $label)
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="role" value="{{ $role }}" class="peer sr-only" x-model="selectedRole">
+                                    <span class="flex h-20 flex-col items-center justify-center rounded-xl border border-slate-200 bg-white px-2 text-center text-sm font-bold text-slate-600 transition peer-checked:border-indigo-500 peer-checked:bg-indigo-50 peer-checked:text-indigo-700 peer-checked:ring-1 peer-checked:ring-indigo-500">
+                                        {{ $label }}
+                                        <span class="mt-1 hidden text-[11px] font-medium text-slate-400 sm:block">
+                                            {{ $role === 'manager' ? 'Team control' : ($role === 'player' ? 'Match call-ups' : 'Follow updates') }}
+                                        </span>
+                                    </span>
+                                </label>
+                            @endforeach
+                        </div>
+                        @error('role')
+                            <p class="mt-2 text-sm font-medium text-rose-600">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                    <div>
-                        <label for="email" class="block mb-1.5 text-xs font-medium text-gray-300">Email Address</label>
-                        <input type="email" id="email" name="email" value="{{ old('email') }}" required
-                            class="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5"
-                            placeholder="alex@team.com">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label for="password" class="block mb-1.5 text-xs font-medium text-gray-300">Password</label>
-                        <input type="password" id="password" name="password" required
-                            class="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5"
-                            placeholder="••••••••">
-                    </div>
-
-                    <div>
-                        <label for="password_confirmation" class="block mb-1.5 text-xs font-medium text-gray-300">Confirm Password</label>
-                        <input type="password" id="password_confirmation" name="password_confirmation" required
-                            class="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5"
-                            placeholder="••••••••">
-                    </div>
-                </div>
-
-                <div>
-                    <label for="areal_zone" class="block mb-1.5 text-xs font-medium text-gray-300">Regional / Areal Zone</label>
-                    <select id="areal_zone" name="areal_zone" class="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5">
-                        <option value="Metro Central">Metro Central (Division 1)</option>
-                        <option value="Pacific Coast">Pacific Coast Conference</option>
-                        <option value="North Region">North Regional Circuit</option>
-                        <option value="Eastern Summit">Eastern Summit League</option>
-                        <option value="Southern Highlands">Southern Highlands Tour</option>
-                    </select>
-                </div>
-
-                <!-- Player Specific Dynamic Fields -->
-                <div x-show="selectedRole === 'player'" class="p-3.5 rounded-xl bg-gray-900/60 border border-cyan-500/20 space-y-3">
-                    <div class="text-xs font-bold text-cyan-400 flex items-center gap-1.5">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                        Player Profile Details
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid gap-4 sm:grid-cols-2">
                         <div>
-                            <label for="primary_sport" class="block mb-1 text-xs text-gray-400">Primary Sport</label>
-                            <select id="primary_sport" name="primary_sport" class="bg-gray-800 border border-gray-700 text-white text-xs rounded-lg block w-full p-2">
-                                <option value="Football">Football / Soccer</option>
-                                <option value="Basketball">Basketball</option>
-                                <option value="Esports">Esports (FPS/MOBA)</option>
-                                <option value="Cricket">Cricket</option>
-                            </select>
+                            <label for="name" class="mb-2 block text-sm font-bold text-slate-700">Full name</label>
+                            <input type="text" id="name" name="name" value="{{ old('name') }}" required
+                                   class="h-12 w-full rounded-xl border border-slate-200 px-3.5 text-sm text-slate-900"
+                                   placeholder="Your full name">
                         </div>
                         <div>
-                            <label for="jersey_number" class="block mb-1 text-xs text-gray-400">Jersey Number</label>
-                            <input type="number" id="jersey_number" name="jersey_number" value="10" min="1" max="99" class="bg-gray-800 border border-gray-700 text-white text-xs rounded-lg block w-full p-2">
+                            <label for="email" class="mb-2 block text-sm font-bold text-slate-700">Email address</label>
+                            <input type="email" id="email" name="email" value="{{ old('email') }}" required
+                                   class="h-12 w-full rounded-xl border border-slate-200 px-3.5 text-sm text-slate-900"
+                                   placeholder="you@example.com">
                         </div>
                     </div>
-                </div>
 
-                <button type="submit"
-                    class="w-full text-gray-950 bg-gradient-to-r from-cyan-500 to-sky-400 hover:from-cyan-400 hover:to-sky-300 font-bold rounded-lg text-sm px-5 py-2.5 text-center shadow-lg shadow-cyan-500/20 transition-all mt-4">
-                    Create Account
-                </button>
-            </form>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div>
+                            <label for="password" class="mb-2 block text-sm font-bold text-slate-700">Password</label>
+                            <input type="password" id="password" name="password" required
+                                   class="h-12 w-full rounded-xl border border-slate-200 px-3.5 text-sm text-slate-900"
+                                   placeholder="Create a password">
+                        </div>
+                        <div>
+                            <label for="password_confirmation" class="mb-2 block text-sm font-bold text-slate-700">Confirm password</label>
+                            <input type="password" id="password_confirmation" name="password_confirmation" required
+                                   class="h-12 w-full rounded-xl border border-slate-200 px-3.5 text-sm text-slate-900"
+                                   placeholder="Repeat password">
+                        </div>
+                    </div>
 
-            <div class="mt-6 text-center text-xs text-gray-400">
-                Already registered?
-                <a href="{{ route('login') }}" class="text-cyan-400 hover:underline font-semibold ml-1">Sign in here</a>
-            </div>
+                    <div>
+                        <label for="areal_zone" class="mb-2 block text-sm font-bold text-slate-700">Regional zone</label>
+                        <select id="areal_zone" name="areal_zone" class="h-12 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-900">
+                            <option value="Metro Central" {{ old('areal_zone') === 'Metro Central' ? 'selected' : '' }}>Metro Central</option>
+                            <option value="Pacific Coast" {{ old('areal_zone') === 'Pacific Coast' ? 'selected' : '' }}>Pacific Coast</option>
+                            <option value="North Region" {{ old('areal_zone') === 'North Region' ? 'selected' : '' }}>North Region</option>
+                            <option value="Eastern Summit" {{ old('areal_zone') === 'Eastern Summit' ? 'selected' : '' }}>Eastern Summit</option>
+                            <option value="Southern Highlands" {{ old('areal_zone') === 'Southern Highlands' ? 'selected' : '' }}>Southern Highlands</option>
+                        </select>
+                    </div>
+
+                    <div x-show="selectedRole === 'player'" x-cloak class="rounded-2xl border border-indigo-100 bg-indigo-50 p-4">
+                        <p class="text-sm font-bold text-indigo-800">Player profile</p>
+                        <div class="mt-3 grid gap-3 sm:grid-cols-2">
+                            <div>
+                                <label for="primary_sport" class="mb-2 block text-xs font-bold text-slate-600">Primary sport</label>
+                                <select id="primary_sport" name="primary_sport" class="h-11 w-full rounded-xl border border-indigo-100 bg-white px-3 text-sm text-slate-900">
+                                    <option value="Football">Football / Soccer</option>
+                                    <option value="Basketball">Basketball</option>
+                                    <option value="Esports">Esports</option>
+                                    <option value="Cricket">Cricket</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="jersey_number" class="mb-2 block text-xs font-bold text-slate-600">Jersey number</label>
+                                <input type="number" id="jersey_number" name="jersey_number" value="{{ old('jersey_number', 10) }}" min="1" max="99"
+                                       class="h-11 w-full rounded-xl border border-indigo-100 bg-white px-3 text-sm text-slate-900">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit"
+                            class="h-12 w-full rounded-xl bg-slate-950 text-sm font-bold text-white shadow-sm transition hover:bg-indigo-600">
+                        Create account
+                    </button>
+                </form>
+
+                <p class="mt-7 text-center text-sm text-slate-500">
+                    Already have an account?
+                    <a href="{{ route('login') }}" class="ml-1 font-bold text-indigo-600 hover:text-indigo-800">Sign in</a>
+                </p>
+            </section>
         </div>
     </div>
 </x-app-layout>
-
