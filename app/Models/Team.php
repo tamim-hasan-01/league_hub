@@ -52,7 +52,7 @@ class Team extends Model
         parent::boot();
         static::creating(function ($team) {
             if (empty($team->slug)) {
-                $team->slug = Str::slug($team->name) . '-' . Str::random(5);
+                $team->slug = Str::slug($team->name).'-'.Str::random(5);
             }
         });
     }
@@ -102,7 +102,7 @@ class Team extends Model
     {
         return GameMatch::where(function ($query) {
             $query->where('home_team_id', $this->id)
-                  ->orWhere('away_team_id', $this->id);
+                ->orWhere('away_team_id', $this->id);
         });
     }
 
@@ -112,6 +112,16 @@ class Team extends Model
     public function tournamentApplications(): HasMany
     {
         return $this->hasMany(TournamentApplication::class);
+    }
+
+    public function tournamentInvitations(): HasMany
+    {
+        return $this->hasMany(TournamentInvitation::class);
+    }
+
+    public function joinRequests(): HasMany
+    {
+        return $this->hasMany(TeamJoinRequest::class);
     }
 
     /**
@@ -136,7 +146,7 @@ class Team extends Model
         $matches = GameMatch::where('status', 'completed')
             ->where(function ($q) {
                 $q->where('home_team_id', $this->id)
-                  ->orWhere('away_team_id', $this->id);
+                    ->orWhere('away_team_id', $this->id);
             })->get();
 
         $wins = 0;
@@ -145,13 +155,21 @@ class Team extends Model
 
         foreach ($matches as $match) {
             if ($match->home_team_id == $this->id) {
-                if ($match->home_score > $match->away_score) $wins++;
-                elseif ($match->home_score < $match->away_score) $losses++;
-                else $draws++;
+                if ($match->home_score > $match->away_score) {
+                    $wins++;
+                } elseif ($match->home_score < $match->away_score) {
+                    $losses++;
+                } else {
+                    $draws++;
+                }
             } else {
-                if ($match->away_score > $match->home_score) $wins++;
-                elseif ($match->away_score < $match->home_score) $losses++;
-                else $draws++;
+                if ($match->away_score > $match->home_score) {
+                    $wins++;
+                } elseif ($match->away_score < $match->home_score) {
+                    $losses++;
+                } else {
+                    $draws++;
+                }
             }
         }
 

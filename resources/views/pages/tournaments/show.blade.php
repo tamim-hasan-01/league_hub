@@ -92,6 +92,132 @@
             </div>
         </section>
 
+        @if($canManageTournament)
+            <section id="tournament-invitations" class="space-y-5 rounded-2xl border border-indigo-200 bg-indigo-50/60 p-5 sm:p-7">
+                <div>
+                    <p class="text-sm font-bold uppercase tracking-[0.12em] text-indigo-600">Organizer tools</p>
+                    <h2 class="mt-1 text-2xl font-black tracking-tight text-slate-950">Invite teams or managers</h2>
+                    <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
+                        Invite a specific team, or invite a manager to choose one of their teams. Pending tournament applications can also be reviewed here.
+                    </p>
+                </div>
+
+                @if($tournament->status === 'registration_open' && $hasTournamentCapacity)
+                    <div class="grid gap-4 lg:grid-cols-2">
+                        <form action="{{ route('tournaments.inviteTeam', $tournament) }}" method="POST" class="space-y-3 rounded-xl border border-slate-200 bg-white p-4">
+                            @csrf
+                            <div>
+                                <label for="invite_team_id" class="block text-sm font-bold text-slate-800">Invite a team</label>
+                                <p class="mt-1 text-xs text-slate-500">The team manager will accept or decline from My Hub.</p>
+                            </div>
+                            <select name="team_id" id="invite_team_id" required class="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900">
+                                <option value="" selected disabled>Select an eligible team</option>
+                                @foreach($invitableTeams as $team)
+                                    <option value="{{ $team->id }}">{{ $team->name }} — {{ $team->manager->name }}</option>
+                                @endforeach
+                            </select>
+                            @if($invitableTeams->isEmpty())
+                                <p class="text-xs text-slate-500">No eligible teams in this sport are available to invite.</p>
+                            @endif
+                            <button type="submit" @disabled($invitableTeams->isEmpty()) class="h-10 rounded-lg bg-slate-950 px-4 text-sm font-bold text-white hover:bg-indigo-600 disabled:cursor-not-allowed disabled:opacity-50">
+                                Send team invitation
+                            </button>
+                        </form>
+
+                        <form action="{{ route('tournaments.inviteManager', $tournament) }}" method="POST" class="space-y-3 rounded-xl border border-slate-200 bg-white p-4">
+                            @csrf
+                            <div>
+                                <label for="invite_manager_id" class="block text-sm font-bold text-slate-800">Invite a manager</label>
+                                <p class="mt-1 text-xs text-slate-500">They will select one of their teams in {{ $tournament->sport_type }} when accepting.</p>
+                            </div>
+                            <select name="manager_id" id="invite_manager_id" required class="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900">
+                                <option value="" selected disabled>Select an eligible manager</option>
+                                @foreach($invitableManagers as $manager)
+                                    <option value="{{ $manager->id }}">{{ $manager->name }}</option>
+                                @endforeach
+                            </select>
+                            @if($invitableManagers->isEmpty())
+                                <p class="text-xs text-slate-500">No eligible managers with available teams are available to invite.</p>
+                            @endif
+                            <button type="submit" @disabled($invitableManagers->isEmpty()) class="h-10 rounded-lg bg-slate-950 px-4 text-sm font-bold text-white hover:bg-indigo-600 disabled:cursor-not-allowed disabled:opacity-50">
+                                Send manager invitation
+                            </button>
+                        </form>
+                    </div>
+                @elseif($tournament->status !== 'registration_open')
+                    <p class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800">
+                        Invitations are available only while tournament registration is open.
+                    </p>
+                @else
+                    <p class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800">
+                        This tournament has reached its team limit.
+                    </p>
+                @endif
+
+                <div class="grid gap-4 lg:grid-cols-2">
+                    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white">
+                        <div class="border-b border-slate-100 px-4 py-3">
+                            <h3 class="font-black text-slate-900">Tournament applications to review</h3>
+                        </div>
+                        <div class="divide-y divide-slate-100">
+                            @forelse($pendingTournamentApplications as $application)
+                                <div class="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+                                    <div>
+                                        <p class="font-bold text-slate-900">{{ $application->team->name }}</p>
+                                        <p class="mt-1 text-xs text-slate-500">Manager: {{ $application->team->manager->name ?? 'Unknown' }}</p>
+                                        @if($application->notes)
+                                            <p class="mt-1 text-xs text-slate-500">{{ $application->notes }}</p>
+                                        @endif
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <form action="{{ route('tournaments.applications.review', [$tournament, $application]) }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="status" value="approved">
+                                            <button type="submit" class="h-9 rounded-lg bg-emerald-600 px-3 text-xs font-bold text-white hover:bg-emerald-700">Approve</button>
+                                        </form>
+                                        <form action="{{ route('tournaments.applications.review', [$tournament, $application]) }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="status" value="rejected">
+                                            <button type="submit" class="h-9 rounded-lg border border-rose-200 bg-rose-50 px-3 text-xs font-bold text-rose-700 hover:bg-rose-100">Decline</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            @empty
+                                <p class="p-4 text-sm text-slate-500">There are no tournament applications waiting for review.</p>
+                            @endforelse
+                        </div>
+                    </div>
+
+                    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white">
+                        <div class="border-b border-slate-100 px-4 py-3">
+                            <h3 class="font-black text-slate-900">Invitation activity</h3>
+                        </div>
+                        <div class="divide-y divide-slate-100">
+                            @forelse($tournamentInvitations as $invitation)
+                                <div class="flex items-center justify-between gap-3 p-4">
+                                    <div>
+                                        <p class="font-bold text-slate-900">
+                                            @if($invitation->target_type === 'team')
+                                                {{ $invitation->team->name ?? 'Team' }}
+                                            @else
+                                                {{ $invitation->manager->name ?? 'Manager' }}
+                                            @endif
+                                        </p>
+                                        <p class="mt-1 text-xs text-slate-500">{{ ucfirst($invitation->target_type) }} invitation</p>
+                                    </div>
+                                    <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-bold capitalize text-slate-700">
+                                        {{ $invitation->status }}
+                                    </span>
+                                </div>
+                            @empty
+                                <p class="p-4 text-sm text-slate-500">No invitations have been sent yet.</p>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
+            </section>
+        @endif
+
         {{-- ========================================== --}}
         {{-- Section: Navigation Tabs (Bracket, Teams, Fixtures) --}}
         {{-- ========================================== --}}

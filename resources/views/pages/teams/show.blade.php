@@ -53,6 +53,41 @@
                         <a href="{{ route('teams.edit', $team->id) }}" class="flex h-12 w-full items-center justify-center rounded-xl border border-indigo-300/30 bg-indigo-300/10 text-sm font-bold text-indigo-100 hover:bg-indigo-300/20">
                             Edit team
                         </a>
+                    @else
+                        @auth
+                            @if(auth()->user()->isPlayer())
+                                @if($playerIsRosterMember)
+                                    <p class="rounded-xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-center text-sm font-bold text-emerald-100">
+                                        You are on this team roster.
+                                    </p>
+                                @elseif($playerJoinRequest && $playerJoinRequest->status === 'pending')
+                                    <p class="rounded-xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-center text-sm font-bold text-amber-100">
+                                        Your team request is awaiting a manager response.
+                                    </p>
+                                @else
+                                    <form action="{{ route('teams.joinRequests.store', $team) }}" method="POST" class="space-y-3">
+                                        @csrf
+                                        <label for="join_position" class="block text-xs font-bold uppercase tracking-[0.1em] text-slate-300">Request to join</label>
+                                        <input type="text" name="position" id="join_position" required maxlength="50"
+                                               value="{{ old('position', $playerJoinRequest?->position) }}"
+                                               placeholder="Preferred position"
+                                               class="h-11 w-full rounded-lg border border-white/15 bg-slate-900 px-3 text-sm text-white placeholder:text-slate-400">
+                                        <textarea name="notes" rows="2" maxlength="500" placeholder="Optional message to the manager"
+                                                  class="w-full rounded-lg border border-white/15 bg-slate-900 px-3 py-2 text-sm text-white placeholder:text-slate-400">{{ old('notes', $playerJoinRequest?->notes) }}</textarea>
+                                        @if($playerJoinRequest && $playerJoinRequest->status === 'rejected')
+                                            <p class="text-xs text-rose-200">Your previous request was declined. You may send a new request.</p>
+                                        @endif
+                                        <button type="submit" class="flex h-11 w-full items-center justify-center rounded-xl bg-white text-sm font-bold text-slate-950 hover:bg-indigo-100">
+                                            Send team request
+                                        </button>
+                                    </form>
+                                @endif
+                            @endif
+                        @else
+                            <a href="{{ route('login') }}" class="flex h-11 w-full items-center justify-center rounded-xl border border-white/15 bg-white/5 text-sm font-bold text-white hover:bg-white/10">
+                                Sign in to request to join
+                            </a>
+                        @endauth
                     @endcan
                 </aside>
             </div>

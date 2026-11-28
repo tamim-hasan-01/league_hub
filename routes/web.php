@@ -65,6 +65,11 @@ Route::middleware(['auth', 'account.active'])->group(function () {
     // Tournament Management & Entry Applications
     Route::POST('/tournaments', [TournamentController::class, 'store'])->name('tournaments.store');
     Route::POST('/tournaments/{tournament}/apply', [TournamentController::class, 'apply'])->name('tournaments.apply');
+    Route::POST('/tournaments/{tournament}/invitations/teams', [TournamentController::class, 'inviteTeam'])->name('tournaments.inviteTeam');
+    Route::POST('/tournaments/{tournament}/invitations/managers', [TournamentController::class, 'inviteManager'])->name('tournaments.inviteManager');
+    Route::POST('/tournaments/{tournament}/applications/{application}/review', [TournamentController::class, 'reviewApplication'])
+        ->scopeBindings()
+        ->name('tournaments.applications.review');
     Route::POST('/tournaments/{tournament}/generate-bracket', [TournamentController::class, 'generateBracket'])->name('tournaments.generateBracket');
 
     // Team Management & Squad Operations
@@ -72,6 +77,7 @@ Route::middleware(['auth', 'account.active'])->group(function () {
     Route::POST('/teams', [TeamController::class, 'store'])->name('teams.store');
     Route::get('/teams/{team}/edit', [TeamController::class, 'edit'])->name('teams.edit');
     Route::put('/teams/{team}', [TeamController::class, 'update'])->name('teams.update');
+    Route::POST('/teams/{team}/join-requests', [TeamController::class, 'requestToJoin'])->name('teams.joinRequests.store');
     Route::POST('/teams/{team}/add-player', [TeamController::class, 'addPlayer'])->name('teams.addPlayer');
     Route::delete('/teams/{team}/remove-player/{player}', [TeamController::class, 'removePlayer'])->name('teams.removePlayer');
     Route::POST('/teams/{team}/propose-friendly', [TeamController::class, 'proposeFriendly'])->name('teams.proposeFriendly');
@@ -83,6 +89,10 @@ Route::middleware(['auth', 'account.active'])->group(function () {
     // Personalized Member Hub & Match Bookmarks
     Route::get('/mytournaments', [MyTournamentsController::class, 'index'])->name('mytournaments');
     Route::POST('/invitations/{invitation}/respond', [MyTournamentsController::class, 'respondInvitation'])->name('invitations.respond');
+    Route::POST('/tournament-invitations/{tournamentInvitation}/respond', [MyTournamentsController::class, 'respondTournamentInvitation'])
+        ->name('tournament-invitations.respond');
+    Route::POST('/team-join-requests/{teamJoinRequest}/respond', [MyTournamentsController::class, 'respondTeamJoinRequest'])
+        ->name('team-join-requests.respond');
     Route::POST('/bookmarks/toggle', [MyTournamentsController::class, 'toggleBookmark'])->name('bookmarks.toggle');
     Route::POST('/members/{user}/suspend', [UserManagementController::class, 'suspend'])->name('members.suspend');
     Route::POST('/members/{user}/restore', [UserManagementController::class, 'restore'])->name('members.restore');

@@ -81,6 +81,107 @@
                     @endforelse
                 </div>
 
+                <div class="grid gap-5 lg:grid-cols-2">
+                    <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+                        <div class="border-b border-slate-100 px-5 py-4">
+                            <p class="text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Tournament invitations</p>
+                            <h3 class="mt-1 text-lg font-black text-slate-950">Invitations to respond to</h3>
+                        </div>
+                        <div class="divide-y divide-slate-100 px-5">
+                            @forelse($receivedTournamentInvitations as $invitation)
+                                <div class="space-y-3 py-4">
+                                    <div>
+                                        <a href="{{ route('tournaments.show', $invitation->tournament->slug) }}" class="font-bold text-indigo-600 hover:text-indigo-800">
+                                            {{ $invitation->tournament->title }}
+                                        </a>
+                                        <p class="mt-1 text-sm text-slate-600">
+                                            @if($invitation->target_type === 'team')
+                                                Your team, {{ $invitation->team->name ?? 'team' }}, has been invited.
+                                            @else
+                                                You are invited to select a {{ $invitation->tournament->sport_type }} team.
+                                            @endif
+                                        </p>
+                                    </div>
+                                    <div class="flex flex-wrap items-end gap-2">
+                                        @if($invitation->target_type === 'manager')
+                                            @php
+                                                $eligibleInvitationTeams = collect($managerData['myTeams'] ?? [])
+                                                    ->where('sport_type', $invitation->tournament->sport_type);
+                                            @endphp
+                                            @if($eligibleInvitationTeams->isNotEmpty())
+                                                <form action="{{ route('tournament-invitations.respond', $invitation) }}" method="POST" class="flex flex-wrap items-end gap-2">
+                                                    @csrf
+                                                    <input type="hidden" name="status" value="accepted">
+                                                    <div>
+                                                        <label class="mb-1 block text-xs font-bold text-slate-600">Choose a team</label>
+                                                        <select name="team_id" required class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900">
+                                                            @foreach($eligibleInvitationTeams as $team)
+                                                                <option value="{{ $team->id }}">{{ $team->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <button type="submit" class="h-10 rounded-lg bg-emerald-600 px-4 text-sm font-bold text-white hover:bg-emerald-700">Accept invite</button>
+                                                </form>
+                                            @else
+                                                <p class="text-xs text-amber-700">You do not currently have an eligible team for this invitation.</p>
+                                            @endif
+                                        @else
+                                            <form action="{{ route('tournament-invitations.respond', $invitation) }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="status" value="accepted">
+                                                <button type="submit" class="h-10 rounded-lg bg-emerald-600 px-4 text-sm font-bold text-white hover:bg-emerald-700">Accept invite</button>
+                                            </form>
+                                        @endif
+                                        <form action="{{ route('tournament-invitations.respond', $invitation) }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="status" value="declined">
+                                            <button type="submit" class="h-10 rounded-lg border border-rose-200 bg-rose-50 px-4 text-sm font-bold text-rose-700 hover:bg-rose-100">Decline</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            @empty
+                                <p class="py-8 text-center text-sm text-slate-500">No tournament invitations need a response.</p>
+                            @endforelse
+                        </div>
+                    </div>
+
+                    <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+                        <div class="border-b border-slate-100 px-5 py-4">
+                            <p class="text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Team membership</p>
+                            <h3 class="mt-1 text-lg font-black text-slate-950">Player requests</h3>
+                        </div>
+                        <div class="divide-y divide-slate-100 px-5">
+                            @forelse($receivedTeamJoinRequests as $joinRequest)
+                                <div class="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
+                                    <div>
+                                        <p class="font-bold text-slate-950">{{ $joinRequest->player->name }}</p>
+                                        <p class="mt-1 text-sm text-slate-600">
+                                            Requests {{ $joinRequest->team->name }} as {{ $joinRequest->position }}
+                                        </p>
+                                        @if($joinRequest->notes)
+                                            <p class="mt-1 text-xs text-slate-500">{{ $joinRequest->notes }}</p>
+                                        @endif
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <form action="{{ route('team-join-requests.respond', $joinRequest) }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="status" value="approved">
+                                            <button type="submit" class="h-9 rounded-lg bg-emerald-600 px-3 text-xs font-bold text-white hover:bg-emerald-700">Approve</button>
+                                        </form>
+                                        <form action="{{ route('team-join-requests.respond', $joinRequest) }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="status" value="rejected">
+                                            <button type="submit" class="h-9 rounded-lg border border-rose-200 bg-rose-50 px-3 text-xs font-bold text-rose-700 hover:bg-rose-100">Decline</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            @empty
+                                <p class="py-8 text-center text-sm text-slate-500">No player requests are waiting for review.</p>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
+
                 <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
                     <div class="border-b border-slate-100 px-5 py-4">
                         <p class="text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Tournament registrations</p>
@@ -187,6 +288,32 @@
                     </div>
                     <a href="{{ route('mystats') }}" class="shrink-0 text-sm font-bold text-indigo-600 hover:text-indigo-800">View stats &rarr;</a>
                 </div>
+
+                @if($user->isPlayer())
+                    <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+                        <div class="border-b border-slate-100 px-5 py-4">
+                            <p class="text-xs font-bold uppercase tracking-[0.12em] text-slate-400">Team membership</p>
+                            <h3 class="mt-1 text-lg font-black text-slate-950">Your team requests</h3>
+                        </div>
+                        <div class="divide-y divide-slate-100 px-5">
+                            @forelse($myTeamJoinRequests as $joinRequest)
+                                <div class="flex items-center justify-between gap-3 py-4">
+                                    <div>
+                                        <a href="{{ route('teams.show', $joinRequest->team->slug) }}" class="font-bold text-indigo-600 hover:text-indigo-800">
+                                            {{ $joinRequest->team->name }}
+                                        </a>
+                                        <p class="mt-1 text-xs text-slate-500">Requested position: {{ $joinRequest->position }}</p>
+                                    </div>
+                                    <span class="rounded-full border px-3 py-1 text-xs font-bold capitalize {{ $joinRequest->status === 'approved' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : ($joinRequest->status === 'rejected' ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-amber-200 bg-amber-50 text-amber-700') }}">
+                                        {{ $joinRequest->status }}
+                                    </span>
+                                </div>
+                            @empty
+                                <p class="py-8 text-center text-sm text-slate-500">You have not requested to join a team yet.</p>
+                            @endforelse
+                        </div>
+                    </div>
+                @endif
 
                 <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
                     <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">

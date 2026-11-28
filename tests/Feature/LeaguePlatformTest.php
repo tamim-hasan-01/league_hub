@@ -34,6 +34,75 @@ class LeaguePlatformTest extends TestCase
         $response->assertSee('Tournaments');
     }
 
+    public function test_admin_can_open_the_tournament_creation_form(): void
+    {
+        $admin = User::where('role', 'admin')->first();
+
+        $response = $this->actingAs($admin)->get('/tournaments');
+
+        $response->assertStatus(200);
+        $response->assertSee('name="title"', false);
+        $response->assertSee('action="'.route('tournaments.store').'"', false);
+    }
+
+    public function test_admin_can_create_a_tournament(): void
+    {
+        $admin = User::where('role', 'admin')->first();
+        $tournamentData = [
+            'title' => 'Community Cup',
+            'sport_type' => 'Football',
+            'description' => 'A local football competition.',
+            'venue' => 'Central Stadium',
+            'start_date' => '2026-12-01',
+            'end_date' => '2026-12-10',
+            'prize_pool' => 'Championship trophy',
+            'max_teams' => 16,
+        ];
+
+        $response = $this->actingAs($admin)->post(route('tournaments.store'), $tournamentData);
+
+        $tournament = Tournament::where('title', 'Community Cup')->firstOrFail();
+        $response->assertRedirect(route('tournaments.show', $tournament->slug));
+        $this->assertDatabaseHas('tournaments', [
+            'title' => 'Community Cup',
+            'creator_id' => $admin->id,
+            'sport_type' => 'Football',
+            'venue' => 'Central Stadium',
+            'max_teams' => 16,
+            'status' => 'registration_open',
+        ]);
+    }
+
+    public function test_non_admin_cannot_create_a_tournament(): void
+    {
+        $manager = User::where('role', 'manager')->first();
+
+        $response = $this->actingAs($manager)->post(route('tournaments.store'), [
+            'title' => 'Unauthorized Cup',
+            'sport_type' => 'Football',
+            'max_teams' => 8,
+        ]);
+
+        $response->assertStatus(403);
+        $this->assertDatabaseMissing('tournaments', [
+            'title' => 'Unauthorized Cup',
+        ]);
+    }
+
+    public function test_guest_is_redirected_to_sign_in_before_creating_a_tournament(): void
+    {
+        $response = $this->post(route('tournaments.store'), [
+            'title' => 'Guest Cup',
+            'sport_type' => 'Football',
+            'max_teams' => 8,
+        ]);
+
+        $response->assertRedirect(route('login'));
+        $this->assertDatabaseMissing('tournaments', [
+            'title' => 'Guest Cup',
+        ]);
+    }
+
     public function test_teams_directory_loads(): void
     {
         $response = $this->get('/teams');
@@ -85,6 +154,16 @@ class LeaguePlatformTest extends TestCase
         $adminResp = $this->actingAs($admin)->get('/admin/dashboard');
         $adminResp->assertStatus(200);
         $adminResp->assertSee('League Authority');
+    }
+
+    public function test_admin_personal_hub_loads_the_member_directory(): void
+    {
+        $admin = User::where('role', 'admin')->first();
+
+        $response = $this->actingAs($admin)->get(route('mytournaments'));
+
+        $response->assertStatus(200);
+        $response->assertViewHas('memberDirectory');
     }
 
     public function test_player_analytics_page_accessible_by_player(): void

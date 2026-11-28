@@ -59,7 +59,7 @@ class Tournament extends Model
         parent::boot();
         static::creating(function ($tournament) {
             if (empty($tournament->slug)) {
-                $tournament->slug = Str::slug($tournament->title) . '-' . Str::random(5);
+                $tournament->slug = Str::slug($tournament->title).'-'.Str::random(5);
             }
         });
     }
@@ -82,6 +82,11 @@ class Tournament extends Model
     public function applications(): HasMany
     {
         return $this->hasMany(TournamentApplication::class);
+    }
+
+    public function invitations(): HasMany
+    {
+        return $this->hasMany(TournamentInvitation::class);
     }
 
     /**

@@ -6,12 +6,17 @@ use App\Models\Bookmark;
 use App\Models\GameMatch;
 use App\Models\MatchInvitation;
 use App\Models\Team;
+use App\Models\TeamJoinRequest;
 use App\Models\Tournament;
 use App\Models\TournamentApplication;
+use App\Models\TournamentInvitation;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 /**
@@ -35,6 +40,14 @@ class MyTournamentsController extends Controller
         $managerData = [];
         $playerData = [];
         $viewerData = [];
+        $receivedTournamentInvitations = TournamentInvitation::query()
+            ->where('manager_id', $user->id)
+            ->where('status', 'pending')
+            ->with(['tournament', 'team'])
+            ->latest()
+            ->get();
+        $receivedTeamJoinRequests = collect();
+        $myTeamJoinRequests = collect();
 
         // ==========================================
         // 1. Manager Role Data Assembly
@@ -42,6 +55,16 @@ class MyTournamentsController extends Controller
         // ==========================================
         if ($user->isManager() || $user->isAdmin()) {
             $teams = Team::where('manager_id', $user->id)->pluck('id');
+            $joinRequestQuery = TeamJoinRequest::query()
+                ->where('status', 'pending')
+                ->with(['team', 'player'])
+                ->latest();
+
+            if (! $user->isAdmin()) {
+                $joinRequestQuery->whereHas('team', fn ($query) => $query->where('manager_id', $user->id));
+            }
+
+            $receivedTeamJoinRequests = $joinRequestQuery->get();
             $managerData = [
                 'myTeams' => Team::where('manager_id', $user->id)->with('players')->get(),
                 'activeTournaments' => Tournament::whereHas('applications', function ($q) use ($teams) {
@@ -74,6 +97,13 @@ class MyTournamentsController extends Controller
         // Retrieve incoming match call-ups, confirmed fixtures, and current team rosters
         // ==========================================
         if ($user->isPlayer() || $user->isAdmin()) {
+            if ($user->isPlayer()) {
+                $myTeamJoinRequests = TeamJoinRequest::where('player_id', $user->id)
+                    ->with('team')
+                    ->latest()
+                    ->get();
+            }
+
             $playerData = [
                 'pendingInvitations' => MatchInvitation::where('player_id', $user->id)
                     ->where('status', 'pending')
@@ -112,7 +142,17 @@ class MyTournamentsController extends Controller
         // 4. View Rendering
         // Render unified hub view with populated role-specific collections
         // ==========================================
-        return view('pages.hub.index', compact('user', 'role', 'managerData', 'playerData', 'viewerData', 'memberDirectory'));
+        return view('pages.hub.index', compact(
+            'user',
+            'role',
+            'managerData',
+            'playerData',
+            'viewerData',
+            'memberDirectory',
+            'receivedTournamentInvitations',
+            'receivedTeamJoinRequests',
+            'myTeamJoinRequests',
+        ));
     }
 
     /**
@@ -136,6 +176,161 @@ class MyTournamentsController extends Controller
         $statusLabel = $request->status === 'accepted' ? 'Accepted' : 'Declined';
 
         return back()->with('success', "Match call-up has been {$statusLabel}.");
+    }
+
+    public function respondTournamentInvitation(Request $request, TournamentInvitation $tournamentInvitation): RedirectResponse
+    {
+        $user = Auth::user();
+        abort_unless($tournamentInvitation->manager_id === $user->id, 403);
+        $tournamentInvitation->loadMissing(['tournament', 'team']);
+
+        if ($tournamentInvitation->target_type === 'manager') {
+            abort_unless($user->isManager(), 403);
+        } elseif ($tournamentInvitation->target_type === 'team') {
+            abort_unless(
+                $tournamentInvitation->team
+                && (int) $tournamentInvitation->team->id === (int) $tournamentInvitation->target_id,
+                403,
+            );
+            Gate::authorize('manage-team', $tournamentInvitation->team);
+        } else {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'status' => ['required', Rule::in(['accepted', 'declined'])],
+        ]);
+        $teamId = null;
+
+        if ($validated['status'] === 'accepted' && $tournamentInvitation->target_type === 'manager') {
+            $teamData = $request->validate([
+                'team_id' => [
+                    'required',
+                    'integer',
+                    Rule::exists('teams', 'id')
+                        ->where('manager_id', $user->id)
+                        ->where('sport_type', $tournamentInvitation->tournament->sport_type),
+                ],
+            ]);
+            $teamId = $teamData['team_id'];
+        } elseif ($tournamentInvitation->target_type === 'team') {
+            $teamId = $tournamentInvitation->team_id;
+        }
+
+        $result = DB::transaction(function () use ($tournamentInvitation, $teamId, $validated, $user) {
+            $invitation = TournamentInvitation::query()
+                ->lockForUpdate()
+                ->findOrFail($tournamentInvitation->id);
+
+            if ($invitation->status !== 'pending') {
+                return 'not_pending';
+            }
+
+            if ($validated['status'] === 'declined') {
+                $invitation->update(['status' => 'declined']);
+
+                return 'declined';
+            }
+
+            $tournament = Tournament::query()->lockForUpdate()->findOrFail($invitation->tournament_id);
+            if ($tournament->status !== 'registration_open') {
+                return 'closed';
+            }
+
+            $team = Team::query()->lockForUpdate()->findOrFail($teamId);
+            if (
+                (int) $team->manager_id !== $user->id
+                || $team->sport_type !== $tournament->sport_type
+                || ($invitation->target_type === 'team' && (int) $team->id !== (int) $invitation->target_id)
+            ) {
+                return 'invalid_team';
+            }
+
+            $application = TournamentApplication::query()
+                ->where('tournament_id', $tournament->id)
+                ->where('team_id', $team->id)
+                ->lockForUpdate()
+                ->first();
+
+            if ($application?->status === 'approved') {
+                return 'already_joined';
+            }
+
+            if (
+                $tournament->applications()->where('status', 'approved')->count() >= $tournament->max_teams
+            ) {
+                return 'full';
+            }
+
+            if ($application) {
+                $application->update(['status' => 'approved']);
+            } else {
+                $application = TournamentApplication::create([
+                    'tournament_id' => $tournament->id,
+                    'team_id' => $team->id,
+                    'status' => 'approved',
+                ]);
+            }
+
+            $invitation->update([
+                'status' => 'accepted',
+                'team_id' => $team->id,
+            ]);
+
+            return 'accepted';
+        });
+
+        return match ($result) {
+            'accepted' => back()->with('success', 'Tournament invitation accepted. Your team is registered.'),
+            'declined' => back()->with('success', 'Tournament invitation declined.'),
+            'closed' => back()->with('error', 'This tournament is no longer accepting teams.'),
+            'full' => back()->with('error', 'This tournament has reached its team limit.'),
+            'already_joined' => back()->with('error', 'This team is already registered for the tournament.'),
+            'invalid_team' => back()->with('error', 'Select a team you manage in the tournament sport.'),
+            default => back()->with('error', 'This invitation has already been answered.'),
+        };
+    }
+
+    public function respondTeamJoinRequest(Request $request, TeamJoinRequest $teamJoinRequest): RedirectResponse
+    {
+        Gate::authorize('manage-team', $teamJoinRequest->team);
+
+        $validated = $request->validate([
+            'status' => ['required', Rule::in(['approved', 'rejected'])],
+        ]);
+
+        $result = DB::transaction(function () use ($teamJoinRequest, $validated) {
+            $joinRequest = TeamJoinRequest::query()
+                ->lockForUpdate()
+                ->findOrFail($teamJoinRequest->id);
+
+            if ($joinRequest->status !== 'pending') {
+                return 'not_pending';
+            }
+
+            $team = Team::query()->lockForUpdate()->findOrFail($joinRequest->team_id);
+            if ($validated['status'] === 'approved' && ! $team->players()->whereKey($joinRequest->player_id)->exists()) {
+                $team->players()->attach($joinRequest->player_id, [
+                    'position' => $joinRequest->position,
+                    'status' => 'active',
+                ]);
+            }
+
+            $joinRequest->update([
+                'status' => $validated['status'],
+                'responded_at' => now(),
+            ]);
+
+            return $validated['status'];
+        });
+
+        if ($result === 'not_pending') {
+            return back()->with('error', 'This team request has already been answered.');
+        }
+
+        $statusLabel = $result === 'approved' ? 'approved' : 'declined';
+
+        return back()->with('success', "The player request was {$statusLabel}.");
     }
 
     /**
