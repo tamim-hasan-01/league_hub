@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\GameMatch;
-use App\Models\Team;
-use App\Models\User;
 use App\Models\MatchInvitation;
+use App\Models\Team;
+use App\Models\TeamJoinRequest;
+use App\Models\User;
 use App\Notifications\MatchInvitationReceived;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -24,7 +25,7 @@ class TeamController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('home_venue', 'like', "%{$search}%");
+                    ->orWhere('home_venue', 'like', "%{$search}%");
             });
         }
 
@@ -47,10 +48,18 @@ class TeamController extends Controller
         $matches = GameMatch::with(['homeTeam', 'awayTeam', 'tournament'])
             ->where(function ($q) use ($team) {
                 $q->where('home_team_id', $team->id)
-                  ->orWhere('away_team_id', $team->id);
+                    ->orWhere('away_team_id', $team->id);
             })
             ->orderBy('scheduled_at', 'desc')
             ->get();
+
+        $playerJoinRequest = null;
+        $playerIsRosterMember = Auth::check() && $team->players->contains('id', Auth::id());
+        if (Auth::check() && Auth::user()->isPlayer()) {
+            $playerJoinRequest = TeamJoinRequest::where('team_id', $team->id)
+                ->where('player_id', Auth::id())
+                ->first();
+        }
 
         // Available free-agent or unassigned players if current user is manager of this team
         $availablePlayers = [];
@@ -67,7 +76,14 @@ class TeamController extends Controller
                 ->get();
         }
 
-        return view('pages.teams.show', compact('team', 'matches', 'availablePlayers', 'otherTeams'));
+        return view('pages.teams.show', compact(
+            'team',
+            'matches',
+            'availablePlayers',
+            'otherTeams',
+            'playerJoinRequest',
+            'playerIsRosterMember',
+        ));
     }
 
     public function create(): View
@@ -87,7 +103,7 @@ class TeamController extends Controller
         $team = Team::create([
             'manager_id' => Auth::id(),
             'name' => $request->name,
-            'slug' => Str::slug($request->name) . '-' . Str::random(4),
+            'slug' => Str::slug($request->name).'-'.Str::random(4),
             'sport_type' => $request->sport_type,
             'home_venue' => $request->home_venue ?? 'City Sports Arena',
             'description' => $request->description,
@@ -101,6 +117,7 @@ class TeamController extends Controller
     public function edit(Team $team): View
     {
         Gate::authorize('manage-team', $team);
+
         return view('pages.teams.edit', compact('team'));
     }
 
@@ -119,6 +136,38 @@ class TeamController extends Controller
 
         return redirect()->route('teams.show', $team->slug)
             ->with('success', 'Team profile updated successfully.');
+    }
+
+    public function requestToJoin(Request $request, Team $team): RedirectResponse
+    {
+        $player = Auth::user();
+        abort_unless($player->isPlayer(), 403);
+
+        $validated = $request->validate([
+            'position' => ['required', 'string', 'max:50'],
+            'notes' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        if ($team->players()->whereKey($player->id)->exists()) {
+            return back()->with('error', 'You are already on this team roster.');
+        }
+
+        $joinRequest = TeamJoinRequest::firstOrNew([
+            'team_id' => $team->id,
+            'player_id' => $player->id,
+        ]);
+
+        if ($joinRequest->exists && $joinRequest->status === 'pending') {
+            return back()->with('error', 'You already have a pending request to join this team.');
+        }
+
+        $joinRequest->fill([
+            ...$validated,
+            'status' => 'pending',
+            'responded_at' => null,
+        ])->save();
+
+        return back()->with('success', "Your request to join {$team->name} was sent to the team manager.");
     }
 
     public function addPlayer(Request $request, Team $team): RedirectResponse
@@ -148,6 +197,7 @@ class TeamController extends Controller
     {
         Gate::authorize('manage-team', $team);
         $team->players()->detach($player->id);
+
         return back()->with('info', "{$player->name} was removed from the roster.");
     }
 
@@ -184,7 +234,7 @@ class TeamController extends Controller
                 'player_id' => $rosterPlayer->id,
                 'team_id' => $team->id,
                 'status' => 'pending',
-                'manager_notes' => 'Callup for upcoming friendly fixture at ' . $match->venue,
+                'manager_notes' => 'Callup for upcoming friendly fixture at '.$match->venue,
             ]);
 
             $rosterPlayer->notify(new MatchInvitationReceived($invitation));
@@ -193,4 +243,3 @@ class TeamController extends Controller
         return back()->with('success', 'Friendly match proposed and callup notifications broadcast to players!');
     }
 }
-
